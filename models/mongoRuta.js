@@ -10,7 +10,8 @@ var Pois = mongoose.model('Pois', poiSchema);
 /* Esquema correspondiente a los usuarios */
 var rutaSchema = {
     "user": { type: Schema.ObjectId, ref: "Users"},
-    "pois": [{ type: Schema.ObjectId, ref: "Pois"}]
+    "pois": [{ type: Schema.ObjectId, ref: "Pois"}],
+    "recomendaciones": Number
 };
 
 // create model if not exists.
