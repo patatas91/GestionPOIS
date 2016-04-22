@@ -1,6 +1,5 @@
 /**
  * Module dependencies.
- * Manolo
  */
 
 var app = require('../app');
