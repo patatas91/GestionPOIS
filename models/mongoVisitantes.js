@@ -8,11 +8,11 @@ var mongoSchema = mongoose.Schema;
 var Users = mongoose.model('Users', userSchema);
 var Pois = mongoose.model('Pois', poiSchema);
 /* Esquema correspondiente a los usuarios */
-var rutaSchema = {
+var visitantesSchema = {
     user: { type: Schema.ObjectId, ref: "Users"},
     listaFavoritos: [{ type: Schema.ObjectId, ref: "Pois"}],
     listaSeguidores: [{ type: Schema.ObjectId, ref: "Users"}]
 };
 
 // create model if not exists.
-module.exports = mongoose.model('Rutas',rutaSchema,'rutas');
+module.exports = mongoose.model('Visitantes',rutaSchema,'visitantes');
