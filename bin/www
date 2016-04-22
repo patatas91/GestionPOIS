@@ -19,6 +19,7 @@ app.set('port', port);
 var pepe = "hola";
 var federico = "si";
 var manolo = 1;
+/*Pos vaya mierda */
 var server = http.createServer(app);
 
 /**
