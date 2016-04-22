@@ -17,6 +17,7 @@ app.set('port', port);
  * Create HTTP server.
  */
 var pepe = "hola";
+var otras = 1;
 var manolo = 7;
 var server = http.createServer(app);
 
