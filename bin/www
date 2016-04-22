@@ -1,6 +1,5 @@
 /**
  * Module dependencies.
- * Manolo
  */
 
 var app = require('../app');
@@ -17,7 +16,7 @@ app.set('port', port);
 /**
  * Create HTTP server.
  */
-
+var manolo = 7;
 var server = http.createServer(app);
 
 /**
