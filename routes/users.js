@@ -22,26 +22,38 @@ router.get('/', function(req, res) {
  * Función que permite añadir un usuario
  */
 router.post('/', function(req,res) {
-  var db = new mongoOp();
   var response = {};
-
-  db.tipoUser;
-  db.email = req.body.email;
-  db.pass = require('crypto')
-      .createHash('sha1')
-      .update(req.body.pass)
-      .digest('base64');
-  db.nombre = req.body.nombre;
-  db.name = req.body.apellidos;
-  db.fechaAlta = new Date();
-
-  db.save(function (err) {
+  mongoOp.findOne({"email": req.body.email},function(err,data) {
     if (err) {
-      response = {"error": true, "message": "Error adding data"};
+      response = {"error": true, "message": "Error adding user"};
+      res.json(response);
+    } else if(data) {
+      response = {"error": true, "message": "This email is registred."};
+      res.json(response);
     } else {
-      response = {"error": false, "message": "Data added"};
+      var db = new mongoOp();
+      var password = generar();
+      db.tipoUser = req.body.tipoUser;
+      db.email = req.body.email;
+      db.pass = require('crypto')
+          .createHash('sha1')
+          .update(password)
+          .digest('base64');
+      db.nombre = req.body.nombre;
+      db.apellidos = req.body.apellidos;
+      db.fechaAlta = new Date();
+
+      db.save(function (err) {
+        if (err) {
+          console.log(err);
+          response = {"error": true, "message": "Error adding user"};
+        } else {
+          db.pass = password;
+          response = {"error": false, "message": "Data added", "user": db};
+        }
+          res.json(response);
+      });
     }
-    res.json(response);
   });
 });
 
@@ -88,7 +100,7 @@ router.put('/:id', function(req,res){
       if(req.body.apellidos !== undefined) {
         data.apellidos = req.body.apellidos;
       }
-
+      data.fechaAcceso = new Date();
       data.save(function(err){
         if(err) {
           response = {"error" : true,"message" : "Error updating data"};
@@ -122,5 +134,13 @@ router.delete('/:id', function(req,res){
     }
   });
 })
+
+
+function generar() {
+  var caracteres = "abcdefghijkmnpqrtuvwxyzABCDEFGHIJKLMNPQRTUVWXYZ2346789_/-?¿¡!.:=+";
+  var contraseña = "";
+  for (i=0; i<8; i++) contraseña += caracteres.charAt(Math.floor(Math.random()*caracteres.length));
+  return contraseña;
+}
 
 module.exports = router;

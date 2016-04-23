@@ -3,10 +3,14 @@
  */
 var mongoose = require("mongoose");
 
+var user = require("./mongoUser");
+var poi = require("./mongoPois");
+
 // create instance of Schema
-var mongoSchema = mongoose.Schema;
-var Users = mongoose.model('Users', userSchema);
-var Pois = mongoose.model('Pois', poiSchema);
+var Schema = mongoose.Schema;
+var Users = mongoose.model('Users');
+var Pois = mongoose.model('Pois');
+
 /* Esquema correspondiente a los usuarios */
 var visitantesSchema = {
     user: { type: Schema.ObjectId, ref: "Users"},
@@ -15,4 +19,4 @@ var visitantesSchema = {
 };
 
 // create model if not exists.
-module.exports = mongoose.model('Visitantes',rutaSchema,'visitantes');
+module.exports = mongoose.model('Visitantes',visitantesSchema,'visitantes');

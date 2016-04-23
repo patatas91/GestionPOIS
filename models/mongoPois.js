@@ -3,12 +3,15 @@
  */
 var mongoose = require("mongoose");
 
+var user = require("./mongoUser");
+
 // create instance of Schema
-var mongoSchema = mongoose.Schema;
-var Users = mongoose.model('Users', userSchema);
+var Schema = mongoose.Schema;
+var Users = mongoose.model('Users');
+
 /* Esquema correspondiente a los usuarios */
 var poiSchema = {
-    "user": { type: Schema.ObjectId, ref: "Users"},
+    "user": [{ type: Number, ref: 'Users' }],
     "nombre": String,
     "descripcion": String,
     "url": String,

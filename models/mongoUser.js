@@ -15,5 +15,5 @@ var userSchema = {
 };
 
 // create model if not exists.user
-var tasking = module.exports = mongoose.model('Users',userSchema, 'users');
+module.exports = mongoose.model('Users',userSchema, 'users');
 

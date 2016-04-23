@@ -1,10 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var mongoOp = require("../models/poiSchema");
-
-app.get('/',function(req,res){
-    res.json({"error" : false,"message" : "Gestion de POIS"});
-});
+var mongoOp = require("../models/mongoPois");
 
 router.get('/', function(req,res){
     var response = {};
@@ -24,15 +20,19 @@ router.post('/', function(req,res){
     var response = {};
 
     //DATOS COLECCION
-    db.user = req.body.user;
+    db.user = ObjectId(req.body.user);
     db.nombre = req.body.nombre;
-    db.descripcion = req.body.descripcion;
-    db.url = req.body.url;
-    db.palabrasClave = req.body.palabrasClave ;
+    if( req.body.descripcion != undefined){
+        db.descripcion = req.body.descripcion;
+    }
+    if(req.body.url !== undefined) {
+        db.url = req.body.url;
+    }
+    if(req.body.palabrasClave != undefined) {
+        db.palabrasClave = req.body.palabrasClave;
+    }
     db.coordX = req.body.coordX;
     db.coordY = req.body.coordY;
-    db.numVotantes = req.body.numVotantes;
-    db.valoracion = req.body.valoracion;
 
     db.save(function(err){
         // save() will run insert() command of MongoDB.
