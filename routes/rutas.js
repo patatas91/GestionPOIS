@@ -3,7 +3,7 @@ var router = express.Router();
 var mongoOp = require("../models/mongoRuta");
 
 /**
- * Funcion que devuelve los usuarios
+ * Funcion que devuelve las rutas
  */
 router.get('/', function(req, res) {
     var response = {};
@@ -19,7 +19,7 @@ router.get('/', function(req, res) {
 });
 
 /**
- * Función que permite añadir un usuario
+ * Función que permite añadir una ruta
  */
 router.post('/', function(req,res) {
     var db = new mongoOp();
@@ -39,7 +39,7 @@ router.post('/', function(req,res) {
 });
 
 /**
- * Función que devuelve el usuario correspondiente al 'id'
+ * Función que devuelve la ruta correspondiente al 'id'
  */
 router.get('/:id', function(req,res){
     var response = {};
@@ -54,7 +54,7 @@ router.get('/:id', function(req,res){
 });
 
 /**
- * Función que permite modificar el usuario correspondiente al 'id'.
+ * Función que permite modificar la ruta correspondiente al 'id'.
  */
 router.put('/:id', function(req,res){
     var response = {};
@@ -79,7 +79,30 @@ router.put('/:id', function(req,res){
 })
 
 /**
- * Función que permite eliminar el usuario que corresponde con el 'id'
+ * Función que permite añade una recomendación a la ruta correspondiente al 'id'.
+ */
+router.put('/:id/recomendar', function(req,res){
+    var response = {};
+
+    mongoOp.findById(req.params.id,function(err,data){
+        if(err) {
+            response = {"error" : true,"message" : "Error fetching data"};
+        } else {
+            data.recomendaciones = data.recomendaciones + 1;
+            data.save(function(err){
+                if(err) {
+                    response = {"error" : true,"message" : "Error updating data"};
+                } else {
+                    response = {"error" : false,"message" : "Data is updated for "+req.params.id};
+                }
+                res.json(response);
+            })
+        }
+    });
+})
+
+/**
+ * Función que permite eliminar la ruta que corresponde con el 'id'
  */
 router.delete('/:id', function(req,res){
     var response = {};
