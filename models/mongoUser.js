@@ -1,10 +1,10 @@
 var mongoose = require("mongoose");
 // create instance of Schema
-var mongoSchema = mongoose.Schema;
+var Schema = mongoose.Schema;
 // create schema
 
-/* Esquema correspondiente a las tareas */
-var userSchema = {
+/* Esquema correspondiente a los usuarios */
+var userSchema = new Schema({
     "tipoUser": Number,
     "email": String,
     "pass": String,
@@ -12,7 +12,7 @@ var userSchema = {
     "apellidos": String,
     "fechaAlta": Date,
     "fechaAcceso": Date
-};
+});
 
 // create model if not exists.user
 module.exports = mongoose.model('Users',userSchema, 'users');

@@ -3,20 +3,15 @@
  */
 var mongoose = require("mongoose");
 
-var user = require("./mongoUser");
-var poi = require("./mongoPois");
-
 // create instance of Schema
 var Schema = mongoose.Schema;
-var Users = mongoose.model('Users');
-var Pois = mongoose.model('Pois');
 
-/* Esquema correspondiente a los usuarios */
-var visitantesSchema = {
-    user: { type: Schema.ObjectId, ref: "Users"},
-    listaFavoritos: [{ type: Schema.ObjectId, ref: "Pois"}],
-    listaSeguidores: [{ type: Schema.ObjectId, ref: "Users"}]
-};
+/* Esquema correspondiente a la información de los visitantes */
+var visitantesSchema = new Schema({
+    user: { type: Schema.Types.ObjectId, ref: 'userSchema' },
+    listaFavoritos: [{ type: Schema.Types.ObjectId, ref: 'poiSchema' }],
+    listaSeguidores: [{ type: Schema.ObjectId, ref: "userSchema"}]
+});
 
 // create model if not exists.
 module.exports = mongoose.model('Visitantes',visitantesSchema,'visitantes');

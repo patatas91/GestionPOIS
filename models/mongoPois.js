@@ -3,24 +3,21 @@
  */
 var mongoose = require("mongoose");
 
-var user = require("./mongoUser");
-
 // create instance of Schema
 var Schema = mongoose.Schema;
-var Users = mongoose.model('Users');
 
-/* Esquema correspondiente a los usuarios */
-var poiSchema = {
-    "user": [{ type: Number, ref: 'Users' }],
+/* Esquema correspondiente a los pois */
+var poiSchema = new Schema({
+    "user": {type: Schema.Types.ObjectId, ref: 'userSchema'},
     "nombre": String,
     "descripcion": String,
     "url": String,
     "palabrasClave": [String],
     "coordX": Number,
     "coordY": Number,
-    "numVotantes": Number,
-    "valoracion": Number
-};
+    "numVotantes": {type: Number, default: 0},
+    "valoracion": {type: Number, default: 0}
+});
 
 // create model if not exists.
 module.exports = mongoose.model('Pois',poiSchema,'pois');
