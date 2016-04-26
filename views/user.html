@@ -11,15 +11,62 @@
 </head>
 <body>
 <div class="container">
+    <!-- TITULO -->
     <div class="jumbotron" align="center">
         <h1>Panel de usuario</h1>
     </div>
+    <!-- PRIMERA FILA - MAPA Y ACCIONES -->
     <div class="row">
+        <!-- MAPA -->
         <div class="col-md-8">
             <div class="embed-responsive embed-responsive-4by3">
                 <iframe class="embed-responsive-item" src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d28363.
                 605257356634!2d-0.8865010014842297!3d41.64803352968904!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1
                 ses!2ses!4v1461681941209"></iframe>
+            </div>
+        </div>
+        <!-- ACCIONES -->
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <!-- NAV CON ACCIONES -->
+                    <ul class="nav nav-pills nav-justified">
+                        <!-- POIS -->
+                        <li role="presentation" class="active"><a href="#">Pois</a></li>
+                        <!-- DESPLEGABLE GESTION -->
+                        <li role="presentation" class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+                            aria-expanded="false">
+                                Gestion <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Añadir</a></li>
+                                <li><a href="#">Eliminar</a></li>
+                                <li><a href="#">Duplicar</a></li>
+                                <li><a href="#">Editar</a></li>
+                                <li><a href="#">+Info</a></li>
+                            </ul>
+                        </li>
+                        <!-- RUTAS -->
+                        <li role="presentation"><a href="#">Rutas</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- DIVISOR HORIZONTAL -->
+    <hr size="10"/>
+    <!-- SEGUNDA FILA - GRAFICAS ESTADISTICAS -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading" align="center">
+                    <h1 class="panel-title">Estadisticas</h1>
+                </div>
+                <div class="panel-body">
+                    <!-- GRAFICAS -->
+                    aqui van las graficas
+                </div>
             </div>
         </div>
     </div>
