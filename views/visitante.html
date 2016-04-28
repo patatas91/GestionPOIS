@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <title>Panel Visitante</title>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+    <!-- TABLA POIS -->
+    <style>
+        .header-fixed {
+            width: 100%
+        }
+
+        .header-fixed > thead,
+        .header-fixed > tbody,
+        .header-fixed > thead > tr,
+        .header-fixed > tbody > tr,
+        .header-fixed > thead > tr > th,
+        .header-fixed > tbody > tr > td {
+            display: block;
+        }
+
+        .header-fixed > tbody > tr:after,
+        .header-fixed > thead > tr:after {
+            content: ' ';
+            display: block;
+            visibility: hidden;
+            clear: both;
+        }
+
+        .header-fixed > tbody {
+            overflow-y: auto;
+            height: 350px;
+        }
+
+        .header-fixed > tbody > tr > td,
+        .header-fixed > thead > tr > th {
+            width: 25%;
+            float: left;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="col-md-12">
+        <!-- PANEL GLOBAL -->
+        <div class="panel panel-primary">
+            <div class="panel-heading" align="center">
+                <h1><b>Panel de Visitante</b></h1>
+            </div>
+            <div class="panel-body">
+                <!-- PRIMERA FILA - MAPA Y ACCIONES -->
+                <div class="row">
+                    <!-- MAPA -->
+                    <div class="col-md-8">
+                        <div class="embed-responsive embed-responsive-4by3">
+                            <iframe class="embed-responsive-item" src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d28363.
+                            605257356634!2d-0.8865010014842297!3d41.64803352968904!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1
+                             ses!2ses!4v1461681941209"></iframe>
+                        </div>
+                    </div>
+                    <!-- ACCIONES -->
+                    <div class="col-md-4">
+                        <div class="panel panel-primary">
+                            <div class="panel-body" style="height: 530px">
+                                <!-- NAV CON ACCIONES -->
+                                <ul class="nav nav-pills nav-justified">
+                                    <!-- POIS -->
+                                    <li role="presentation" class="active"><a data-toggle="pill" href="#pois">Pois</a></li>
+                                    <!-- RUTAS -->
+                                    <li role="presentation"><a data-toggle="pill" href="#rutas">Rutas</a></li>
+                                    <!-- GESTION -->
+                                    <li role="presentation"><a data-toggle="pill" href="#acceso">Acceso</a></li>
+                                </ul>
+                                <!-- CONTENIDO EN CADA PILL -->
+                                <div class="tab-content">
+                                    <div id="pois" class="tab-pane fade in active">
+                                        <br><p>Listado de Pois</p><br>
+                                        <div class="table-responsive">
+                                            <table class="table table-striped header-fixed">
+                                                <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Nombre</th>
+                                                    <th>Latitud</th>
+                                                    <th>Longitud</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>Casa</td>
+                                                    <td>19.92475</td>
+                                                    <td>-0.80924</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>2</td>
+                                                    <td>Hotel</td>
+                                                    <td>20.78275</td>
+                                                    <td>-0.83456</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>3</td>
+                                                    <td>Hotel</td>
+                                                    <td>20.78275</td>
+                                                    <td>-0.83456</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>4</td>
+                                                    <td>Hotel</td>
+                                                    <td>20.78275</td>
+                                                    <td>-0.83456</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>5</td>
+                                                    <td>Hotel</td>
+                                                    <td>20.78275</td>
+                                                    <td>-0.83456</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>6</td>
+                                                    <td>Hotel</td>
+                                                    <td>20.78275</td>
+                                                    <td>-0.83456</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>7</td>
+                                                    <td>Hotel</td>
+                                                    <td>20.78275</td>
+                                                    <td>-0.83456</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>8</td>
+                                                    <td>Hotel</td>
+                                                    <td>20.78275</td>
+                                                    <td>-0.83456</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>9</td>
+                                                    <td>Hotel</td>
+                                                    <td>20.78275</td>
+                                                    <td>-0.83456</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>10</td>
+                                                    <td>Hotel</td>
+                                                    <td>20.78275</td>
+                                                    <td>-0.83456</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>11</td>
+                                                    <td>Puti</td>
+                                                    <td>20.78275</td>
+                                                    <td>-0.83456</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div id="rutas" class="tab-pane fade">
+                                        <br><p>Crear una ruta de Pois:</p><br>
+                                    </div>
+                                    <div id="acceso" class="tab-pane fade">
+                                        <div class="jumbotron" align="center">
+                                            <h3>Acceso</h3>
+                                        </div>
+                                        <div align="center">
+                                            <form class="form-inline">
+                                                <div class="form-group">
+                                                    <label for="email">Email</label>
+                                                    <input type="email" class="form-control" id="email" placeholder="Email">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="pass">Contraseña</label>
+                                                    <input type="password" class="form-control" id="pass" placeholder="Password">
+                                                </div>
+                                                <button type="submit" class="btn btn-default">Acceder</button>
+                                            </form>
+                                            <button type="submit" class="btn btn-default" onClick="window.location.href='registro.html'">Registrarse</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- DIVISOR HORIZONTAL -->
+                <hr size="10"/>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
