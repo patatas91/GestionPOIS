@@ -39,7 +39,7 @@
 
         .header-fixed > tbody > tr > td,
         .header-fixed > thead > tr > th {
-            width: 25%;
+            width: 33%;
             float: left;
         }
     </style>
@@ -61,6 +61,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand">AICRIDI</a>
             </div>
@@ -70,7 +71,9 @@
                         <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>&nbsp;POIS<span class="sr-only">(current)</span></a></li>
                     <li role="presentation"><a data-toggle="pill" href="#users"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;Usuarios</a></li>
                     <li role="presentation"><a data-toggle="pill" href="#statics"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span>&nbsp;Estadísticas</a></li>
+                    <li role="presentation"><a data-toggle="pill" href="#account"><span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>&nbsp;Cuenta</a></li>
                 </ul>
+
             </div>
         </div>
     </nav>
@@ -194,6 +197,13 @@
         </div>
         <div id="statics" class="tab-pane fade in active">
             Gestión de Estadísticas
+        </div>
+        <div id="account" class="tab-pane fade in active">
+            <div class="row">
+                <a href="logout"><button type="button" class="btn btn-default" style="text-align: right; position: absolute; right: 3%;"><span class="glyphicon glyphicon-off" aria-hidden="true"></span>&nbsp;Logout</button></a>
+            </div>
+            <br><br>
+            Información Usuario
         </div>
     </div>
 </div>
