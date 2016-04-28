@@ -42,7 +42,34 @@
             width: 33%;
             float: left;
         }
-        #header-fixed2 > thead > tr > th {
+        .header-fixed2 {
+            width: 100%
+        }
+
+        .header-fixed2 > thead,
+        .header-fixed2 > tbody,
+        .header-fixed2 > thead > tr,
+        .header-fixed2 > tbody > tr,
+        .header-fixed2 > thead > tr > th,
+        .header-fixed2 > tbody > tr > td {
+            display: block;
+        }
+
+        .header-fixed2 > tbody > tr:after,
+        .header-fixed2 > thead > tr:after {
+            content: ' ';
+            display: block;
+            visibility: hidden;
+            clear: both;
+        }
+
+        .header-fixed2 > tbody {
+            overflow-y: auto;
+            height: 350px;
+        }
+
+        .header-fixed2 > tbody > tr > td,
+        .header-fixed2 > thead > tr > th {
             width: 20%;
             float: left;
         }
@@ -197,7 +224,152 @@
             </div>
         </div>
         <div id="users" class="tab-pane fade">
-            Lista de Usuarios
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <a href="logout"><button type="button" class="btn btn-default" style="background-color: rgb(177, 204, 141); margin: 0px 30px 20px 0px"><b>Crear Usuario</b></button></a>
+                        <a href="logout"><button type="button" class="btn btn-default" style="background-color: rgb(230, 141, 121); margin: 0px 0px 20px 0px"><b>Eliminar Usuario</b></button></a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-primary" style="min-width: 650px">
+                            <div class="panel-header" align="center">
+                                <h3><b>Usuarios Registrados</b></h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="table-responsive" style="min-width: 600px">
+                                    <table class="table table-striped header-fixed2">
+                                        <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Apellidos</th>
+                                            <th>email</th>
+                                            <th>Último Acceso</th>
+                                            <th>Fecha de Alta</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody style="height: 435px">
+                                        <tr>
+                                            <td>Diego del Monte</td>
+                                            <td>Batolomeu Zaragozano</td>
+                                            <td>diego@unizar.es</td>
+                                            <td>19/08/0555</td>
+                                            <td>17/56/9632</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hotel</td>
+                                            <td>20.78275</td>
+                                            <td>-0.83456</td>
+                                            <td>19.92475</td>
+                                            <td>-0.80924</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hotel</td>
+                                            <td>20.78275</td>
+                                            <td>-0.83456</td>
+                                            <td>19.92475</td>
+                                            <td>-0.80924</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hotel</td>
+                                            <td>20.78275</td>
+                                            <td>-0.83456</td>
+                                            <td>19.92475</td>
+                                            <td>-0.80924</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hotel</td>
+                                            <td>20.78275</td>
+                                            <td>-0.83456</td>
+                                            <td>19.92475</td>
+                                            <td>-0.80924</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hotel</td>
+                                            <td>20.78275</td>
+                                            <td>-0.83456</td>
+                                            <td>19.92475</td>
+                                            <td>-0.80924</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hotel</td>
+                                            <td>20.78275</td>
+                                            <td>-0.83456</td>
+                                            <td>19.92475</td>
+                                            <td>-0.80924</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hotel</td>
+                                            <td>20.78275</td>
+                                            <td>-0.83456</td>
+                                            <td>19.92475</td>
+                                            <td>-0.80924</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hotel</td>
+                                            <td>20.78275</td>
+                                            <td>-0.83456</td>
+                                            <td>19.92475</td>
+                                            <td>-0.80924</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hotel</td>
+                                            <td>20.78275</td>
+                                            <td>-0.83456</td>
+                                            <td>19.92475</td>
+                                            <td>-0.80924</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Puti</td>
+                                            <td>20.78275</td>
+                                            <td>-0.83456</td>
+                                            <td>19.92475</td>
+                                            <td>-0.80924</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hotel</td>
+                                            <td>20.78275</td>
+                                            <td>-0.83456</td>
+                                            <td>19.92475</td>
+                                            <td>-0.80924</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hotel</td>
+                                            <td>20.78275</td>
+                                            <td>-0.83456</td>
+                                            <td>19.92475</td>
+                                            <td>-0.80924</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hotel</td>
+                                            <td>20.78275</td>
+                                            <td>-0.83456</td>
+                                            <td>19.92475</td>
+                                            <td>-0.80924</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hotel</td>
+                                            <td>20.78275</td>
+                                            <td>-0.83456</td>
+                                            <td>19.92475</td>
+                                            <td>-0.80924</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Puti</td>
+                                            <td>20.78275</td>
+                                            <td>-0.83456</td>
+                                            <td>19.92475</td>
+                                            <td>-0.80924</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div id="statics" class="tab-pane fade">
             Gestión de Estadísticas
