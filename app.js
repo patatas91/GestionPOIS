@@ -28,8 +28,8 @@ app.use('/gestionVisitantes', gestionVisitantes);
 
 app.use('/admin', admin);
 
-app.get('/adminCore.js', function(req, res) {
-    res.sendfile('./views/adminCore.js'); // load the single view file (angular will handle the page changes on the front-end)
+app.get('/views/:item', function(req, res) {
+    res.sendfile('./views/'+req.params.item); // load the single view file (angular will handle the page changes on the front-end)
 });
 
 
