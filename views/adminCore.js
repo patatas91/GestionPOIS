@@ -13,7 +13,9 @@ function mainController($scope, $http) {
     $scope.showpoi=false;
     $scope.listUser=true;
     $scope.newUser=false;
-    $scope.deleteUser=false;
+    $scope.delUser=false;
+    $scope.datosAcceso=false;
+    $scope.formData={};
 
     $http.get('/pois')
         .success(function(data) {
@@ -32,7 +34,7 @@ function mainController($scope, $http) {
         });
 
     $scope.viewPoi = function(id) {
-        if($scope.map){
+        if(id != 0){
             $scope.map=false;
             $http.get('/pois/'+id)
                 .success(function(data){
@@ -52,22 +54,48 @@ function mainController($scope, $http) {
     $scope.viewUser = function(id){
         if(id == 0){
             $scope.listUser=false;
-            $scope.deleteUser=false;
+            $scope.delUser=false;
             $scope.newUser=true;
         } else if(id == 1){
+            $scope.newUser=false;
             $scope.listUser=false;
-            $scope.deleteUser=true;
+            $scope.delUser=true;
+        } else if(id=2){
+            $scope.delUser=false;
             $scope.newUser=false;
-        } else{
+            $scope.datosAcceso=false;
             $scope.listUser=true;
-            $scope.deleteUser=false;
+        }
+        else{
+            $scope.delUser=false;
             $scope.newUser=false;
+            $scope.listUser=true;
         }
     }
 
-    $scope.viewMap = function() {
+    $scope.createUser = function() {
+        $http.post('/users', $scope.formData)
+            .success(function(data) {
+                $scope.formData = {};
+                $scope.users = data.message;
+                $scope.user = data.user;
+                $scope.datosAcceso=true;
+            })
+            .error(function(data) {
+                console.log('Error: ' + data);
+            });
+    };
 
-    }
+    $scope.deleteUser = function(id) {
+        $http.delete('/users/' + id)
+            .success(function(data) {
+                $scope.users = data.message;
+                $scope.datosAcceso=true;
+            })
+            .error(function(data) {
+                console.log('Error: ' + data);
+            });
+    };
 }
 
 function initMap() {

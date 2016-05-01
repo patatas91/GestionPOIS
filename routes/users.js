@@ -8,7 +8,6 @@ var mongoOp = require("../models/mongoUser");
 router.get('/', function(req, res) {
   var response = {};
   mongoOp.find({},function(err,data){
-// Mongo command to fetch all data from collection.
     if(err) {
       response = {"error" : true,"message" : "Error fetching data"};
     } else {
@@ -47,11 +46,19 @@ router.post('/', function(req,res) {
         if (err) {
           console.log(err);
           response = {"error": true, "message": "Error adding user"};
-        } else {
-          db.pass = password;
-          response = {"error": false, "message": "Data added", "user": db};
-        }
           res.json(response);
+        } else {
+          mongoOp.find({},function(err,data){
+            if(err) {
+              response = {"error" : true,"message" : "Error fetching data"};
+            } else {
+              db.pass=password;
+              response = {"error": false, "message": data, "user": db};
+            }
+            res.json(response);
+          });
+
+        }
       });
     }
   });
@@ -104,10 +111,17 @@ router.put('/:id', function(req,res){
       data.save(function(err){
         if(err) {
           response = {"error" : true,"message" : "Error updating data"};
+          res.json(response);
         } else {
-          response = {"error" : false,"message" : "Data is updated for "+req.params.id};
+          mongoOp.find({},function(err,data){
+            if(err) {
+              response = {"error" : true,"message" : "Error fetching data"};
+            } else {
+              response = {"error": false, "message": data};
+            }
+            res.json(response);
+          });
         }
-        res.json(response);
       })
     }
   });
@@ -126,10 +140,17 @@ router.delete('/:id', function(req,res){
       mongoOp.remove({_id : req.params.id},function(err){
         if(err) {
           response = {"error" : true,"message" : "Error deleting data"};
+          res.json(response);
         } else {
-          response = {"error" : false,"message" : "Data associated with "+req.params.id+"is deleted"};
+          mongoOp.find({},function(err,data){
+            if(err) {
+              response = {"error" : true,"message" : "Error fetching data"};
+            } else {
+              response = {"error": false, "message": data};
+            }
+            res.json(response);
+          });
         }
-        res.json(response);
       });
     }
   });
@@ -137,7 +158,7 @@ router.delete('/:id', function(req,res){
 
 
 function generar() {
-  var caracteres = "abcdefghijkmnpqrtuvwxyzABCDEFGHIJKLMNPQRTUVWXYZ2346789_/-?¿¡!.:=+";
+  var caracteres = "abcdefghijkmnpqrtuvwxyzABCDEFGHIJKLMNPQRTUVWXYZ2346789_/-?¿.:=+";
   var contraseña = "";
   for (i=0; i<8; i++) contraseña += caracteres.charAt(Math.floor(Math.random()*caracteres.length));
   return contraseña;
