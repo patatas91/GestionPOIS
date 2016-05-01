@@ -13,8 +13,8 @@ var poiSchema = new Schema({
     "descripcion": String,
     "url": String,
     "palabrasClave": [String],
-    "coordX": Number,
-    "coordY": Number,
+    "latitud": Number,
+    "longitud": Number,
     "numVotantes": {type: Number, default: 0},
     "valoracion": {type: Number, default: 0}
 });

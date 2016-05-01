@@ -37,8 +37,8 @@ router.post('/', function(req,res){
     if(req.body.palabrasClave != undefined) {
         db.palabrasClave = req.body.palabrasClave;
     }
-    db.coordX = req.body.coordX;
-    db.coordY = req.body.coordY;
+    db.latitud = req.body.latitud;
+    db.longitud = req.body.longitud;
 
     db.save(function(err){
         // save() will run insert() command of MongoDB.
@@ -92,13 +92,13 @@ router.put('/:id', function(req,res){
                 // case where password needs to be updated
                 data.palabrasClave = req.body.palabrasClave;
             }
-            if(req.body.coordX !== undefined) {
+            if(req.body.latitud !== undefined) {
                 // case where password needs to be updated
-                data.coordX = req.body.coordX;
+                data.latitud = req.body.latitud;
             }
-            if(req.body.coordY !== undefined) {
+            if(req.body.longitud !== undefined) {
                 // case where password needs to be updated
-                data.coordY = req.body.coordY;
+                data.longitud = req.body.longitud;
             }
             // save the data
             data.save(function(err){

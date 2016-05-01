@@ -11,18 +11,14 @@ var rutas = require('./routes/rutas');
 var pois = require('./routes/pois');
 var gestionVisitantes = require('./routes/gestionVisitantes');
 
-var app = express();
-// view engine setup
-//app.set('views', path.join(__dirname, 'views'));
-//app.set('view engine', 'jade');
+var admin = require('./routes/admin');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+var app = express();
+
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-//app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
@@ -30,36 +26,12 @@ app.use('/rutas', rutas);
 app.use('/pois', pois);
 app.use('/gestionVisitantes', gestionVisitantes);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+app.use('/admin', admin);
+
+app.get('/adminCore.js', function(req, res) {
+    res.sendfile('./views/adminCore.js'); // load the single view file (angular will handle the page changes on the front-end)
 });
 
-// error handlers
-
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
-}
-
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
-});
 
 
 module.exports = app;
