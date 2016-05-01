@@ -6,7 +6,10 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <title>Pruebas</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script><!-- load angular -->
+    <!-- Custom angular module -->
+    <script src="adminCore.js"></script>
+    <title>Admin</title>
     <!--<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script> -->
     <style>
         html, body { height: 100%; margin: 0; padding: 0; }
@@ -39,7 +42,7 @@
 
         .header-fixed > tbody > tr > td,
         .header-fixed > thead > tr > th {
-            width: 33%;
+            width: 100%;
             float: left;
         }
         .header-fixed2 {
@@ -73,9 +76,18 @@
             width: 20%;
             float: left;
         }
+        .table-responsive>.table>tbody>tr>td,
+        .table-responsive>.table>tbody>tr>th,
+        .table-responsive>.table>tfoot>tr>td,
+        .table-responsive>.table>tfoot>tr>th,
+        .table-responsive>.table>thead>tr>td,
+        .table-responsive>.table>thead>tr>th {
+            white-space: pre-line;
+        }
+
     </style>
 </head>
-<body>
+<body ng-app="adminManager" ng-controller="mainController">
 <div class="container">
     <nav class="navbar navbar-default navbar-fixed-tdiv">
         <div class="container col-md-12">
@@ -113,8 +125,25 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-8">
-                        <div class="embed-responsive embed-responsive-4by3">
-                            <div class="embed-responsive-item" id="map"></div>
+                        <div >
+                            <div class="embed-responsive embed-responsive-4by3 embed-responsive-item" ng-show="map" style="margin-bottom: 10px; min-width: 323px; min-height: 323px" id="map"></div>
+                            <div ng-show="showpoi">
+                                <div class="panel panel-primary embed-responsive-item" style="margin-bottom: 10px">
+                                    <div class="panel-header" align="center">
+                                        <h3> {{ mypoi.nombre}} </h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <b>Descripción:</b> <p>{{ mypoi.descripcion }}</p><br/>
+                                        <b>Url:</b> {{ mypoi.url }}<br/>
+                                        <b>Número de votantes:</b> {{ mypoi.numVotantes }}<br/>
+                                        <b>Valoración:</b> {{ mypoi.valoracion }}<br/>
+                                        <b>Palabras clave:</b> <ol ng-repeat="clave in mypoi.palabrasClave"> {{ clave }}</ol>
+                                        <b>Latitud: </b>{{ mypoi.latitud }}<br/>
+                                        <b>Longitud: </b>{{ mypoi.longitud }}<br/>
+                                    </div>
+                                </div>
+                                <input type="button" style="margin: 10px" class="btn btn-primary btn-lg" value="Ver Mapa" ng-click="viewPoi(0)">
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -129,90 +158,11 @@
                                         <thead>
                                         <tr>
                                             <th>Nombre</th>
-                                            <th>Latitud</th>
-                                            <th>Longitud</th>
                                         </tr>
                                         </thead>
                                         <tbody style="height: 435px">
-                                        <tr>
-                                            <td>Casa</td>
-                                            <td>19.92475</td>
-                                            <td>-0.80924</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Puti</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Puti</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
+                                        <tr ng-repeat="poi in pois">
+                                            <td>{{ poi.nombre }} &nbsp;&nbsp;<input type="button" class="btn btn-primary btn-sm" value="Ver POI" ng-click="viewPoi(poi._id)"></td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -226,19 +176,19 @@
         <div id="users" class="tab-pane fade">
             <div class="panel-body">
                 <div class="row">
-                    <div class="col-md-12">
-                        <a href="logout"><button type="button" class="btn btn-default" style="background-color: rgb(177, 204, 141); margin: 0px 30px 20px 0px"><b>Crear Usuario</b></button></a>
-                        <a href="logout"><button type="button" class="btn btn-default" style="background-color: rgb(230, 141, 121); margin: 0px 0px 20px 0px"><b>Eliminar Usuario</b></button></a>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="panel panel-primary" style="min-width: 650px">
+                    <div class="col-md-12" ng-show="listUser">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-primary btn-lg" style="margin: 0px 30px 20px 0px" ng-click="viewUser(0)"><b>Crear Usuario</b></button>
+                                <button type="button" class="btn btn-primary btn-lg" style="margin: 0px 0px 20px 0px" ng-click="viewUser(1)"><b>Eliminar Usuario</b></button>
+                            </div>
+                        </div>
+                        <div class="panel panel-primary col-md-12" style="min-width: 700px">
                             <div class="panel-header" align="center">
                                 <h3><b>Usuarios Registrados</b></h3>
                             </div>
                             <div class="panel-body">
-                                <div class="table-responsive" style="min-width: 600px">
+                                <div class="table-responsive" style="min-width: 650px">
                                     <table class="table table-striped header-fixed2">
                                         <thead>
                                         <tr>
@@ -250,121 +200,31 @@
                                         </tr>
                                         </thead>
                                         <tbody style="height: 435px">
-                                        <tr>
-                                            <td>Diego del Monte</td>
-                                            <td>Batolomeu Zaragozano</td>
-                                            <td>diego@unizar.es</td>
-                                            <td>19/08/0555</td>
-                                            <td>17/56/9632</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                            <td>19.92475</td>
-                                            <td>-0.80924</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                            <td>19.92475</td>
-                                            <td>-0.80924</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                            <td>19.92475</td>
-                                            <td>-0.80924</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                            <td>19.92475</td>
-                                            <td>-0.80924</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                            <td>19.92475</td>
-                                            <td>-0.80924</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                            <td>19.92475</td>
-                                            <td>-0.80924</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                            <td>19.92475</td>
-                                            <td>-0.80924</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                            <td>19.92475</td>
-                                            <td>-0.80924</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                            <td>19.92475</td>
-                                            <td>-0.80924</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Puti</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                            <td>19.92475</td>
-                                            <td>-0.80924</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                            <td>19.92475</td>
-                                            <td>-0.80924</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                            <td>19.92475</td>
-                                            <td>-0.80924</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                            <td>19.92475</td>
-                                            <td>-0.80924</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hotel</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                            <td>19.92475</td>
-                                            <td>-0.80924</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Puti</td>
-                                            <td>20.78275</td>
-                                            <td>-0.83456</td>
-                                            <td>19.92475</td>
-                                            <td>-0.80924</td>
+                                        <tr ng-repeat="user in users">
+                                            <td> {{ user.nombre }}</td>
+                                            <td> {{ user.apellidos }}</td>
+                                            <td> {{ user.email }}</td>
+                                            <td> {{ user.fechaAlta }}</td>
+                                            <td> {{ user.fechaAcceso }}</td>
                                         </tr>
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12" ng-show="newUser">
+                        CREANDO USUARIO
+                    </div>
+                    <div class="col-md-12" ng-show="deleteUser">
+                        <div class="panel panel-primary col-md-12" align="center">
+                            <div>
+                                <div class="div">
+                                    <div ng-repeat="user in users" style="margin: 15px 15px 15px 15px">
+                                        <b>{{user.nombre}}&nbsp;{{user.apellidos}}</b>&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-danger btn-xs">Eliminar Usuario</button>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-lg" style="margin: 10px 10px 10px 10px" ng-click="viewUser(3)"><b>Lista de Usuarios</b></button>
                             </div>
                         </div>
                     </div>
@@ -384,26 +244,6 @@
     </div>
 </div>
 
-
-<script type="text/javascript">
-
-    var map;
-    function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-            center: {lat: 40.46366700000001, lng: -3.7492200000000366},
-            zoom: 6
-        });
-
-        var marker = new google.maps.Marker({
-            position: {lat: 41.64886959999999, lng: -0.889742100000035},
-            map: map,
-            title: 'Casa!'
-        });
-
-        marker.setMap(map)
-    }
-
-</script>
 <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXKViVY9DuiM75qPiyclDq_wcWZNOpj1Q&callback=initMap">
 </script>
