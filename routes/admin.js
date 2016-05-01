@@ -6,7 +6,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res) {
-    res.sendfile('./views/pruebas.html');
+    res.sendfile('./views/admin.html');
 });
 
 module.exports = router;
