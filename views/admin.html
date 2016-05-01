@@ -213,15 +213,42 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-12" ng-show="newUser">
-                        CREANDO USUARIO
+                    <div class="col-md-12 col-ms-12" style="margin-bottom: 10px" ng-show="newUser" align="center">
+                        <div class="panel panel-success col-md-12" ng-show="datosAcceso">
+                            <div class="panel-heading">
+                                <h7 class="panel-tittle">Datos de Acceso</h7>
+                            </div>
+                            <div class="panel-body">
+                                Usuario:&nbsp;<label>{{ user.nombre }}</label>
+                                Contraseña:&nbsp;<label>{{ user.pass }}</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-ms-12">
+                            <div class="panel panel-primary" style="align-content:center; max-width: 500px; min-width: 150px">
+                                <div class="panel-header" align="center">
+                                    <h3><b>Nuevo Usuario</b></h3>
+                                </div>
+                                <div class="panel-body" align="center">
+                                    <form>
+                                        <label>Nombre:</label>
+                                        <input class="form-control" type="text" name="nombre" ng-model="formData.nombre"/>
+                                        <label>Apellidos:</label>
+                                        <input class="form-control"  type="text" name="apellidos" ng-model="formData.apellidos"/>
+                                        <label>Email:</label>
+                                        <input class="form-control"  type="text" name="email" ng-model="formData.email"/>
+                                        <button type="submit" class="btn btn-primary btn-md" style="margin: 20px 0px 0px 0px" ng-click="createUser()"><b>Crear Usuario</b></button>
+                                    </form>
+                                    <button type="button" class="btn btn-primary btn-md" style="margin: 20px 0px 0px 0px" ng-click="viewUser(2)"><b>Volver</b></button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-12" ng-show="deleteUser">
-                        <div class="panel panel-primary col-md-12" align="center">
+                    <div class="col-md-12" ng-show="delUser" style="min-width: 267px">
+                        <div class="panel panel-primary">
                             <div>
                                 <div class="div">
                                     <div ng-repeat="user in users" style="margin: 15px 15px 15px 15px">
-                                        <b>{{user.nombre}}&nbsp;{{user.apellidos}}</b>&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-danger btn-xs">Eliminar Usuario</button>
+                                        <b>{{user.nombre}}&nbsp;{{user.apellidos}}</b>&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-danger btn-xs" ng-click="deleteUser(user._id)">Eliminar Usuario</button>
                                     </div>
                                 </div>
                                 <button type="button" class="btn btn-primary btn-lg" style="margin: 10px 10px 10px 10px" ng-click="viewUser(3)"><b>Lista de Usuarios</b></button>
