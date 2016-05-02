@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 
 /* Esquema correspondiente a los usuarios */
 var userSchema = new Schema({
-    "tipoUser": Number,
+    "tipoUser": Number,  //0: admin, 1:user, 2:visitante
     "email": String,
     "pass": String,
     "nombre": String,

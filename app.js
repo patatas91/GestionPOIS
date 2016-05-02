@@ -10,10 +10,13 @@ var users = require('./routes/users');
 var rutas = require('./routes/rutas');
 var pois = require('./routes/pois');
 var gestionVisitantes = require('./routes/gestionVisitantes');
+var chart = require('./routes/chart');
 
 var admin = require('./routes/admin');
 
 var app = express();
+
+process.env.TZ = 'UTC+2';
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -27,6 +30,7 @@ app.use('/pois', pois);
 app.use('/gestionVisitantes', gestionVisitantes);
 
 app.use('/admin', admin);
+app.use('/chart', chart);
 
 app.get('/views/:item', function(req, res) {
     res.sendfile('./views/'+req.params.item); // load the single view file (angular will handle the page changes on the front-end)

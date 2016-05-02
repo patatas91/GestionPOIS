@@ -8,7 +8,6 @@ angular.module('adminManager',[],function($locationProvider){
 var map;
 
 function mainController($scope, $http) {
-    // when landing on the page, get all todos and show them
     $scope.map=true;
     $scope.showpoi=false;
     $scope.listUser=true;
@@ -24,7 +23,14 @@ function mainController($scope, $http) {
         .error(function(data) {
             console.log('Error: ' + data);
         });
-
+    $http.get('/chart/lastAccess')
+        .success(function(data){
+            var ctx = document.getElementById("myChart");
+            $scope.mychart = new Chart(ctx,data.message);
+        })
+        .error(function(data){
+           console.log('Error: ' + data);
+        });
     $http.get('/users')
         .success(function(data) {
             $scope.users = data.message;
@@ -100,7 +106,7 @@ function mainController($scope, $http) {
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: 40.46366700000001, lng: -3.7492200000000366},
+        center: {lat: 40.4167754, lng: -3.7037901999999576},
         zoom: 6
     });
     var markers=[];
@@ -118,5 +124,7 @@ function initMap() {
         }
     });
 }
+
+
 
 

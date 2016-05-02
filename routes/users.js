@@ -7,7 +7,7 @@ var mongoOp = require("../models/mongoUser");
  */
 router.get('/', function(req, res) {
   var response = {};
-  mongoOp.find({},function(err,data){
+  mongoOp.find({"tipoUser": 1},function(err,data){
     if(err) {
       response = {"error" : true,"message" : "Error fetching data"};
     } else {
@@ -48,7 +48,7 @@ router.post('/', function(req,res) {
           response = {"error": true, "message": "Error adding user"};
           res.json(response);
         } else {
-          mongoOp.find({},function(err,data){
+          mongoOp.find({"tipoUser": 1},function(err,data){
             if(err) {
               response = {"error" : true,"message" : "Error fetching data"};
             } else {
@@ -107,13 +107,15 @@ router.put('/:id', function(req,res){
       if(req.body.apellidos !== undefined) {
         data.apellidos = req.body.apellidos;
       }
-      data.fechaAcceso = new Date();
+      if(req.body.fechaAcceso !== undefined) {
+        data.fechaAcceso = req.body.fechaAcceso;
+      }
       data.save(function(err){
         if(err) {
           response = {"error" : true,"message" : "Error updating data"};
           res.json(response);
         } else {
-          mongoOp.find({},function(err,data){
+          mongoOp.find({"tipoUser": 1},function(err,data){
             if(err) {
               response = {"error" : true,"message" : "Error fetching data"};
             } else {
@@ -142,7 +144,7 @@ router.delete('/:id', function(req,res){
           response = {"error" : true,"message" : "Error deleting data"};
           res.json(response);
         } else {
-          mongoOp.find({},function(err,data){
+          mongoOp.find({"tipoUser": 1},function(err,data){
             if(err) {
               response = {"error" : true,"message" : "Error fetching data"};
             } else {
