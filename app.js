@@ -13,6 +13,7 @@ var gestionVisitantes = require('./routes/gestionVisitantes');
 var chart = require('./routes/chart');
 
 var admin = require('./routes/admin');
+var user = require('./routes/user');
 
 var app = express();
 
@@ -31,6 +32,8 @@ app.use('/gestionVisitantes', gestionVisitantes);
 
 app.use('/admin', admin);
 app.use('/chart', chart);
+
+app.use('/user', user);
 
 app.get('/views/:item', function(req, res) {
     res.sendfile('./views/'+req.params.item); // load the single view file (angular will handle the page changes on the front-end)
