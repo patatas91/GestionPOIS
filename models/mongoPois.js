@@ -16,7 +16,8 @@ var poiSchema = new Schema({
     "latitud": Number,
     "longitud": Number,
     "numVotantes": {type: Number, default: 0},
-    "valoracion": {type: Number, default: 0}
+    "valoracion": {type: Number, default: 0},
+    "fecha": Date
 });
 
 // create model if not exists.

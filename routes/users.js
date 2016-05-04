@@ -7,7 +7,7 @@ var mongoOp = require("../models/mongoUser");
  */
 router.get('/', function(req, res) {
   var response = {};
-  mongoOp.find({"tipoUser": 1},function(err,data){
+  mongoOp.find({"tipoUser": 1, "fechaBaja": {$exists: false}}, {"tipoUser": 0, "pass": 0},function(err,data){
     if(err) {
       response = {"error" : true,"message" : "Error fetching data"};
     } else {
@@ -32,7 +32,7 @@ router.post('/', function(req,res) {
     } else {
       var db = new mongoOp();
       var password = generar();
-      db.tipoUser = req.body.tipoUser;
+      db.tipoUser = 1;
       db.email = req.body.email;
       db.pass = require('crypto')
           .createHash('sha1')
@@ -48,7 +48,7 @@ router.post('/', function(req,res) {
           response = {"error": true, "message": "Error adding user"};
           res.json(response);
         } else {
-          mongoOp.find({"tipoUser": 1},function(err,data){
+          mongoOp.find({"tipoUser": 1, "fechaBaja": {$exists: false}}, {"tipoUser": 0, "pass": 0},function(err,data){
             if(err) {
               response = {"error" : true,"message" : "Error fetching data"};
             } else {
@@ -69,7 +69,7 @@ router.post('/', function(req,res) {
  */
 router.get('/:id', function(req,res){
   var response = {};
-  mongoOp.findById( req.params.id ,function(err,data){
+  mongoOp.findById( req.params.id ,{"tipoUser": 0, "pass": 0},function(err,data){
     if(err) {
       response = {"error" : true,"message" : "Error fetching data"};
     } else {
@@ -115,7 +115,7 @@ router.put('/:id', function(req,res){
           response = {"error" : true,"message" : "Error updating data"};
           res.json(response);
         } else {
-          mongoOp.find({"tipoUser": 1},function(err,data){
+          mongoOp.find({"tipoUser": 1, "fechaBaja": {$exists: false}}, {"tipoUser": 0, "pass": 0},function(err,data){
             if(err) {
               response = {"error" : true,"message" : "Error fetching data"};
             } else {
@@ -139,12 +139,13 @@ router.delete('/:id', function(req,res){
     if(err) {
       response = {"error" : true,"message" : "Error fetching data"};
     } else {
-      mongoOp.remove({_id : req.params.id},function(err){
+      data.fechaBaja = new Date();
+      data.save(function(err){
         if(err) {
-          response = {"error" : true,"message" : "Error deleting data"};
+          response = {"error" : true,"message" : "Error updating data"};
           res.json(response);
         } else {
-          mongoOp.find({"tipoUser": 1},function(err,data){
+          mongoOp.find({"tipoUser": 1, "fechaBaja": {$exists: false}}, {"tipoUser": 0, "pass": 0},function(err,data){
             if(err) {
               response = {"error" : true,"message" : "Error fetching data"};
             } else {
@@ -153,7 +154,7 @@ router.delete('/:id', function(req,res){
             res.json(response);
           });
         }
-      });
+      })
     }
   });
 })

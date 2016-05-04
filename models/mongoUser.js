@@ -11,7 +11,8 @@ var userSchema = new Schema({
     "nombre": String,
     "apellidos": String,
     "fechaAlta": Date,
-    "fechaAcceso": Date
+    "fechaAcceso": Date,
+    "fechaBaja": Date
 });
 
 // create model if not exists.user

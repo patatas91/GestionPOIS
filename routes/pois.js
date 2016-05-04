@@ -25,9 +25,13 @@ router.post('/', function(req,res){
     var db = new mongoOp();
     var response = {};
 
-    //DATOS COLECCION
+    //DATOS obligatorios
     db.user = req.body.user;
     db.nombre = req.body.nombre;
+    db.fecha = new Date() - 1000 * 60 *60 *24*20;
+    db.latitud = req.body.latitud;
+    db.longitud = req.body.longitud;
+
     if( req.body.descripcion != undefined){
         db.descripcion = req.body.descripcion;
     }
@@ -37,8 +41,6 @@ router.post('/', function(req,res){
     if(req.body.palabrasClave != undefined) {
         db.palabrasClave = req.body.palabrasClave;
     }
-    db.latitud = req.body.latitud;
-    db.longitud = req.body.longitud;
 
     db.save(function(err){
         // save() will run insert() command of MongoDB.
