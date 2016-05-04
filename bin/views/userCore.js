@@ -18,7 +18,6 @@ function setMarkers(lat, long) {
     var marker = new google.maps.Marker({
         position: {lat: lat, lng: long},
         map: map,
-        icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
         animation: google.maps.Animation.DROP
     });
 
