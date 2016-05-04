@@ -128,24 +128,9 @@
                 <div class="row">
                     <div class="col-md-8">
                         <div >
+                            <!-- MAPA -->
                             <div class="embed-responsive embed-responsive-4by3 embed-responsive-item" ng-show="map" style="margin-bottom: 10px; min-width: 323px; min-height: 323px" id="map"></div>
-                            <div ng-show="showpoi">
-                                <div class="panel panel-primary embed-responsive-item" style="margin-bottom: 10px">
-                                    <div class="panel-header" align="center">
-                                        <h3> {{ mypoi.nombre}} </h3>
-                                    </div>
-                                    <div class="panel-body">
-                                        <b>Descripción:</b> <p>{{ mypoi.descripcion }}</p><br/>
-                                        <b>Url:</b> {{ mypoi.url }}<br/>
-                                        <b>Número de votantes:</b> {{ mypoi.numVotantes }}<br/>
-                                        <b>Valoración:</b> {{ mypoi.valoracion }}<br/>
-                                        <b>Palabras clave:</b> <ol ng-repeat="clave in mypoi.palabrasClave"> {{ clave }}</ol>
-                                        <b>Latitud: </b>{{ mypoi.latitud }}<br/>
-                                        <b>Longitud: </b>{{ mypoi.longitud }}<br/>
-                                    </div>
-                                </div>
-                                <input type="button" style="margin: 10px" class="btn btn-primary btn-lg" value="Ver Mapa" ng-click="viewPoi(0)">
-                            </div>
+
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -155,7 +140,26 @@
                             </div>
                             <div class="panel-body" style="height: 500px">
 
-                                <div class="table-responsive">
+                                <!-- PANEL INFO POI -->
+                                <div ng-show="showpoi">
+                                    <div class="panel panel-primary embed-responsive-item" style="margin-bottom: 10px">
+                                        <div class="panel-header" align="center">
+                                            <h3> {{ mypoi.nombre}} </h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <b>Descripción:</b> <p>{{ mypoi.descripcion }}</p><br/>
+                                            <b>Url:</b> {{ mypoi.url }}<br/>
+                                            <b>Número de votantes:</b> {{ mypoi.numVotantes }}<br/>
+                                            <b>Valoración:</b> {{ mypoi.valoracion }}<br/>
+                                            <b>Palabras clave:</b> <ol ng-repeat="clave in mypoi.palabrasClave"> {{ clave }}</ol>
+                                            <b>Latitud: </b>{{ mypoi.latitud }}<br/>
+                                            <b>Longitud: </b>{{ mypoi.longitud }}<br/>
+                                        </div>
+                                    </div>
+                                    <input type="button" class="btn btn-primary btn-lg btn-block" value="Volver" ng-click="viewPoi(0)">
+                                </div>
+                                <!-- LISTA POI -->
+                                <div ng-show="showlista" class="table-responsive">
                                     <table class="table table-striped header-fixed">
                                         <thead>
                                         <tr>
@@ -164,7 +168,7 @@
                                         </thead>
                                         <tbody style="height: 435px">
                                         <tr ng-repeat="poi in pois">
-                                            <td>{{ poi.nombre }} &nbsp;&nbsp;<input type="button" class="btn btn-primary btn-sm" value="Ver POI" ng-click="viewPoi(poi._id)"></td>
+                                            <td>{{ poi.nombre }} &nbsp;&nbsp;<input type="button" class="btn btn-primary btn-sm pull-right" value="Info" ng-click="viewPoi(poi._id)"></td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -179,7 +183,114 @@
         <div id="gestion" class="tab-pane fade">
             <div class="panel-body">
                 <div class="row">
-                    gestion operaciones
+                    <ul class="nav nav-pills nav-justified">
+                        <li class="active"><a data-toggle="pill" href="#añadir">Añadir</a></li>
+                        <li><a data-toggle="pill" href="#eliminar">Eliminar</a></li>
+                        <li><a data-toggle="pill" href="#duplicar">Duplicar</a></li>
+                        <li><a data-toggle="pill" href="#editar">Editar</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div id="añadir" class="tab-pane fade in active">
+                            <br>
+                            <div class="panel panel-primary col-md-12" style="min-width: 700px">
+                                <div class="panel-header" align="center">
+                                    <h3><b>Añadir un nuevo Poi</b></h3>
+                                </div>
+                                <div class="panel-body">
+                                    <form>
+                                        <div class="form-group">
+                                            <input type="text" class="form-control input-lg text-center" placeholder="Nombre" ng-model="formData.nombre"><br>
+                                            <input type="text" class="form-control input-lg text-center" placeholder="Descripcion" ng-model="formData.descripcion"><br>
+                                            <input type="url" class="form-control input-lg text-center" placeholder="Url" ng-model="formData.url"><br>
+                                            //PALABRAS CLAVE
+                                            <input type="number" step="any" class="form-control input-lg text-center" placeholder="Latitud" ng-model="formData.latitud"><br>
+                                            <input type="number" step="any" class="form-control input-lg text-center" placeholder="Longitud" ng-model="formData.longitud"><br>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-lg btn-block" ng-click="addPoi()">Confirmar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="eliminar" class="tab-pane fade">
+                            <br>
+                            <div class="panel panel-primary col-md-12" style="min-width: 700px">
+                                <div class="panel-header" align="center">
+                                    <h3><b>Lista de Pois</b></h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="table-responsive" style="min-width: 650px">
+                                        <table class="table table-striped header-fixed2">
+                                            <thead>
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>Descripcion</th>
+                                                <th>Latitud</th>
+                                                <th>Longitud</th>
+                                                <th>Eliminar</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody style="height: 435px">
+                                            <tr ng-repeat="poi in pois">
+                                                <td> {{ poi.nombre }}</td>
+                                                <td> {{ poi.descripcion }}</td>
+                                                <td> {{ poi.latitud }}</td>
+                                                <td> {{ poi.longitud }}</td>
+                                                <td> <button type="button" class="btn btn-danger btn-xs pull-center" ng-click="deletePoi(poi._id)">Eliminar</button></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="duplicar" class="tab-pane fade">
+                            <br>
+                            <div class="col-md-6 col-md-offset-3">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading" align="center">
+                                        <h2>Duplicar un Poi</h2>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="checkbox" ng-repeat="poi in pois">
+                                            <label>
+                                                <input type="checkbox" ng-click="duplicatePoi(poi._id)"> {{poi.nombre}}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="editar" class="tab-pane fade">
+                            <br>
+                            <div class="col-md-6 col-md-offset-3">
+                                <div ng-show="showSelecEditar" class="panel panel-default">
+                                    <div class="panel-heading" align="center">
+                                        <h2>Editar un Poi</h2>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="checkbox" ng-repeat="poi in pois">
+                                            <label>
+                                                <input type="checkbox" ng-click="changePanel(poi._id)"> {{poi.nombre}}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div ng-show="showEditar" class="panel panel-default">
+                                    <div class="panel-heading" align="center">
+                                        <h2>Editar un Poi</h2>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="checkbox" ng-repeat="poi in pois">
+                                            <label>
+                                                <input type="checkbox" ng-click="changePanel(poi._id)"> {{poi.nombre}}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
