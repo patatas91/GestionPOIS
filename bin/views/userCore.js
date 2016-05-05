@@ -6,8 +6,11 @@ angular.module('userManager',[],function($locationProvider){
 });
 
 var map;
+var map2;
+var map3;
 var markers = [];
 var markersUltimo = [];
+var markersBuscar = [];
 
 function setMarkers(lat, long) {
     // Loop through markers and set map to null for each
@@ -61,12 +64,34 @@ function reloadMarkers() {
     });
 }
 
+function reloadMarkersBuscar(lat, long) {
+
+    for(i=0;i<markersBuscar.length;i++) {
+        markersBuscar[i].setMap(null);
+    }
+
+    markersBuscar = [];
+
+    var marker = new google.maps.Marker({
+        position: {lat: lat, lng: long},
+        map: map2,
+        animation: google.maps.Animation.DROP,
+    });
+    // Push marker to markers array
+    markersBuscar.push(marker);
+    map2.panTo(new google.maps.LatLng(lat, long));
+    map2.setZoom(12);
+}
+
 function mainController($scope, $http) {
     // when landing on the page, get all todos and show them
     $scope.map=true;
     $scope.showpoi=false;
     $scope.showlista=true;
-    
+    $scope.latitud;
+    $scope.longitud;
+    $scope.tablaEdit=true;
+    $scope.edicion=false;
 
     $http.get('/pois')
         .success(function(data) {
@@ -74,7 +99,22 @@ function mainController($scope, $http) {
         })
         .error(function(data) {
             console.log('Error: ' + data);
-        });    
+        });
+
+    /* DEVUELVE LAS COORDENADAS DE UNA DIRECCION */
+    $scope.sacarDir = function(address) {
+        geocoder = new google.maps.Geocoder();
+        geocoder.geocode( { 'address': address}, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                reloadMarkersBuscar(results[0].geometry.location.lat(), results[0].geometry.location.lng());
+                $scope.latitud=results[0].geometry.location.lat();
+                $scope.longitud=results[0].geometry.location.lng();
+                //alert(results[0].geometry.location.lat()+'-'+results[0].geometry.location.lng());
+            } else {
+                alert('Debe introducir una direccion');
+            }
+        });
+    };
     
     /* CAMBIA LISTA Y VISTA DE UN POI */
     $scope.viewPoi = function(id) {
@@ -99,16 +139,90 @@ function mainController($scope, $http) {
             $scope.showlista=true;
         }
     };
+    
+    /* AÑADIR UN NUEVO POI */
+    $scope.addPoi = function() {
+        var r = confirm('¿Desea añadir el nuevo Poi?');
+        if(r==true) {
+            $http.post('/pois', $scope.formData)
+                .success(function(data) {
+                    $scope.formData = {};
+                    $scope.pois = data.message;
+                    $scope.poi = data.poi;
+                    reloadMarkers();
+                    alert('Poi añadido correctamente');
 
-    $scope.deleteMarkersFromMap = function() {
-        for (var i = 0; i<$scope.markers.length; i++) {
-            $scope.markers[i].setMap(null);
+                })
+                .error(function(data) {
+                    console.log('Error: ' + data);
+                    alert('Error al añadir el Poi');
+                });
         }
-    }
+    };
 
-    $scope.deleteMarkersFromArray = function() {
-        $scope.markers.length = 0;
-    }
+    /* ELIMINAR UN POI */
+    $scope.deletePoi = function(id) {
+        var r = confirm('¿Desea eliminar el Poi seleccionado?');
+        if(r==true) {
+            $http.delete('/pois/' + id)
+                .success(function(data) {
+                    $scope.pois = data.message;
+                    reloadMarkers();
+                    alert('Poi eliminado correctamente');
+                })
+                .error(function(data) {
+                    console.log('Error: ' + data);
+                    alert('Error al eliminar el Poi');
+                });
+        }
+    };
+
+    /* DUPLICAR UN POI */
+    $scope.duplicatePoi = function(id) {
+        var r = confirm('¿Desea duplicar el Poi seleccionado?');
+        if(r==true) {
+            $http.get('/pois/'+id)
+                .success(function(data){
+                    $http.post('/pois', data.message)
+                        .success(function(data) {
+                            $scope.pois = data.message;
+                            $scope.poi = data.poi;
+                            reloadMarkers();
+                            alert('Poi duplicado correctamente');
+                        })
+                        .error(function(data) {
+                            console.log('Error: ' + data);
+                            alert('Error al duplicar el Poi');
+                        });
+
+                })
+                .error(function(data){
+                    console.log('Error: '+ data);
+                    alert('Error al duplicar el Poi');
+                });
+        }
+    };
+
+    /* EDITAR UN POI */
+    $scope.editPoi = function(id) {
+        var r = confirm('¿Desea editar el Poi seleccionado?');
+        if(r==true) {
+
+        }
+        $scope.tablaEdit=true;
+        $scope.edicion=false;
+    };
+    
+    $scope.showEdit = function(op) {
+        if(op==1){
+            $scope.tablaEdit=false;
+            $scope.edicion=true;
+        }
+        else {
+            $scope.tablaEdit=true;
+            $scope.edicion=false;
+        }
+    };
     
     $scope.calculateDistance = function() {
         var totalDistance = 0;
@@ -138,6 +252,11 @@ function initMap() {
         zoom: 6
     });
 
+    map2 = new google.maps.Map(document.getElementById('map2'), {
+        center: {lat: 40.46366700000001, lng: -3.7492200000000366},
+        zoom: 6
+    });
+
     $.get('/pois', function(res){
         var message=res.message;
         if(!res.error){
@@ -155,4 +274,6 @@ function initMap() {
     });
     setMarkers(markers);
 }
+
+
 
