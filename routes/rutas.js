@@ -70,9 +70,15 @@ router.put('/:id', function(req,res){
                 if(err) {
                     response = {"error" : true,"message" : "Error updating data"};
                 } else {
-                    response = {"error" : false,"message" : "Data is updated for "+req.params.id};
+                    mongoOp.find({}, function(err, data) {
+                        if(err) {
+                            response = {"error" : true,"message" : "Error adding data"};
+                        } else {
+                            response = {"error" : false,"message" : data};
+                        }
+                        res.json(response);
+                    });
                 }
-                res.json(response);
             })
         }
     });
@@ -93,9 +99,15 @@ router.put('/:id/recomendar', function(req,res){
                 if(err) {
                     response = {"error" : true,"message" : "Error updating data"};
                 } else {
-                    response = {"error" : false,"message" : "Data is updated for "+req.params.id};
+                    mongoOp.find({}, function(err, data) {
+                        if(err) {
+                            response = {"error" : true,"message" : "Error adding data"};
+                        } else {
+                            response = {"error" : false,"message" : data};
+                        }
+                        res.json(response);
+                    });
                 }
-                res.json(response);
             })
         }
     });
@@ -115,9 +127,15 @@ router.delete('/:id', function(req,res){
                 if(err) {
                     response = {"error" : true,"message" : "Error deleting data"};
                 } else {
-                    response = {"error" : false,"message" : "Data associated with "+req.params.id+"is deleted"};
+                    mongoOp.find({}, function(err, data) {
+                        if(err) {
+                            response = {"error" : true,"message" : "Error adding data"};
+                        } else {
+                            response = {"error" : false,"message" : data};
+                        }
+                        res.json(response);
+                    });
                 }
-                res.json(response);
             });
         }
     });
