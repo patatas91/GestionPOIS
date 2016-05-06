@@ -3,12 +3,11 @@ var router = express.Router();
 var mongoOp = require("../models/mongoPois");
 
 /**
- * Método para obtener todos pois
+ * Petición para obtener todos pois
  */
 router.get('/', function(req,res){
     var response = {};
     mongoOp.find({},function(err,data){
-        // Mongo command to fetch all data from collection.
         if(err) {
             response = {"error" : true,"message" : "Error fetching data"};
         } else {
@@ -19,7 +18,7 @@ router.get('/', function(req,res){
 });
 
 /**
- * Método para añadir un poi
+ * Petición para añadir un poi
  */
 router.post('/', function(req,res){
     var db = new mongoOp();
@@ -31,7 +30,7 @@ router.post('/', function(req,res){
     db.fecha = new Date() - 1000 * 60 *60 *24*20;
     db.latitud = req.body.latitud;
     db.longitud = req.body.longitud;
-
+    //DATOS opcionales
     if( req.body.descripcion != undefined){
         db.descripcion = req.body.descripcion;
     }
@@ -43,8 +42,6 @@ router.post('/', function(req,res){
     }
 
     db.save(function(err){
-        // save() will run insert() command of MongoDB.
-        // it will add new data in collection.
         if(err) {
             response = {"error" : true,"message" : "Error adding data"};
         } else {
@@ -54,6 +51,9 @@ router.post('/', function(req,res){
     });
 });
 
+/*
+ * Petición para obtener un poi concreto correspondiente al id
+ */
 router.get('/:id', function(req,res){
     var response = {};
     mongoOp.findById(req.params.id,function(err,data){
@@ -68,16 +68,16 @@ router.get('/:id', function(req,res){
 });
 
 /**
- * Método para actualizar los dato que son actualizables de un poi
+ * Petición para actualizar los datos que son actualizables de un poi
  */
 router.put('/:id', function(req,res){
     var response = {};
-    // first find out record exists or not
-    // if it does then update the record
+    //Se busca
     mongoOp.findById(req.params.id,function(err,data){
         if(err) {
             response = {"error" : true,"message" : "Error fetching data"};
         } else {
+            //Se actualizan los campos
             if(req.body.nombre !== undefined) {
                 // case where password needs to be updated
                 data.nombre = req.body.nombre;
@@ -102,7 +102,7 @@ router.put('/:id', function(req,res){
                 // case where password needs to be updated
                 data.longitud = req.body.longitud;
             }
-            // save the data
+            //Se guarda
             data.save(function(err){
                 if(err) {
                     response = {"error" : true,"message" : "Error updating data"};
@@ -116,7 +116,7 @@ router.put('/:id', function(req,res){
 });
 
 /**
- * Metodo para votar
+ * Petición para votar un determinado poi
  */
 router.put('/:id/votar', function(req,res){
     console.log(req.body.valoracion);
@@ -149,16 +149,16 @@ router.put('/:id/votar', function(req,res){
 });
 
 /**
- * Método para eliminar un poi
+ * Petición para eliminar un poi, correspondiente al id
  */
 router.delete('/:id', function(req,res){
     var response = {};
-    // find the data
+    //Se busca el dato
     mongoOp.findById(req.params.id,function(err,data){
         if(err) {
             response = {"error" : true,"message" : "Error fetching data"};
         } else {
-            // data exists, remove it.
+            //Si existe, se elimina
             mongoOp.remove({_id : req.params.id},function(err){
                 if(err) {
                     response = {"error" : true,"message" : "Error deleting data"};

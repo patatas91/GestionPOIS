@@ -4,7 +4,7 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
+/* Devuelve la página de inicio del usuario. */
 router.get('/', function(req, res) {
     res.sendfile('./views/user.html');
 });

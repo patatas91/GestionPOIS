@@ -3,12 +3,11 @@ var router = express.Router();
 var mongoOp = require("../models/mongoRuta");
 
 /**
- * Funcion que devuelve las rutas
+ * Petición que devuelve todas las rutas
  */
 router.get('/', function(req, res) {
     var response = {};
     mongoOp.find({},function(err,data){
-// Mongo command to fetch all data from collection.
         if(err) {
             response = {"error" : true,"message" : "Error fetching data"};
         } else {
@@ -19,7 +18,7 @@ router.get('/', function(req, res) {
 });
 
 /**
- * Función que permite añadir una ruta
+ * Petición que permite añadir una ruta.
  */
 router.post('/', function(req,res) {
     var db = new mongoOp();
@@ -39,7 +38,7 @@ router.post('/', function(req,res) {
 });
 
 /**
- * Función que devuelve la ruta correspondiente al 'id'
+ * Petición que devuelve la ruta correspondiente al 'id'
  */
 router.get('/:id', function(req,res){
     var response = {};
@@ -54,18 +53,21 @@ router.get('/:id', function(req,res){
 });
 
 /**
- * Función que permite modificar la ruta correspondiente al 'id'.
+ * Petición que permite modificar la ruta correspondiente al 'id'.
  */
 router.put('/:id', function(req,res){
     var response = {};
 
+    //Se busca
     mongoOp.findById(req.params.id,function(err,data){
         if(err) {
             response = {"error" : true,"message" : "Error fetching data"};
         } else {
+            //Se edita
             if(req.body.pois !== undefined) {
                 data.pois = req.body.pois;
             }
+            //Se guarda
             data.save(function(err){
                 if(err) {
                     response = {"error" : true,"message" : "Error updating data"};
@@ -79,7 +81,7 @@ router.put('/:id', function(req,res){
 })
 
 /**
- * Función que permite añade una recomendación a la ruta correspondiente al 'id'.
+ * Petición que permite añadir una recomendación a la ruta correspondiente al 'id'.
  */
 router.put('/:id/recomendar', function(req,res){
     var response = {};
