@@ -14,6 +14,7 @@ var chart = require('./routes/chart');
 
 var admin = require('./routes/admin');
 var user = require('./routes/user');
+var visitante=require('./routes/visitante');
 
 var app = express();
 
@@ -34,6 +35,7 @@ app.use('/admin', admin);
 app.use('/chart', chart);
 
 app.use('/user', user);
+app.use('/visitante', visitante);
 
 app.get('/views/:item', function(req, res) {
     res.sendfile('./views/'+req.params.item); // load the single view file (angular will handle the page changes on the front-end)
