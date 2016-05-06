@@ -8,7 +8,9 @@ var Schema = mongoose.Schema;
 
 /* Esquema correspondiente a las rutas */
 var rutaSchema = new Schema({
-    user: { type: Schema.Types.ObjectId, ref: 'userSchema' },
+    "nombre": String,
+    "descripcion": String,
+    "user": { type: Schema.Types.ObjectId, ref: 'userSchema' },
     "pois": [{ type: Schema.Types.ObjectId, ref: 'poiSchema' }],
     "recomendaciones": { type: Number, default: 0 }
 });

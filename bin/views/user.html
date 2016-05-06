@@ -85,6 +85,34 @@
             white-space: pre-line;
         }
 
+        .header-fixed3 > thead,
+        .header-fixed3 > tbody,
+        .header-fixed3 > thead > tr,
+        .header-fixed3 > tbody > tr,
+        .header-fixed3 > thead > tr > th,
+        .header-fixed3 > tbody > tr > td {
+            display: block;
+        }
+
+        .header-fixed3 > tbody > tr:after,
+        .header-fixed3 > thead > tr:after {
+            content: ' ';
+            display: block;
+            visibility: hidden;
+            clear: both;
+        }
+
+        .header-fixed3 > tbody {
+            overflow-y: auto;
+            height: 350px;
+        }
+
+        .header-fixed3 > tbody > tr > td,
+        .header-fixed3 > thead > tr > th {
+            width: 33.3%;
+            float: left;
+        }
+
     </style>
 </head>
 <body ng-app="userManager" ng-controller="mainController">
@@ -111,9 +139,9 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li role="presentation" class="active"><a data-toggle="pill" href="#pois">
-                        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>&nbsp;POIS<span class="sr-only">(current)</span></a></li>
-                    <li role="presentation"><a data-toggle="pill" href="#gestion"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;Gestion</a></li>
-                    <li role="presentation"><a data-toggle="pill" href="#rutas"><span class="glyphicon glyphicon-road" aria-hidden="true"></span>&nbsp;Rutas</a></li>
+                        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>&nbsp;Mapa<span class="sr-only">(current)</span></a></li>
+                    <li role="presentation"><a data-toggle="pill" href="#gestion"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;Gestion POIS</a></li>
+                    <li role="presentation"><a data-toggle="pill" href="#rutas"><span class="glyphicon glyphicon-road" aria-hidden="true"></span>&nbsp;Gestion Rutas</a></li>
                     <li role="presentation"><a data-toggle="pill" href="#estadisticas"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span>&nbsp;Estadísticas</a></li>
                     <li role="presentation"><a data-toggle="pill" href="#cuenta"><span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>&nbsp;Cuenta</a></li>
                 </ul>
@@ -125,21 +153,32 @@
         <!-- POIS -->
         <div id="pois" class="tab-pane fade in active">
             <div class="panel-body">
+                <div class="btn-group btn-group-justified">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success" ng-click="changePois()">POIS</button>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-warning" ng-click="changeRoutes()">Rutas</button>
+                    </div>
+                </div>
+                <br>
                 <div class="row">
                     <div class="col-md-8">
                         <div >
                             <!-- MAPA -->
-                            <div class="embed-responsive embed-responsive-4by3 embed-responsive-item" ng-show="map" style="margin-bottom: 10px;
-                            min-width: 323px; min-height: 323px" id="map"></div>
+                            <div class="embed-responsive embed-responsive-4by3 embed-responsive-item" style="margin-bottom: 10px;
+                            min-width: 323px; min-height: 323px" id="map_canvas"></div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="panel panel-primary" style="min-width: 323px">
-                            <div class="panel-header" align="center">
+                            <div class="panel-header" align="center" ng-show="cabeceraPois">
                                 <h3><b>Listado de POIS</b></h3>
                             </div>
+                            <div class="panel-header" align="center" ng-show="cabeceraRutas">
+                                <h3><b>Listado de Rutas</b></h3>
+                            </div>
                             <div class="panel-body" style="height: 500px">
-
                                 <!-- PANEL INFO POI -->
                                 <div ng-show="showpoi">
                                     <div class="panel panel-primary embed-responsive-item" style="margin-bottom: 10px">
@@ -158,6 +197,18 @@
                                     </div>
                                     <input type="button" class="btn btn-primary btn-lg btn-block" value="Volver" ng-click="viewPoi(0)">
                                 </div>
+                                <!-- PANEL INFO RUTA -->
+                                <div ng-show="showruta">
+                                    <div class="panel panel-primary embed-responsive-item" style="margin-bottom: 10px">
+                                        <div class="panel-header" align="center">
+                                            <h3> {{ myruta.nombre}} </h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <b>Descripción:</b> <p>{{ myruta.descripcion }}</p><br/>
+                                        </div>
+                                    </div>
+                                    <input type="button" class="btn btn-primary btn-lg btn-block" value="Volver" ng-click="viewRuta(0)">
+                                </div>
                                 <!-- LISTA POI -->
                                 <div ng-show="showlista" class="table-responsive">
                                     <table class="table table-striped header-fixed">
@@ -169,6 +220,21 @@
                                         <tbody style="height: 435px">
                                         <tr ng-repeat="poi in pois">
                                             <td>{{ poi.nombre }} &nbsp;&nbsp;<input type="button" class="btn btn-primary btn-sm pull-right" value="Info" ng-click="viewPoi(poi._id)"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- LISTA RUTAS -->
+                                <div ng-show="showlistaruta" class="table-responsive">
+                                    <table class="table table-striped header-fixed">
+                                        <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody style="height: 435px">
+                                        <tr ng-repeat="ruta in rutas">
+                                            <td>{{ ruta.nombre }} &nbsp;&nbsp;<input type="button" class="btn btn-primary btn-sm pull-right" value="Info" ng-click="viewRuta(ruta._id)"></td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -195,10 +261,11 @@
                             <div id="añadir" class="tab-pane fade in active">
                                 <br>
                                 <div class="panel-header" align="center">
-                                    <h3><b>Añadir un nuevo Poi</b></h3>
+                                    <h3><b>Añadir un nuevo POI</b></h3>
                                 </div>
                                 <div class="panel-body">
                                     <div class="col-sm-6">
+                                        <b> Buscar coordenadas: </b><br>
                                         <form class="form" role="form">
                                             <div class="form-group">
                                                 <input type="text" class="form-control" placeholder="Direccion" ng-model="address"/>
@@ -209,8 +276,10 @@
                                             </div>
                                             <button ng-click="sacarDir(address)" type="submit" class="btn btn-primary btn-block">Buscar</button><br>
                                         </form>
+                                        <!-- MAPA --
                                         <div class="embed-responsive embed-responsive-4by3 embed-responsive-item" style="margin-bottom: 10px;
-                                         min-width: 323px; min-height: 323px" id="map2"></div>
+                                         min-width: 323px; min-height: 323px" id="map_canvas2"></div>
+                                         -->
                                     </div>
                                     <div class="col-sm-6">
                                     <form>
@@ -220,7 +289,7 @@
                                             <input type="url" class="form-control input-lg text-center" placeholder="Url" ng-model="formData.url"><br><br>
                                             <input type="text" class="form-control input-lg text-center" placeholder="Palabras clave: palabra1, palabra2, ..." ng-model="formData.palabrasClave"><br><br>
                                             <input type="number" step="any" class="form-control input-lg text-center" placeholder="Latitud" ng-model="formData.latitud"><br><br>
-                                            <input type="number" step="any" class="form-control input-lg text-center" placeholder="Longitud" ng-model="formData.longitud"><br><br>
+                                            <input type="number" step="any" class="form-control input-lg text-center" placeholder="Longitud" ng-model="formData.longitud"><br>
                                         </div>
                                         <button type="submit" class="btn btn-primary btn-lg btn-block" ng-click="addPoi()">Confirmar</button>
                                     </form>
@@ -230,7 +299,7 @@
                             <div id="eliminar" class="tab-pane fade">
                                 <br>
                                 <div class="panel-header" align="center">
-                                    <h3><b>Eliminar un Poi</b></h3>
+                                    <h3><b>Eliminar un POI</b></h3>
                                 </div>
                                 <div class="panel-body">
                                     <div class="table-responsive" style="min-width: 650px">
@@ -260,7 +329,7 @@
                             <div id="duplicar" class="tab-pane fade">
                                 <br>
                                 <div class="panel-header" align="center">
-                                    <h3><b>Duplicar un Poi</b></h3>
+                                    <h3><b>Duplicar un POI</b></h3>
                                 </div>
                                 <div class="panel-body">
                                     <div class="table-responsive" style="min-width: 650px">
@@ -290,7 +359,7 @@
                             <div id="editar" class="tab-pane fade">
                                 <br>
                                 <div class="panel-header" align="center">
-                                    <h3><b>Editar un Poi</b></h3>
+                                    <h3><b>Editar un POI</b></h3>
                                 </div>
                                 <div class="panel-body">
                                     <div class="table-responsive" ng-show="tablaEdit" style="min-width: 650px">
@@ -310,13 +379,14 @@
                                                 <td> {{ poi.descripcion }}</td>
                                                 <td> {{ poi.latitud }}</td>
                                                 <td> {{ poi.longitud }}</td>
-                                                <td align="center"><button type="button" class="btn btn-success btn-xs pull-center" ng-click="showEdit(1)">&nbsp;Editar&nbsp;</button></td>
+                                                <td align="center"><button type="button" class="btn btn-success btn-xs pull-center" ng-click="showEdit(1,poi._id)">&nbsp;Editar&nbsp;</button></td>
                                             </tr>
                                             </tbody>
                                         </table>
                                     </div>
                                     <div ng-show="edicion">
                                         <div class="col-sm-6">
+                                            <b> Buscar coordenadas: </b><br>
                                             <form class="form" role="form">
                                                 <div class="form-group">
                                                     <input type="text" class="form-control" placeholder="Direccion" ng-model="address"/>
@@ -327,8 +397,25 @@
                                                 </div>
                                                 <button ng-click="sacarDir(address)" type="submit" class="btn btn-primary btn-block">Buscar</button><br>
                                             </form>
+                                            <!-- MAPA BUSCAR DIRECCION--
                                             <div class="embed-responsive embed-responsive-4by3 embed-responsive-item" style="margin-bottom: 10px;
-                                         min-width: 323px; min-height: 323px" id="map2"></div>
+                                         min-width: 323px; min-height: 323px" id="map_canvas2"></div>
+                                         -->
+                                            <br><b> Datos del POI: </b><br>
+                                            <div class="panel panel-primary embed-responsive-item" style="margin-bottom: 10px">
+                                                <div class="panel-header" align="center">
+                                                    <h3> {{ datosEdit.nombre}} </h3>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <b>Descripción:</b> <p>{{ datosEdit.descripcion }}</p><br/>
+                                                    <b>Url:</b> {{ datosEdit.url }}<br/>
+                                                    <b>Número de votantes:</b> {{ datosEdit.numVotantes }}<br/>
+                                                    <b>Valoración:</b> {{ datosEdit.valoracion }}<br/>
+                                                    <b>Palabras clave:</b> <ol ng-repeat="clave in datosEdit.palabrasClave"> {{ clave }}</ol>
+                                                    <b>Latitud: </b>{{ datosEdit.latitud }}<br/>
+                                                    <b>Longitud: </b>{{ datosEdit.longitud }}<br/>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="col-sm-6">
                                             <form>
@@ -338,10 +425,10 @@
                                                     <input type="url" class="form-control input-lg text-center" placeholder="Url" ng-model="formData.url"><br><br>
                                                     <input type="text" class="form-control input-lg text-center" placeholder="Palabras clave: palabra1, palabra2, ..." ng-model="formData.palabrasClave"><br><br>
                                                     <input type="number" step="any" class="form-control input-lg text-center" placeholder="Latitud" ng-model="formData.latitud"><br><br>
-                                                    <input type="number" step="any" class="form-control input-lg text-center" placeholder="Longitud" ng-model="formData.longitud"><br><br>
+                                                    <input type="number" step="any" class="form-control input-lg text-center" placeholder="Longitud" ng-model="formData.longitud"><br>
                                                 </div>
-                                                <button type="submit" class="btn btn-primary btn-lg btn-block" ng-click="editPoi()">Confirmar</button>
-                                                <button type="cancel" class="btn btn-danger btn-lg btn-block" ng-click="showEdit(0)">Cancelar</button>
+                                                <button type="submit" class="btn btn-primary btn-lg btn-block" ng-click="editPoi(datosEdit._id)">Confirmar</button>
+                                                <button type="cancel" class="btn btn-danger btn-lg btn-block" ng-click="showEdit(0,0)">Cancelar</button>
                                             </form>
                                         </div>
                                     </div>
@@ -354,7 +441,221 @@
         </div>
         <!-- RUTAS -->
         <div id="rutas" class="tab-pane fade">
-            Gestión de Estadísticas
+            <div class="panel-body">
+                <div class="row">
+                    <ul class="nav nav-pills nav-justified">
+                        <li class="active"><a data-toggle="pill" href="#añadirRuta">Añadir</a></li>
+                        <li><a data-toggle="pill" href="#eliminarRuta">Eliminar</a></li>
+                        <li><a data-toggle="pill" href="#duplicarRuta">Duplicar</a></li>
+                        <li><a data-toggle="pill" href="#editarRuta">Editar</a></li>
+                    </ul>
+                    <br>
+                    <div class="panel panel-primary col-md-12" style="min-width: 700px">
+                        <div class="tab-content">
+                            <div id="añadirRuta" class="tab-pane fade in active">
+                                <br>
+                                <div class="panel-header" align="center">
+                                    <h3><b>Añadir una nueva ruta</b></h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="col-sm-6">
+                                        <b> Datos de la nueva ruta:</b><br>
+                                        <form>
+                                            <div class="form-group">
+                                                <input type="text" class="form-control input-lg text-center" placeholder="Nombre" ng-model="formData.nombre"><br><br>
+                                                <input type="text" class="form-control input-lg text-center" placeholder="Descripcion" ng-model="formData.descripcion"><br><br>
+                                                <input type="text" class="form-control input-lg text-center" placeholder="IdPOI_1, IdPOI_2, ..." ng-model="formData.pois"><br><br>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary btn-lg btn-block" ng-click="addRoute()">Continuar</button>
+                                        </form>
+                                    </div>
+                                    <div class="panel panel-primary col-sm-6">
+                                        <div class="panel-header" align="center">
+                                            <br><b>POIS disponibles</b>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div class="table-responsive" style="min-width: 325px" ng-show="listaPoisRuta">
+                                                <table class="table table-striped header-fixed3">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Nombre</th>
+                                                        <th>ID</th>
+                                                        <th>&nbsp;</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody style="height: 300px">
+                                                    <tr ng-repeat="poi in pois">
+                                                        <td> {{ poi.nombre }}</td>
+                                                        <td><b>{{ poi._id }}</b></td>
+                                                        <td align="center"><button type="button" class="btn btn-success btn-xs pull-right" ng-click="viewPoiRuta(poi._id)">&nbsp;&nbsp;&nbsp;Ver&nbsp;&nbsp;&nbsp;</button></td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!-- PANEL INFO POI -->
+                                            <div ng-show="showpoiRuta">
+                                                <div class="panel panel-primary embed-responsive-item" >
+                                                    <div class="panel-header" align="center">
+                                                        <h3> {{ mypoi.nombre}} </h3>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <b>Descripción:</b> <p>{{ mypoi.descripcion }}</p><br/>
+                                                        <b>Url:</b> {{ mypoi.url }}<br/>
+                                                        <b>Número de votantes:</b> {{ mypoi.numVotantes }}<br/>
+                                                        <b>Valoración:</b> {{ mypoi.valoracion }}<br/>
+                                                        <b>Palabras clave:</b> <ol ng-repeat="clave in mypoi.palabrasClave"> {{ clave }}</ol>
+                                                        <b>Latitud: </b>{{ mypoi.latitud }}<br/>
+                                                        <b>Longitud: </b>{{ mypoi.longitud }}<br/>
+                                                    </div>
+                                                </div>
+                                                <input type="button" class="btn btn-primary btn-lg btn-block" value="Volver" ng-click="viewPoiRuta(0)">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="eliminarRuta" class="tab-pane fade">
+                                <br>
+                                <div class="panel-header" align="center">
+                                    <h3><b>Eliminar una Ruta</b></h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="table-responsive" style="min-width: 650px">
+                                        <table class="table table-striped header-fixed2">
+                                            <thead>
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>Descripcion</th>
+                                                <th>Numero POIS</th>
+                                                <th>Distancia</th>
+                                                <th>&nbsp;</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody style="height: 435px">
+                                            <tr ng-repeat="ruta in rutas">
+                                                <td> {{ ruta.nombre }}</td>
+                                                <td> {{ ruta.descripcion }}</td>
+                                                <td> 4 </td>
+                                                <td> 18763 </td>
+                                                <td align="center"><button type="button" class="btn btn-danger btn-xs pull-center" ng-click="deletePoi(poi._id)">Eliminar</button></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="duplicarRuta" class="tab-pane fade">
+                                <br>
+                                <div class="panel-header" align="center">
+                                    <h3><b>Duplicar una Ruta</b></h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="table-responsive" style="min-width: 650px">
+                                        <table class="table table-striped header-fixed2">
+                                            <thead>
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>Descripcion</th>
+                                                <th>Numero POIS</th>
+                                                <th>Distancia</th>
+                                                <th>&nbsp;</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody style="height: 435px">
+                                            <tr ng-repeat="ruta in rutas">
+                                                <td> {{ ruta.nombre }}</td>
+                                                <td> {{ ruta.descripcion }}</td>
+                                                <td> 4 </td>
+                                                <td> 18763 </td>
+                                                <td align="center"><button type="button" class="btn btn-warning btn-xs pull-center" ng-click="duplicatePoi(poi._id)">Duplicar</button></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="editarRuta" class="tab-pane fade">
+                                <br>
+                                <div class="panel-header" align="center">
+                                    <h3><b>Editar una Ruta</b></h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="table-responsive" ng-show="tablaEdit" style="min-width: 650px">
+                                        <table class="table table-striped header-fixed2">
+                                            <thead>
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>Descripcion</th>
+                                                <th>Numero POIS</th>
+                                                <th>Distancia</th>
+                                                <th>&nbsp;</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody style="height: 435px">
+                                            <tr ng-repeat="ruta in rutas">
+                                                <td> {{ ruta.nombre }}</td>
+                                                <td> {{ ruta.descripcion }}</td>
+                                                <td> 4 </td>
+                                                <td> 18763 </td>
+                                                <td align="center"><button type="button" class="btn btn-success btn-xs pull-center" ng-click="showEdit(1,poi._id)">&nbsp;Editar&nbsp;</button></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div ng-show="edicion">
+                                        <div class="col-sm-6">
+                                            <b> Buscar coordenadas: </b><br>
+                                            <form class="form" role="form">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" placeholder="Direccion" ng-model="address"/>
+                                                    <div class="well">
+                                                        <b>Latitud: {{latitud}}</b><br>
+                                                        <b>Logitud: {{longitud}}</b>
+                                                    </div>
+                                                </div>
+                                                <button ng-click="sacarDir(address)" type="submit" class="btn btn-primary btn-block">Buscar</button><br>
+                                            </form>
+                                            <!-- MAPA BUSCAR DIRECCION--
+                                            <div class="embed-responsive embed-responsive-4by3 embed-responsive-item" style="margin-bottom: 10px;
+                                         min-width: 323px; min-height: 323px" id="map_canvas2"></div>
+                                         -->
+                                            <br><b> Datos del POI: </b><br>
+                                            <div class="panel panel-primary embed-responsive-item" style="margin-bottom: 10px">
+                                                <div class="panel-header" align="center">
+                                                    <h3> {{ datosEdit.nombre}} </h3>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <b>Descripción:</b> <p>{{ datosEdit.descripcion }}</p><br/>
+                                                    <b>Url:</b> {{ datosEdit.url }}<br/>
+                                                    <b>Número de votantes:</b> {{ datosEdit.numVotantes }}<br/>
+                                                    <b>Valoración:</b> {{ datosEdit.valoracion }}<br/>
+                                                    <b>Palabras clave:</b> <ol ng-repeat="clave in datosEdit.palabrasClave"> {{ clave }}</ol>
+                                                    <b>Latitud: </b>{{ datosEdit.latitud }}<br/>
+                                                    <b>Longitud: </b>{{ datosEdit.longitud }}<br/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <form>
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control input-lg text-center" placeholder="Nombre" ng-model="formData.nombre"><br><br>
+                                                    <input type="text" class="form-control input-lg text-center" placeholder="Descripcion" ng-model="formData.descripcion"><br><br>
+                                                    <input type="url" class="form-control input-lg text-center" placeholder="Url" ng-model="formData.url"><br><br>
+                                                    <input type="text" class="form-control input-lg text-center" placeholder="Palabras clave: palabra1, palabra2, ..." ng-model="formData.palabrasClave"><br><br>
+                                                    <input type="number" step="any" class="form-control input-lg text-center" placeholder="Latitud" ng-model="formData.latitud"><br><br>
+                                                    <input type="number" step="any" class="form-control input-lg text-center" placeholder="Longitud" ng-model="formData.longitud"><br>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary btn-lg btn-block" ng-click="editPoi(datosEdit._id)">Confirmar</button>
+                                                <button type="cancel" class="btn btn-danger btn-lg btn-block" ng-click="showEdit(0,0)">Cancelar</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- ESTADISTICAS -->
         <div id="estadisticas" class="tab-pane fade">
