@@ -4,25 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://code.angularjs.org/1.4.2/angular.js"></script>
     <title>Login</title>
+    <script src="views/login.js"></script>
 </head>
-<body>
+<body ng-app="login" ng-controller="mainController">
 <div class="container">
     <div class="jumbotron" align="center">
         <h1>Login</h1>
         <p>Debe iniciar sesion para acceder a la aplicacion</p>
     </div>
+    <div class="panel panel-warning col-md-12" ng-show="incorrecto">
+        <div class="panel-heading">
+            <h7 class="panel-tittle">Datos de acceso incorrectos</h7>
+        </div>
+    </div>
     <div align="center">
         <form class="form-inline">
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" placeholder="Email">
+                <input type="email" class="form-control" id="email" placeholder="Email" name="email" ng-model="formData.email">
             </div>
             <div class="form-group">
                 <label for="pass">Contraseña</label>
-                <input type="password" class="form-control" id="pass" placeholder="Password">
+                <input type="password" class="form-control" id="pass" placeholder="Password" name="pass" ng-model="formData.pass">
             </div>
-            <button type="submit" class="btn btn-default">Acceder</button>
+            <button type="button" class="btn btn-default" ng-click="autentificar()">Acceder</button>
         </form>
     </div>
 </div>

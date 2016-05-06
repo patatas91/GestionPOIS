@@ -25,27 +25,16 @@ router.post('/', function(req,res) {
     var db = new mongoOp();
     var response = {};
 
-    db.nombre = req.body.nombre;
     db.user = req.body.user;
     db.pois = req.body.pois;
-
-    if( req.body.descripcion != undefined){
-        db.descripcion = req.body.descripcion;
-    }
 
     db.save(function (err) {
         if (err) {
             response = {"error": true, "message": "Error adding data"};
-        } else {            
-            mongoOp.find({}, function(err, data) {
-                if(err) {
-                    response = {"error" : true,"message" : "Error adding data"};
-                } else {
-                    response = {"error" : false,"message" : data};
-                }
-                res.json(response);
-            });
+        } else {
+            response = {"error": false, "message": "Data added"};
         }
+        res.json(response);
     });
 });
 
@@ -74,12 +63,6 @@ router.put('/:id', function(req,res){
         if(err) {
             response = {"error" : true,"message" : "Error fetching data"};
         } else {
-            if(req.body.nombre !== undefined) {
-                data.nombre = req.body.nombre;
-            }
-            if(req.body.descripcion !== undefined) {
-                data.descripcion = req.body.descripcion;
-            }
             if(req.body.pois !== undefined) {
                 data.pois = req.body.pois;
             }
@@ -87,15 +70,9 @@ router.put('/:id', function(req,res){
                 if(err) {
                     response = {"error" : true,"message" : "Error updating data"};
                 } else {
-                    mongoOp.find({}, function(err, data) {
-                        if(err) {
-                            response = {"error" : true,"message" : "Error adding data"};
-                        } else {
-                            response = {"error" : false,"message" : data};
-                        }
-                        res.json(response);
-                    });
-                }                
+                    response = {"error" : false,"message" : "Data is updated for "+req.params.id};
+                }
+                res.json(response);
             })
         }
     });
@@ -116,15 +93,9 @@ router.put('/:id/recomendar', function(req,res){
                 if(err) {
                     response = {"error" : true,"message" : "Error updating data"};
                 } else {
-                    mongoOp.find({}, function(err, data) {
-                        if(err) {
-                            response = {"error" : true,"message" : "Error adding data"};
-                        } else {
-                            response = {"error" : false,"message" : data};
-                        }
-                        res.json(response);
-                    });
-                }                
+                    response = {"error" : false,"message" : "Data is updated for "+req.params.id};
+                }
+                res.json(response);
             })
         }
     });
@@ -144,15 +115,9 @@ router.delete('/:id', function(req,res){
                 if(err) {
                     response = {"error" : true,"message" : "Error deleting data"};
                 } else {
-                    mongoOp.find({}, function(err, data) {
-                        if(err) {
-                            response = {"error" : true,"message" : "Error adding data"};
-                        } else {
-                            response = {"error" : false,"message" : data};
-                        }
-                        res.json(response);
-                    });
-                }               
+                    response = {"error" : false,"message" : "Data associated with "+req.params.id+"is deleted"};
+                }
+                res.json(response);
             });
         }
     });

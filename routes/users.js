@@ -1,11 +1,13 @@
 var express = require('express');
 var router = express.Router();
 var mongoOp = require("../models/mongoUser");
+var middleware = require("../middleware");
 
 /**
- * Funcion que devuelve los usuarios
+ * Petición que devuelve todos los usuarios
+ * Petición sólo disponible para el administrador
  */
-router.get('/', function(req, res) {
+router.get('/', middleware.ensureAuthenticatedAdmin, function(req, res) {
   var response = {};
   mongoOp.find({"tipoUser": 1, "fechaBaja": {$exists: false}}, {"tipoUser": 0, "pass": 0},function(err,data){
     if(err) {
@@ -18,18 +20,20 @@ router.get('/', function(req, res) {
 });
 
 /**
- * Función que permite añadir un usuario
+ * Petición que permite añadir un usuario
+ * Sólo disponible para el administrador.
  */
-router.post('/', function(req,res) {
+router.post('/', middleware.ensureAuthenticatedAdmin, function(req,res) {
   var response = {};
   mongoOp.findOne({"email": req.body.email},function(err,data) {
     if (err) {
       response = {"error": true, "message": "Error adding user"};
       res.json(response);
-    } else if(data) {
+    } else if(data) { //Si existe ya
       response = {"error": true, "message": "This email is registred."};
       res.json(response);
     } else {
+      //Sino se crea
       var db = new mongoOp();
       var password = generar();
       db.tipoUser = 1;
@@ -42,6 +46,7 @@ router.post('/', function(req,res) {
       db.apellidos = req.body.apellidos;
       db.fechaAlta = new Date();
 
+      //Se guarda
       db.save(function (err) {
         if (err) {
           console.log(err);
@@ -65,7 +70,7 @@ router.post('/', function(req,res) {
 });
 
 /**
- * Función que devuelve el usuario correspondiente al 'id'
+ * Petición que devuelve el usuario correspondiente al 'id'
  */
 router.get('/:id', function(req,res){
   var response = {};
@@ -80,15 +85,17 @@ router.get('/:id', function(req,res){
 });
 
 /**
- * Función que permite modificar el usuario correspondiente al 'id'.
+ * Petición que permite modificar el usuario correspondiente al 'id'.
  */
 router.put('/:id', function(req,res){
   var response = {};
 
+  //Se busca el usuario
   mongoOp.findById(req.params.id,function(err,data){
     if(err) {
       response = {"error" : true,"message" : "Error fetching data"};
     } else {
+      //Se actualizan los datos
       if(req.body.email !== undefined) {
         data.email = req.body.email;
       }
@@ -110,6 +117,7 @@ router.put('/:id', function(req,res){
       if(req.body.fechaAcceso !== undefined) {
         data.fechaAcceso = req.body.fechaAcceso;
       }
+      //Se guarda
       data.save(function(err){
         if(err) {
           response = {"error" : true,"message" : "Error updating data"};
@@ -130,21 +138,24 @@ router.put('/:id', function(req,res){
 })
 
 /**
- * Función que permite eliminar el usuario que corresponde con el 'id'
+ * Petición que permite eliminar el usuario que corresponde con el 'id'
  */
-router.delete('/:id', function(req,res){
+router.delete('/:id', middleware.ensureAuthenticatedAdmin, function(req,res){
   var response = {};
 
+  //Se busca
   mongoOp.findById(req.params.id,function(err,data){
     if(err) {
       response = {"error" : true,"message" : "Error fetching data"};
     } else {
+      //Se indica que se ha dado de baja
       data.fechaBaja = new Date();
       data.save(function(err){
         if(err) {
           response = {"error" : true,"message" : "Error updating data"};
           res.json(response);
         } else {
+          //Se devuelven el resto de usuarios
           mongoOp.find({"tipoUser": 1, "fechaBaja": {$exists: false}}, {"tipoUser": 0, "pass": 0},function(err,data){
             if(err) {
               response = {"error" : true,"message" : "Error fetching data"};

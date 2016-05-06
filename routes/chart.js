@@ -2,12 +2,17 @@ var express = require('express');
 var router = express.Router();
 var mongoUser = require("../models/mongoUser");
 var mongoPois = require("../models/mongoPois");
-
+var middleware = require('../middleware');
 /**
- * Funcion que devuelve los usuarios
+ * Funciones que devuelven los datos de una gráfica para el formato de Chart.js
  */
-router.get('/ultimosAccesos', function(req, res) {
 
+/*
+ * Función que devuelve los datos para la gráfica de últimos accesos.
+ * Sólo puede acceder a estos datos el administrador.
+ */
+router.get('/ultimosAccesos', middleware.ensureAuthenticatedAdmin,function(req, res) {
+  //Esqueleto de los datos
   var myChart ={
     type: 'bar',
     data: {
@@ -31,6 +36,7 @@ router.get('/ultimosAccesos', function(req, res) {
   var date1 = new Date().setHours(0,0,0);
   var date2 = new Date().setHours(0,0,0);
 
+  //SE REALIZAN UNA SERIE DE CONSULTAS PARA OBTENER TODOS DATOS QUE HACEN FALTA PARA FORMAR LA GRÁFICA
   date1 = new Date().getTime() - 1000 * 60 * 60 * 24 * 7;
   //Accesos hace 1 semana
   mongoUser.count({"fechaAcceso": {$gt: date1}, "tipoUser":1},function(err,data){
@@ -38,7 +44,7 @@ router.get('/ultimosAccesos', function(req, res) {
       response = {"error" : true,"message" : "Error fetching data"};
       res.json(response);
     } else{
-      datos.push(data);
+      datos.push(data); //Se añade a la lista
       //Accesos hace 2 semanas
       date2 = new Date().getTime() - 1000 * 60 * 60 * 24 * 14;
       mongoUser.count({"fechaAcceso": {$gt: date2, $lt: date1}, "tipoUser":1},function(err,data){
@@ -79,6 +85,7 @@ router.get('/ultimosAccesos', function(req, res) {
                           res.json(response);
                         } else {
                           datos.push(data);
+                          //Se añaden los datos recogidos al esqueleto definido anteriormente
                           var sets = [{
                             label: 'Nº Usuarios',
                             data: datos,
@@ -101,8 +108,12 @@ router.get('/ultimosAccesos', function(req, res) {
   });
 });
 
-router.get('/altasYbajas', function(req, res) {
-
+/*
+ * Función que devuelve los datos para la gráfica de números de usuarios que se han dado de alta y baja.
+ * Sólo puede acceder a estos datos el administrador.
+ */
+router.get('/altasYbajas', middleware.ensureAuthenticatedAdmin,function(req, res) {
+  //Esqueleto de los datos
   var myChart ={
     type: 'bar',
     data: {
@@ -125,7 +136,7 @@ router.get('/altasYbajas', function(req, res) {
   var datos = [];
   var date1 = new Date().setHours(0,0,0);
   var date2 = new Date().setHours(0,0,0);
-
+  //SE REALIZAN UNA SERIE DE CONSULTAS PARA OBTENER TODOS DATOS QUE HACEN FALTA PARA FORMAR LA GRÁFICA
   date1 = new Date().getTime() - 1000 * 60 * 60 * 24 * 7;
   //Altas desde hace 1 semana
   mongoUser.count({"fechaAlta": {$gt: date1}, "tipoUser":1},function(err,data){
@@ -229,6 +240,7 @@ router.get('/altasYbajas', function(req, res) {
                                                   res.json(response);
                                                 } else {
                                                   datos.push(data);
+                                                  //Se añaden los datos recogidos al esqueleto definido anteriormente, en este caso son 2 datasets(altas y bajas)
                                                   var set2 = {
                                                     label: 'Nº Bajas',
                                                     data: datos,
@@ -264,8 +276,13 @@ router.get('/altasYbajas', function(req, res) {
   });
 });
 
-router.get('/pois', function(req, res) {
+/*
+ * Función que devuelve los datos para la gráfica de número de pois que se han añadido en las últimas semanas.
+ * Sólo puede acceder a estos datos el administrador.
+ */
+router.get('/pois', middleware.ensureAuthenticatedAdmin, function(req, res) {
 
+  //Esqueleto de la gráfica
   var myLineChart = {
     type: 'line',
     data: {},
@@ -277,6 +294,7 @@ router.get('/pois', function(req, res) {
   var date1 = new Date().setHours(0,0,0);
   var date2 = new Date().setHours(0,0,0);
 
+  //SE REALIZAN UNA SERIE DE CONSULTAS PARA OBTENER TODOS DATOS QUE HACEN FALTA PARA FORMAR LA GRÁFICA
   date1 = new Date().getTime() - 1000 * 60 * 60 * 24 * 7;
   //Accesos hace 1 semana
   mongoPois.count({"fecha": {$gt: date1}},function(err,data){
@@ -325,6 +343,7 @@ router.get('/pois', function(req, res) {
                           res.json(response);
                         } else {
                           datos.push(data);
+                          //Se añaden los datos recogidos al esqueleto definido anteriormente
                           myLineChart.data = {
                             labels: ["Última semana", "Hace 2 semanas", "Hace 3 semanas", "Hace 4 semanas", "Hace 5 semanas", "Hace 6 semanas"],
                             datasets: [

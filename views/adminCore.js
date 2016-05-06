@@ -1,13 +1,10 @@
 /**
  * Created by diego on 29/04/2016.
  */
-angular.module('adminManager',[],function($locationProvider){
-    $locationProvider.html5Mode(true);
-});
+var app = angular.module('adminManager', ['ngCookies']);
+app.controller('mainController', function($rootScope, $scope, $window, $http, $cookies) {
 
-var map;
-
-function mainController($scope, $http) {
+    var map;
     $scope.map=true;
     $scope.showpoi=false;
     $scope.listUser=true;
@@ -133,6 +130,11 @@ function mainController($scope, $http) {
             });
     };
 
+    $scope.logout = function() {
+            $cookies.remove("token");
+            $window.location.href= '/login';
+    };
+
     $scope.deleteUser = function(id) {
         $http.delete('/users/' + id)
             .success(function(data) {
@@ -143,18 +145,18 @@ function mainController($scope, $http) {
                 console.log('Error: ' + data);
             });
     };
-}
+})
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 40.4167754, lng: -3.7037901999999576},
         zoom: 6
     });
-    var markers=[];
-    $.get('/pois', function(res){
-        var message=res.message;
-        if(!res.error){
-            for(i=0;i<message.length;i++){
+    var markers = [];
+    $.get('/pois', function (res) {
+        var message = res.message;
+        if (!res.error) {
+            for (i = 0; i < message.length; i++) {
                 var marker = new google.maps.Marker({
                     position: {lat: message[i].latitud, lng: message[i].longitud},
                     map: map,
@@ -165,6 +167,7 @@ function initMap() {
         }
     });
 }
+
 
 
 
