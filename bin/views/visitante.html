@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script><!-- load angular -->
+
+    <script src="views/visitanteCore.js"></script>
+    <title>Panel Visitante</title>
+    <!-- TABLA POIS -->
+    <style>
+        html, body { height: 100%; margin: 0; padding: 0; }
+        #map { height: 100%; }
+
+        .header-fixed {
+            width: 100%
+        }
+
+        .header-fixed > thead,
+        .header-fixed > tbody,
+        .header-fixed > thead > tr,
+        .header-fixed > tbody > tr,
+        .header-fixed > thead > tr > th,
+        .header-fixed > tbody > tr > td {
+            display: block;
+        }
+
+        .header-fixed > tbody > tr:after,
+        .header-fixed > thead > tr:after {
+            content: ' ';
+            display: block;
+            visibility: hidden;
+            clear: both;
+        }
+
+        .header-fixed > tbody {
+            overflow-y: auto;
+            height: 350px;
+        }
+
+        .header-fixed > tbody > tr > td,
+        .header-fixed > thead > tr > th {
+            width: 100%;
+            float: left;
+        }
+        .header-fixed2 {
+            width: 100%
+        }
+
+        .header-fixed2 > thead,
+        .header-fixed2 > tbody,
+        .header-fixed2 > thead > tr,
+        .header-fixed2 > tbody > tr,
+        .header-fixed2 > thead > tr > th,
+        .header-fixed2 > tbody > tr > td {
+            display: block;
+        }
+
+        .header-fixed2 > tbody > tr:after,
+        .header-fixed2 > thead > tr:after {
+            content: ' ';
+            display: block;
+            visibility: hidden;
+            clear: both;
+        }
+
+        .header-fixed2 > tbody {
+            overflow-y: auto;
+            height: 350px;
+        }
+
+        .header-fixed2 > tbody > tr > td,
+        .header-fixed2 > thead > tr > th {
+            width: 20%;
+            float: left;
+        }
+        .table-responsive>.table>tbody>tr>td,
+        .table-responsive>.table>tbody>tr>th,
+        .table-responsive>.table>tfoot>tr>td,
+        .table-responsive>.table>tfoot>tr>th,
+        .table-responsive>.table>thead>tr>td,
+        .table-responsive>.table>thead>tr>th {
+            white-space: pre-line;
+        }
+    </style>
+</head>
+
+<body ng-app="visitanteManager" ng-controller="mainController">
+<div class="container">
+    <nav class="navbar navbar-default navbar-fixed-tdiv">
+        <div class="container col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading" align="center">
+                    <h1><b>Panel de Visitante</b></h1>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand">AICRIDI</a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li role="presentation" class="active"><a data-toggle="pill" href="#pois">
+                        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>&nbsp;POIS<span class="sr-only">(current)</span></a></li>
+                    <li role="presentation"><a data-toggle="pill" href="#rutas"><span class="glyphicon glyphicon-road" aria-hidden="true"></span>&nbsp;Rutas</a></li>
+                    <li role="presentation"><a data-toggle="pill" href="#acceso"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;Acceso</a></li>
+                    <form class="navbar-form navbar-left" role="search">
+                        <div class="form-group">
+                            <input type="text" ng-model="word" class="form-control" placeholder="Búsqueda">
+                        </div>
+                        <button type="submit" class="btn btn-default">Buscar</button>
+                    </form>
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+    <div class="tab-content">
+
+        <div id="pois" class="tab-pane fade in active">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div >
+                            <!-- MAPA -->
+                            <div class="embed-responsive embed-responsive-4by3 embed-responsive-item" ng-show="map" style="margin-bottom: 10px;
+                            min-width: 323px; min-height: 323px" id="map"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="panel panel-primary" style="min-width: 323px">
+                            <div class="panel-header" align="center">
+                                <h3><b>Listado de POIS</b></h3>
+                            </div>
+                            <div class="panel-body" style="height: 500px">
+
+                                <!-- PANEL INFO POI -->
+                                <div ng-show="showpoi">
+                                    <div class="panel panel-primary embed-responsive-item" style="margin-bottom: 10px">
+                                        <div class="panel-header" align="center">
+                                            <h3> {{ mypoi.nombre}} </h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <b>Descripción:</b> <p>{{ mypoi.descripcion }}</p><br/>
+                                            <b>Url:</b> {{ mypoi.url }}<br/>
+                                            <b>Número de votantes:</b> {{ mypoi.numVotantes }}<br/>
+                                            <b>Valoración:</b> {{ mypoi.valoracion }}<br/>
+                                            <b>Palabras clave:</b> <ol ng-repeat="clave in mypoi.palabrasClave"> {{ clave }}</ol>
+                                            <b>Latitud: </b>{{ mypoi.latitud }}<br/>
+                                            <b>Longitud: </b>{{ mypoi.longitud }}<br/>
+                                        </div>
+                                    </div>
+                                    <input type="button" class="btn btn-primary btn-lg btn-block" value="Volver" ng-click="viewPoi(0)">
+                                </div>
+                                <!-- LISTA POI -->
+                                <div ng-show="showlista" class="table-responsive">
+                                    <table class="table table-striped header-fixed">
+                                        <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody style="height: 435px">
+                                        <tr ng-repeat="poi in pois">
+                                            <td>{{ poi.nombre }} &nbsp;&nbsp;<input type="button" class="btn btn-primary btn-sm pull-right" value="Info" ng-click="viewPoi(poi._id)"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="rutas" class="tab-pane fade in active">
+            <br><p>Crear una ruta de Pois:</p><br>
+        </div>
+
+        <div id="acceso" class="tab-pane fade">
+            <div align="left">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="Email">
+                    </div>
+                    <div class="form-group">
+                        <label for="pass">Contraseña</label>
+                        <input type="password" class="form-control" id="pass" placeholder="Password">
+                    </div>
+                    <button type="submit" class="btn btn-default">Acceder</button>
+                </form>
+                <button type="submit"  class="btn btn-default" onClick="window.location.href='views/registro.html'">Registrarse</button>
+            </div>
+        </div>
+    </div>
+
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXKViVY9DuiM75qPiyclDq_wcWZNOpj1Q&callback=initMap">
+    </script>
+</div>
+</body>
+</html>
