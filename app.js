@@ -15,6 +15,7 @@ var chart = require('./routes/chart');
 //Se importan las diferentes peticiones web
 var admin = require('./routes/admin');
 var user = require('./routes/user');
+var visitante=require('./routes/visitante');
 
 var app = express();
 
@@ -38,6 +39,7 @@ app.use('/admin', admin);
 app.use('/chart', chart);
 
 app.use('/user', user);
+app.use('/visitante', visitante);
 
 //Petición para devolver cualquier fichero de la carpeta views
 app.get('/views/:item', function(req, res) {

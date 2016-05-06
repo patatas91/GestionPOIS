@@ -44,10 +44,17 @@ router.post('/', function(req,res){
     db.save(function(err){
         if(err) {
             response = {"error" : true,"message" : "Error adding data"};
+            res.json(response);
         } else {
-            response = {"error" : false,"message" : "Data added"};
-        }
-        res.json(response);
+            mongoOp.find({}, function(err, data) {
+                if(err) {
+                    response = {"error" : true,"message" : "Error adding data"};
+                } else {
+                    response = {"error" : false,"message" : data};
+                }
+                res.json(response);
+            });           
+        }       
     });
 });
 
@@ -106,10 +113,17 @@ router.put('/:id', function(req,res){
             data.save(function(err){
                 if(err) {
                     response = {"error" : true,"message" : "Error updating data"};
+                    res.json(response);
                 } else {
-                    response = {"error" : false,"message" : "Data is updated for "+req.params.id};
+                    mongoOp.find({}, function(err, data) {
+                        if(err) {
+                            response = {"error" : true,"message" : "Error updating data"};
+                        } else {
+                            response = {"error" : false,"message" : data};
+                        }
+                        res.json(response);
+                    });
                 }
-                res.json(response);
             })
         }
     });
@@ -162,10 +176,17 @@ router.delete('/:id', function(req,res){
             mongoOp.remove({_id : req.params.id},function(err){
                 if(err) {
                     response = {"error" : true,"message" : "Error deleting data"};
+                    res.json(response);
                 } else {
-                    response = {"error" : true,"message" : "Data associated with "+req.params.id+"is deleted"};
-                }
-                res.json(response);
+                    mongoOp.find({}, function(err, data) {
+                        if(err) {
+                            response = {"error" : true,"message" : "Error deleting data"};
+                        } else {
+                            response = {"error" : false,"message" : data};
+                        }
+                        res.json(response);
+                    });
+                }                
             });
         }
     });

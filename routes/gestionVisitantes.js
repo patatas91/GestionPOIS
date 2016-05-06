@@ -99,4 +99,19 @@ router.delete('/:id', function(req,res){
     });
 })
 
+/**
+ * Función que devuelve los pois
+ */
+router.get('pois/busqueda/:descripcion', function(req,res){
+    var response = {};
+    mongoOp.find( {'descripcion': req.params.word} ,function(err,data){
+        if(err) {
+            response = {"error" : true,"message" : "Error fetching data"};
+        } else {
+            response = {"error" : false,"message" : data};
+        }
+        res.json(response);
+    });
+});
+
 module.exports = router;
