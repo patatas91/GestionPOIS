@@ -114,7 +114,30 @@ function mainController($scope, $http) {
             $scope.showlista=true;
         }
     };
-
+    $scope.formData = {};
+    $scope.find = function() {
+        if($scope.showlista){
+            $scope.showlista=false;
+            $http.get('/pois/busqueda/'+$scope.formData.word)
+                .success(function(data){
+                    $scope.formData = {};
+                    $scope.mypoi=data.message;
+                    //
+                    setMarkers(data.message.latitud, data.message.longitud);
+                    focusPoi(data.message.latitud, data.message.longitud, 18);
+                })
+                .error(function(data){
+                    console.log('Error: '+ data);
+                });
+            $scope.showpoi=true;
+        }
+        else{
+            reloadMarkers();
+            resetfocus();
+            $scope.showpoi=false;
+            $scope.showlista=true;
+        }
+    };
 
 
     $scope.calculateDistance = function() {
