@@ -22,6 +22,7 @@ router.get('/', function(req, res) {
  * Función que permite añadir una ruta
  */
 router.post('/', function(req,res) {
+    console.log(req.body);
     var db = new mongoOp();
     var response = {};
     db.nombre = req.body.nombre;
@@ -32,10 +33,17 @@ router.post('/', function(req,res) {
     db.save(function (err) {
         if (err) {
             response = {"error": true, "message": "Error adding data"};
+            res.json(response);
         } else {
-            response = {"error": false, "message": "Data added"};
+            mongoOp.find({}, function(err, data) {
+                if(err) {
+                    response = {"error" : true,"message" : "Error adding data"};
+                } else {
+                    response = {"error" : false,"message" : data};
+                }
+                res.json(response);
+            });
         }
-        res.json(response);
     });
 });
 

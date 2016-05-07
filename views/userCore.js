@@ -102,6 +102,7 @@ function mainController($scope, $http) {
     $scope.showruta=false;
     $scope.cabeceraPois=true;
     $scope.cabeceraRutas=false;
+    $scope.formData = {};
 
     $http.get('/pois')
         .success(function(data) {
@@ -330,28 +331,13 @@ function mainController($scope, $http) {
     $scope.addRoute = function() {
         var r = confirm('¿Desea añadir la nueva ruta?');
         if(r==true) {
-            var tablaPois = [];
-            var listaPois = [$scope.formData.get(pois)];
-            for(i=0;i<listaPois.length;i++) {
-                $http.get('/pois/'+listaPois[i])
-                    .success(function(data){
-                        tablaPois[data]
-                    })
-                    .error(function(data){
-                        console.log('Error: '+ data);
-                    });
-            }
-            var data = $.param({
-                nombre: $scope.formData.get(nombre),
-                descripcion: $scope.formData.get(descripcion),
-                pois: tablaPois
-            });
-
-            $http.post('/rutas', data)
+            $scope.formData.pois = $scope.formData.pois.split(', ');
+            $scope.formData.user = "571b4838440995301fb355c1";
+            $http.post('/rutas', $scope.formData)
                 .success(function(data) {
                     $scope.formData = {};
                     $scope.rutas = data.message;
-                    $scope.ruta = data.ruta;                    
+                    $scope.formData = {};
                     alert('Ruta añadida correctamente');
 
                 })
@@ -386,7 +372,7 @@ function mainController($scope, $http) {
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map_canvas'), {
-        center: {lat: 40.46366700000001, lng: -3.7492200000000366},
+        center: {lat: 40.4167754, lng: -3.7492200000000366},
         zoom: 6
     });
 
