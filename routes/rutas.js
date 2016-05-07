@@ -24,8 +24,9 @@ router.get('/', function(req, res) {
 router.post('/', function(req,res) {
     var db = new mongoOp();
     var response = {};
-
+    db.nombre = req.body.nombre;
     db.user = req.body.user;
+    db.descripcion = req.body.descripcion;
     db.pois = req.body.pois;
 
     db.save(function (err) {
@@ -65,6 +66,10 @@ router.put('/:id', function(req,res){
         } else {
             if(req.body.pois !== undefined) {
                 data.pois = req.body.pois;
+            } if(req.body.nombre !== undefined) {
+                data.nombre = req.body.nombre;
+            }if(req.body.descripcion !== undefined) {
+                data.descripcion = req.body.descripcion;
             }
             data.save(function(err){
                 if(err) {
