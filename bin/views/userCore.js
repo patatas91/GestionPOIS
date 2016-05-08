@@ -9,17 +9,18 @@ var map;
 //var map2;
 var markers = [];
 var markersUltimo = [];
+var lista = [];
 //var listaPois = [];
 //var markersBuscar = [];
 
 function setMarkers(lat, long) {
     // Loop through markers and set map to null for each
-   for (var i=0; i<markers.length; i++) {
+    for (var i=0; i<markers.length; i++) {
         markers[i].setMap(null);
-   }
-
+    }
+    var point = new google.maps.LatLng(lat,long);
     var marker = new google.maps.Marker({
-        position: {lat: lat, lng: long},
+        position: point,
         map: map,
         animation: google.maps.Animation.DROP
     });
@@ -44,18 +45,22 @@ function reloadMarkers() {
     }
     for(i=0;i<markers.length;i++) {
         markers[i].setMap(null);
-    }  
+    }
 
     // Reset the markers array
     markersUltimo = [];
     markers = [];
+    //quitar rutas
+    //directionsDisplay = new google.maps.DirectionsRenderer();// also, constructor can get "DirectionsRendererOptions" object
+    directionsDisplay.setMap(null);
 
     $.get('/pois', function(res){
         var message=res.message;
         if(!res.error){
             for(i=0;i<message.length;i++){
+                var point = new google.maps.LatLng(message[i].latitud,message[i].longitud);
                 var marker = new google.maps.Marker({
-                    position: {lat: message[i].latitud, lng: message[i].longitud},
+                    position: point,
                     map: map,
                     animation: google.maps.Animation.DROP,
                     title: message[i].nombre
@@ -67,26 +72,61 @@ function reloadMarkers() {
     });
 }
 
-/*
-function reloadMarkersBuscar(lat, long) {
+/* MUESTRA LA RUTA ENTRE 2 PUNTOS */
+function displayRoute(lista) {
 
-    for(i=0;i<markersBuscar.length;i++) {
-        markersBuscar[i].setMap(null);
+    for(i=0;i<markersUltimo.length;i++) {
+        markersUltimo[i].setMap(null);
+    }
+    for(i=0;i<markers.length;i++) {
+        markers[i].setMap(null);
     }
 
-    markersBuscar = [];
+    // Reset the markers array
+    markersUltimo = [];
+    markers = [];
 
-    var marker = new google.maps.Marker({
-        position: {lat: lat, lng: long},
-        map: map2,
-        animation: google.maps.Animation.DROP,
+    //directionsDisplay = new google.maps.DirectionsRenderer();// also, constructor can get "DirectionsRendererOptions" object
+    directionsDisplay.setMap(map); // map should be already initialized.
+
+    //var start = new google.maps.LatLng(41.6488226, -0.88908530000003);
+    //var end = new google.maps.LatLng(41.3850639, 2.1734034999999494);
+    var start = new google.maps.LatLng(lista[0], lista[1]);
+    var end = new google.maps.LatLng(lista[2], lista[3]);
+
+    var request = {
+        origin : start,
+        destination : end,
+        travelMode : google.maps.TravelMode.DRIVING
+    };
+    var directionsService = new google.maps.DirectionsService();
+    directionsService.route(request, function(response, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+            directionsDisplay.setDirections(response);
+        }
     });
-    // Push marker to markers array
-    markersBuscar.push(marker);
-    map2.panTo(new google.maps.LatLng(lat, long));
-    map2.setZoom(12);
 }
-*/
+
+/*
+ function reloadMarkersBuscar(lat, long) {
+
+ for(i=0;i<markersBuscar.length;i++) {
+ markersBuscar[i].setMap(null);
+ }
+
+ markersBuscar = [];
+
+ var marker = new google.maps.Marker({
+ position: {lat: lat, lng: long},
+ map: map2,
+ animation: google.maps.Animation.DROP,
+ });
+ // Push marker to markers array
+ markersBuscar.push(marker);
+ map2.panTo(new google.maps.LatLng(lat, long));
+ map2.setZoom(12);
+ }
+ */
 
 function mainController($scope, $http) {
     // when landing on the page, get all todos and show them
@@ -102,6 +142,7 @@ function mainController($scope, $http) {
     $scope.showruta=false;
     $scope.cabeceraPois=true;
     $scope.cabeceraRutas=false;
+    $scope.formData = {};
 
     $http.get('/pois')
         .success(function(data) {
@@ -113,7 +154,7 @@ function mainController($scope, $http) {
 
     $http.get('/rutas')
         .success(function(data) {
-            $scope.rutas = data.message;
+            $scope.rutas = data.message;            
         })
         .error(function(data) {
             console.log('Error: ' + data);
@@ -138,6 +179,7 @@ function mainController($scope, $http) {
         $scope.showlista=false;
         $scope.showlistaruta=true;
         $scope.showruta=false;
+        //displayRoute();
         //RESET MAP
     }
 
@@ -155,14 +197,14 @@ function mainController($scope, $http) {
             }
         });
     };
-    
+
     /* CAMBIA LISTA Y VISTA DE UN POI */
     $scope.viewPoi = function(id) {
         if($scope.showlista){
             $scope.showlista=false;
             $http.get('/pois/'+id)
                 .success(function(data){
-                    $scope.mypoi=data.message;
+                    $scope.mypoi=data.message;                    
                     //
                     setMarkers(data.message.latitud, data.message.longitud);
                     focusPoi(data.message.latitud, data.message.longitud, 18);
@@ -187,12 +229,46 @@ function mainController($scope, $http) {
             $http.get('/rutas/'+id)
                 .success(function(data){
                     $scope.myruta=data.message;
-
-                    //////
+                    //$scope.tuvieja=data.message.pois
+                    //TABLA CON LOS POIS DE LA RUTA
+                    var tablaPois=data.message.pois;
+                    var count=0;
+                    var start=0;
+                    var end=0;
+                    for(i=0;i<tablaPois.length;i++) {
+                        count=i;
+                    }
+                    //NUMERO DE POIS
+                    $scope.numPois=count+1;  
+                    
+                    //$scope.listPois=lista;
+                    //DATOS POIS
+                    $http.get('/pois/'+tablaPois[0])
+                        .success(function(data){
+                            $scope.inicio=data.message;
+                            //start=new google.maps.LatLng(data.message.latitud, data.message.longitud);
+                            lista.push(data.message.latitud);
+                            lista.push(data.message.longitud);
+                        })
+                        .error(function(data){
+                            console.log('Error: '+ data);
+                        });
+                    $http.get('/pois/'+tablaPois[count])
+                        .success(function(data){
+                            $scope.final=data.message;
+                            //end=new google.maps.LatLng(data.message.latitud, data.message.longitud);
+                            lista.push(data.message.latitud);
+                            lista.push(data.message.longitud);
+                        })
+                        .error(function(data){
+                            console.log('Error: '+ data);
+                        });
+                    //displayRoute();
+                    displayRoute(lista);
                 })
                 .error(function(data){
                     console.log('Error: '+ data);
-                });
+                });            
             $scope.showruta=true;
         }
         else{
@@ -202,11 +278,15 @@ function mainController($scope, $http) {
             $scope.showlistaruta=true;
         }
     };
-    
+
     /* AÑADIR UN NUEVO POI */
     $scope.addPoi = function() {
         var r = confirm('¿Desea añadir el nuevo Poi?');
         if(r==true) {
+            if($scope.formData.palabrasClave!=undefined) {
+                $scope.formData.palabrasClave = $scope.formData.palabrasClave.split(', ');
+            }
+            $scope.formData.user = "572638d6bff8342f2997fee0";
             $http.post('/pois', $scope.formData)
                 .success(function(data) {
                     $scope.formData = {};
@@ -270,6 +350,9 @@ function mainController($scope, $http) {
     $scope.editPoi = function(id) {
         var r = confirm('¿Desea editar el Poi seleccionado?');
         if(r==true) {
+            if($scope.formData.palabrasClave!=undefined) {
+                $scope.formData.palabrasClave = $scope.formData.palabrasClave.split(', ');
+            }
             $http.put('/pois/' + id, $scope.formData)
                 .success(function(data) {
                     $scope.formData = {};
@@ -281,12 +364,12 @@ function mainController($scope, $http) {
                 .error(function(data) {
                     console.log('Error: ' + data);
                     alert('Error al editar el Poi');
-                });               
+                });
         }
         $scope.tablaEdit=true;
         $scope.edicion=false;
     };
-    
+
     $scope.showEdit = function(op, id) {
         if(op==1){
             $http.get('/pois/'+id)
@@ -330,28 +413,15 @@ function mainController($scope, $http) {
     $scope.addRoute = function() {
         var r = confirm('¿Desea añadir la nueva ruta?');
         if(r==true) {
-            var tablaPois = [];
-            var listaPois = [$scope.formData.get(pois)];
-            for(i=0;i<listaPois.length;i++) {
-                $http.get('/pois/'+listaPois[i])
-                    .success(function(data){
-                        tablaPois[data]
-                    })
-                    .error(function(data){
-                        console.log('Error: '+ data);
-                    });
+            if($scope.formData.pois!=undefined) {
+                $scope.formData.pois = $scope.formData.pois.split(', ');
             }
-            var data = $.param({
-                nombre: $scope.formData.get(nombre),
-                descripcion: $scope.formData.get(descripcion),
-                pois: tablaPois
-            });
-
-            $http.post('/rutas', data)
+            $scope.formData.user = "572638d6bff8342f2997fee0";
+            $http.post('/rutas', $scope.formData)
                 .success(function(data) {
                     $scope.formData = {};
                     $scope.rutas = data.message;
-                    $scope.ruta = data.ruta;                    
+                    $scope.formData = {};
                     alert('Ruta añadida correctamente');
 
                 })
@@ -361,7 +431,7 @@ function mainController($scope, $http) {
                 });
         }
     };
-    
+
     $scope.calculateDistance = function() {
         var totalDistance = 0;
         var partialDistance = [];
@@ -385,17 +455,22 @@ function mainController($scope, $http) {
 }
 
 function initMap() {
-    map = new google.maps.Map(document.getElementById('map_canvas'), {
-        center: {lat: 40.46366700000001, lng: -3.7492200000000366},
+    var mapOptions = {
+        center: new google.maps.LatLng(40.4167754,-3.7492200000000366),
         zoom: 6
-    });
+    }
+
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    geocoder = new google.maps.Geocoder();
+    directionsService = new google.maps.DirectionsService();
+    map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
 
     /*
-    map2 = new google.maps.Map(document.getElementById('map_canvas2'), {
-        center: {lat: 40.46366700000001, lng: -3.7492200000000366},
-        zoom: 6
-    });
-    */
+     map2 = new google.maps.Map(document.getElementById('map_canvas2'), {
+     center: {lat: 40.46366700000001, lng: -3.7492200000000366},
+     zoom: 6
+     });
+     */
 
     $.get('/pois', function(res){
         var message=res.message;
