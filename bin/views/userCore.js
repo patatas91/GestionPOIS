@@ -12,6 +12,8 @@ var markersUltimo = [];
 var lista = [];
 //var listaPois = [];
 //var markersBuscar = [];
+var directionsDisplay;
+var id_user = "57349ba848d3e577329ac669";
 
 function setMarkers(lat, long) {
     // Loop through markers and set map to null for each
@@ -85,6 +87,7 @@ function displayRoute(lista) {
     // Reset the markers array
     markersUltimo = [];
     markers = [];
+    var sizeLista = lista.length;
 
     //directionsDisplay = new google.maps.DirectionsRenderer();// also, constructor can get "DirectionsRendererOptions" object
     directionsDisplay.setMap(map); // map should be already initialized.
@@ -92,11 +95,30 @@ function displayRoute(lista) {
     //var start = new google.maps.LatLng(41.6488226, -0.88908530000003);
     //var end = new google.maps.LatLng(41.3850639, 2.1734034999999494);
     var start = new google.maps.LatLng(lista[0], lista[1]);
-    var end = new google.maps.LatLng(lista[2], lista[3]);
+
+    /*
+    var waypts = [];
+
+    for(i=2;i<lista.length;i+2) {
+        if(lista.length>4) {
+            stop = new google.maps.LatLng(lista[i], lista[i+1])
+            waypts.push({
+                location: stop,
+                stopover: true
+            });
+        } else {
+            var end = new google.maps.LatLng(lista[lista.length-1], lista[lista.length]);
+        }
+    }
+    */
+
+    var end = new google.maps.LatLng(lista[sizeLista-2], lista[sizeLista-1]);
 
     var request = {
         origin : start,
         destination : end,
+        //waypoints: waypts,
+        //optimizeWaypoints: true,
         travelMode : google.maps.TravelMode.DRIVING
     };
     var directionsService = new google.maps.DirectionsService();
@@ -136,6 +158,8 @@ function mainController($scope, $http) {
     $scope.longitud;
     $scope.tablaEdit=true;
     $scope.edicion=false;
+    $scope.tablaEditRuta=true;
+    $scope.edicionRuta=false;
     $scope.listaPoisRuta=true;
     $scope.showpoiRuta=false;
     $scope.showlistaruta=false;
@@ -159,6 +183,30 @@ function mainController($scope, $http) {
         .error(function(data) {
             console.log('Error: ' + data);
         });
+
+    $http.get('/users/'+id_user)
+        .success(function(data){
+            $scope.user=data.message;
+        })
+        .error(function(data){
+            console.log('Error: '+ data);
+        });
+
+    $http.get('/chart/bestpois')
+        .success(function(data){
+            var ctx = document.getElementById("myChart");
+            var myChart = new Chart(ctx,data.message);
+        })
+        .error(function(data){
+            console.log('Error: ' + data);
+        });
+
+    
+
+    $scope.logout = function() {
+        //$cookies.remove("token");
+        //$window.location.href= '/login';
+    };
 
     /* CAMBIA A VISTA POIS */
     $scope.changePois = function() {
@@ -232,15 +280,16 @@ function mainController($scope, $http) {
                     //$scope.tuvieja=data.message.pois
                     //TABLA CON LOS POIS DE LA RUTA
                     var tablaPois=data.message.pois;
-                    var count=0;
+                    var sizeTabla = tablaPois.length;
+                    //var count=0;
                     var start=0;
                     var end=0;
-                    for(i=0;i<tablaPois.length;i++) {
-                        count=i;
-                    }
+                    //for(i=0;i<tablaPois.length;i++) {
+                      //  count=i;
+                    //}
                     //NUMERO DE POIS
-                    $scope.numPois=count+1;  
-                    
+                    $scope.numPois=sizeTabla;
+
                     //$scope.listPois=lista;
                     //DATOS POIS
                     $http.get('/pois/'+tablaPois[0])
@@ -253,7 +302,7 @@ function mainController($scope, $http) {
                         .error(function(data){
                             console.log('Error: '+ data);
                         });
-                    $http.get('/pois/'+tablaPois[count])
+                    $http.get('/pois/'+tablaPois[sizeTabla-1])
                         .success(function(data){
                             $scope.final=data.message;
                             //end=new google.maps.LatLng(data.message.latitud, data.message.longitud);
@@ -263,6 +312,19 @@ function mainController($scope, $http) {
                         .error(function(data){
                             console.log('Error: '+ data);
                         });
+                    /*
+                    for(i=0;i<tablaPois.length;i++) {
+                        $http.get('/pois/'+tablaPois[i])
+                            .success(function(data){
+                                $scope.inicio=data.message;
+                                //start=new google.maps.LatLng(data.message.latitud, data.message.longitud);
+                                lista.push(data.message.latitud);
+                                lista.push(data.message.longitud);
+                            })
+                            .error(function(data){
+                                console.log('Error: '+ data);
+                            });
+                    }*/
                     //displayRoute();
                     displayRoute(lista);
                 })
@@ -286,7 +348,7 @@ function mainController($scope, $http) {
             if($scope.formData.palabrasClave!=undefined) {
                 $scope.formData.palabrasClave = $scope.formData.palabrasClave.split(', ');
             }
-            $scope.formData.user = "572638d6bff8342f2997fee0";
+            $scope.formData.user = id_user;
             $http.post('/pois', $scope.formData)
                 .success(function(data) {
                     $scope.formData = {};
@@ -416,7 +478,7 @@ function mainController($scope, $http) {
             if($scope.formData.pois!=undefined) {
                 $scope.formData.pois = $scope.formData.pois.split(', ');
             }
-            $scope.formData.user = "572638d6bff8342f2997fee0";
+            $scope.formData.user = id_user;
             $http.post('/rutas', $scope.formData)
                 .success(function(data) {
                     $scope.formData = {};
@@ -432,6 +494,113 @@ function mainController($scope, $http) {
         }
     };
 
+    /* ELIMINAR UNA RUTA */
+    $scope.deleteRuta = function(id) {
+        var r = confirm('¿Desea eliminar la ruta seleccionada?');
+        if(r==true) {
+            $http.delete('/rutas/' + id)
+                .success(function(data) {
+                    $scope.rutas = data.message;
+                    //reloadMarkers();
+                    alert('Ruta eliminada correctamente');
+                })
+                .error(function(data) {
+                    console.log('Error: ' + data);
+                    alert('Error al eliminar la ruta');
+                });
+        }
+    };
+
+    /* DUPLICAR UNA RUTA */
+    $scope.duplicateRuta = function(id) {
+        var r = confirm('¿Desea duplicar la ruta seleccionado?');
+        if(r==true) {
+            $http.get('/rutas/'+id)
+                .success(function(data){
+                    $http.post('/rutas', data.message)
+                        .success(function(data) {
+                            $scope.rutas = data.message;
+                            $scope.ruta = data.ruta;
+                            reloadMarkers();
+                            alert('Ruta duplicada correctamente');
+                        })
+                        .error(function(data) {
+                            console.log('Error: ' + data);
+                            alert('Error al duplicar la ruta');
+                        });
+
+                })
+                .error(function(data){
+                    console.log('Error: '+ data);
+                    alert('Error al duplicar la ruta');
+                });
+        }
+    };
+
+    /* EDITAR UNA RUTA */
+    $scope.editRuta = function(id) {
+        var r = confirm('¿Desea editar la ruta seleccionado?');
+        if(r==true) {
+            if($scope.formData.pois!=undefined) {
+                $scope.formData.pois = $scope.formData.pois.split(', ');
+            }
+            $http.put('/rutas/' + id, $scope.formData)
+                .success(function(data) {
+                    $scope.formData = {};
+                    $scope.rutas = data.message;
+                    $scope.ruta = data.ruta;
+                    //reloadMarkers();
+                    alert('Ruta editada correctamente');
+                })
+                .error(function(data) {
+                    console.log('Error: ' + data);
+                    alert('Error al editar la ruta');
+                });
+        }
+        $scope.tablaEditRuta=true;
+        $scope.edicionRuta=false;
+    };
+
+    $scope.showEditRuta = function(op, id) {
+        if(op==1){
+            $http.get('/rutas/'+id)
+                .success(function(data){
+                    $scope.datosEditRuta=data.message;
+
+                })
+                .error(function(data){
+                    console.log('Error: '+ data);
+                });
+            $scope.tablaEditRuta=false;
+            $scope.edicionRuta=true;
+        }
+        else {
+            $scope.tablaEditRuta=true;
+            $scope.edicionRuta=false;
+        }
+    };
+
+    /* EDITAR UN USUARIO */
+    $scope.editUser = function() {
+        var r = confirm('¿Desea editar su cuenta?');
+        if(r==true) {        
+            if($scope.formData.pass == $scope.formData.pass2) {
+                $http.put('/users/' + id_user, $scope.formData)
+                    .success(function(data) {
+                        $scope.formData = {};
+                        $scope.user = data.message;
+                        alert('Usuario editado correctamente');
+                    })
+                    .error(function(data) {
+                        console.log('Error: ' + data);
+                        alert('Error al editar el usuario');
+                    });
+            } else {
+                alert('¡Las contraseñas no coinciden!');
+            }
+        }        
+    };
+    
     $scope.calculateDistance = function() {
         var totalDistance = 0;
         var partialDistance = [];

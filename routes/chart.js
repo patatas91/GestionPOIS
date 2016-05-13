@@ -372,4 +372,53 @@ router.get('/pois', middleware.ensureAuthenticatedAdmin, function(req, res) {
   });
 });
 
+/*
+ * Función que devuelve los pois del usuario mejor valorados.
+ */
+router.get('/bestpois', function(req, res) {
+
+  //Esqueleto de la gráfica
+  var myLineChart = {
+    type: 'bar',
+    data: {},
+    options: {}
+  };
+
+  var response = {};
+  var datos = [];
+  var nombres = [];
+  var valoracion = [];
+
+  //SE REALIZAN UNA SERIE DE CONSULTAS PARA OBTENER TODOS DATOS QUE HACEN FALTA PARA FORMAR LA GRÁFICA
+  var id_user = "57349ba848d3e577329ac669";
+  //.sort({"valoracion": 1}).limit(5)
+  mongoPois.find({"user": id_user}), function(err, data) {
+    if(err) {
+      response = {"error" : true,"message" : "Error fetching data"};
+    } else {
+      valoracion.push(5);
+    }     
+  }
+  for(var i = 0; i<datos.length; i++) {
+    nombres.push(datos[i].message.nombre);
+    valoracion.push(datos[i].message.valoracion);
+  }
+  //Se añaden los datos recogidos al esqueleto definido anteriormente
+  myLineChart.data = {
+    labels: ["tu madre", "tu vieja", "herny"],
+    datasets: [
+      {
+        label: "Mejores POIS",
+        backgroundColor: "rgba(108,164,232,0.4)",
+        borderColor: "rgba(13,35,62,0.4)",
+        borderWidth: 1,
+        data: valoracion
+      }
+    ]
+  };
+  response = {"error": false, "message": myLineChart};
+  res.json(response)
+});
+
+
 module.exports = router;
