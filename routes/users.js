@@ -20,6 +20,21 @@ router.get('/', middleware.ensureAuthenticatedAdmin, function(req, res) {
 });
 
 /**
+ * Petición para obtener todos users
+ */
+router.get('/visitantes', function(req,res){
+  var response = {};
+  mongoOp.find({},function(err,data){
+    if(err) {
+      response = {"error" : true,"message" : "Error fetching data"};
+    } else {
+      response = {"error" : false,"message" : data};
+    }
+    res.json(response);
+  });
+});
+
+/**
  * Petición que permite añadir un usuario
  * Sólo disponible para el administrador.
  */
@@ -177,5 +192,31 @@ function generar() {
   for (i=0; i<8; i++) contraseña += caracteres.charAt(Math.floor(Math.random()*caracteres.length));
   return contraseña;
 }
+
+/**
+ * Función que permite añade un dato de un visitante
+ */
+router.post('/registro', function(req,res) {
+  var db = new mongoOp();
+  var response = {};
+  db.tipoUser=2;
+  db.email = req.body.email;
+  db.pass = req.body.pass;
+  db.save(function(err){
+    if(err) {
+      response = {"error" : true,"message" : "Error adding data"};
+      res.json(response);
+    } else {
+      mongoOp.find({}, function(err, data) {
+        if(err) {
+          response = {"error" : true,"message" : "Error adding data"};
+        } else {
+          response = {"error" : false,"message" : data};
+        }
+        res.json(response);
+      });
+    }
+  });
+});
 
 module.exports = router;

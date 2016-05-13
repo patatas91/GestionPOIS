@@ -8,8 +8,11 @@ var bodyParser = require('body-parser');
 //Se importan las diferentes peticiones de la API
 var routes = require('./routes/login');
 var users = require('./routes/users');
+var registro = require('./routes/users');
+var visitantes = require('./routes/users');
 var rutas = require('./routes/rutas');
 var pois = require('./routes/pois');
+var busqueda = require('./routes/pois');
 var gestionVisitantes = require('./routes/gestionVisitantes');
 var chart = require('./routes/chart');
 //Se importan las diferentes peticiones web
@@ -31,9 +34,12 @@ app.use(cookieParser());
 app.use('/', routes);
 app.use('/login', routes);
 app.use('/users', users);
+app.use('/users/registro', registro);
+app.use('/users/visitantes', visitantes);
 app.use('/rutas', rutas);
 app.use('/pois', pois);
-app.use('/gestionVisitantes', gestionVisitantes);
+app.use('/pois/busqueda', busqueda);
+//app.use('/gestionVisitantes', gestionVisitantes);
 
 app.use('/admin', admin);
 app.use('/chart', chart);

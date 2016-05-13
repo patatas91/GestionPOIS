@@ -192,4 +192,18 @@ router.delete('/:id', function(req,res){
     });
 }) ;
 
+/**
+ * Función que devuelve los pois filtrados por busqueda
+ */
+router.get('/busqueda/:word', function(req,res){
+    var response = {};
+    mongoOp.find({$or:[{descripcion:{$regex : ".*"+req.params.word+".*"}},{nombre:{$regex : ".*"+req.params.word+".*"}}]} ,function(err,data){
+        if(err) {
+            response = {"error" : true,"message" : "Error fetching data"};
+        } else {
+            response = {"error" : false,"message" : data};
+        }
+        res.json(response);
+    });
+});
 module.exports = router;

@@ -10,10 +10,7 @@ var markers = [];
 var markersUltimo = [];
 
 function setMarkers(lat, long) {
-    // Loop through markers and set map to null for each
-    for (var i=0; i<markers.length; i++) {
-        markers[i].setMap(null);
-    }
+
 
     var marker = new google.maps.Marker({
         position: {lat: lat, lng: long},
@@ -114,31 +111,49 @@ function mainController($scope, $http) {
             $scope.showlista=true;
         }
     };
-    $scope.formData = {};
+
     $scope.find = function() {
-        if($scope.showlista){
+
+            //$scope.pois=[];
             $scope.showlista=false;
-            $http.get('/pois/busqueda/'+$scope.formData.word)
-                .success(function(data){
+            $http.get('/pois/busqueda/'+$scope.formData.word).success(function(data){
                     $scope.formData = {};
-                    $scope.mypoi=data.message;
-                    //
-                    setMarkers(data.message.latitud, data.message.longitud);
-                    focusPoi(data.message.latitud, data.message.longitud, 18);
-                })
-                .error(function(data){
+                    $scope.pois=data.message;
+                    var message=data.message;
+                        // Loop through markers and set map to null for each
+                        for (var i=0; i<markers.length; i++) {
+                            markers[i].setMap(null);
+                        }
+                        markers = [];
+                        for(i=0;i<message.length;i++){
+                            var marker = new google.maps.Marker({
+                                position: {lat: message[i].latitud, lng: message[i].longitud},
+                                map: map,
+                                animation: google.maps.Animation.DROP,
+                                title: message[i].nombre
+                            });
+                            markers.push(marker);
+                            setMarkers(message[i].latitud, message[i].longitud);
+                        }
+
+                }).error(function(data){
                     console.log('Error: '+ data);
                 });
-            $scope.showpoi=true;
-        }
-        else{
-            reloadMarkers();
-            resetfocus();
-            $scope.showpoi=false;
-            $scope.showlista=true;
-        }
-    };
+        $scope.showlista=true;
+    }
 
+    $scope.registro = function() {
+        $http.post('/users/registro', $scope.formData)
+            .success(function(data) {
+                $scope.formData = {}; // clear the form so our user is ready to enter another
+                $scope.users = data.message;
+                $scope.user = data.user;
+                $scope.datosAcceso=true;
+            })
+            .error(function(data) {
+                console.log('Error: ' + data);
+            });
+    }
 
     $scope.calculateDistance = function() {
         var totalDistance = 0;
@@ -170,11 +185,6 @@ function initMap() {
         zoom: 6
     });
 
-    map2 = new google.maps.Map(document.getElementById('map2'), {
-        center: {lat: 40.46366700000001, lng: -3.7492200000000366},
-        zoom: 6
-    });
-
     $.get('/pois', function(res){
         var message=res.message;
         if(!res.error){
@@ -192,7 +202,6 @@ function initMap() {
     });
     setMarkers(markers);
 }
-
 
 
 

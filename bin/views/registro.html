@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script><!-- load angular -->
     <title>Login</title>
+    <script src="visitanteCore.js"></script>
 </head>
-<body>
+<body ng-app="visitanteManager" ng-controller="mainController">
 <div class="container">
     <div class="jumbotron" align="center">
         <h1>Acceso</h1>
@@ -15,13 +19,13 @@
         <form class="form-inline">
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" placeholder="Email">
+                <input type="email" class="form-control" id="email" ng-model="formData.email" placeholder="Email">
             </div>
             <div class="form-group">
                 <label for="pass">Contraseña</label>
-                <input type="password" class="form-control" id="pass" placeholder="Password">
+                <input type="password" class="form-control" id="pass" ng-model="formData.pass" placeholder="Password">
             </div>
-            <button type="submit" class="btn btn-default" onclick="window.location.href='/visitante'">Registrarse</button>
+            <button type="submit" class="btn btn-default"  ng-click="registro()">Registrarse</button>
         </form>
     </div>
 </div>
