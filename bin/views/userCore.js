@@ -656,7 +656,7 @@ function initMap() {
             }
         }
     });
-    setMarkers(markers);
+    //setMarkers(markers);
 }
 
 
