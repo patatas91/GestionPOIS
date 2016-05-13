@@ -191,18 +191,23 @@
 
         <div id="acceso" class="tab-pane fade">
             <div align="left">
-                <form class="form-inline">
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" class="form-control" id="email" placeholder="Email">
-                    </div>
-                    <div class="form-group">
-                        <label for="pass">Contraseña</label>
-                        <input type="password" class="form-control" id="pass" placeholder="Password">
-                    </div>
-                    <button type="submit" class="btn btn-default">Acceder</button>
-                </form>
-                <a href="/views/registro.html">Registrarse</a>
+                <h2>Acceso/Registro</h2>
+                <div ng-show="showregistro">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="Email">
+                        </div>
+                        <div class="form-group">
+                            <label for="pass">Contraseña</label>
+                            <input type="password" class="form-control" id="pass" placeholder="Password">
+                        </div>
+                        <button type="submit" class="btn btn-default" ng-click="registro()">Acceder</button>
+                    </form>
+                </div>
+                <div ng-show="showlogin">
+                    <button type="submit" class="btn btn-default" ng-click="logout()">Log Out</button>
+                </div>
             </div>
         </div>
     </div>

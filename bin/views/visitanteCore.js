@@ -58,11 +58,13 @@ function reloadMarkers() {
     });
 }
 
-function mainController($scope, $http) {
+function mainController($rootScope, $scope, $window, $http, $cookies) {
     // when landing on the page, get all todos and show them
     $scope.map=true;
     $scope.showpoi=false;
     $scope.showlista=true;
+    $scope.showregistro=true;
+    $scope.showlogin=false;
     $scope.latitud;
     $scope.longitud;
 
@@ -149,10 +151,20 @@ function mainController($scope, $http) {
                 $scope.users = data.message;
                 $scope.user = data.user;
                 $scope.datosAcceso=true;
+                $scope.showlogin=true;
+                $scope.showregistro=false;
             })
             .error(function(data) {
                 console.log('Error: ' + data);
             });
+    }
+
+    $scope.logout=function(res){
+        res.header().json({
+            error: true,
+        });
+        $scope.showregistro=true;
+        $scope.showlogin=false;
     }
 
     $scope.calculateDistance = function() {
