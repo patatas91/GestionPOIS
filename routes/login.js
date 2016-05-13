@@ -19,7 +19,7 @@ router.get('/', function(req, res) {
  * Petición correspondiente que se encarga de comprobar que los campos introducidos por el usuario corresponden con
  * los de un usuario existente.
  */
-router.post('/auth', function(req, res) {
+router.post('/login/auth', function(req, res) {
     //Se encripta la contraseña
     var password = require('crypto')
         .createHash('sha1')

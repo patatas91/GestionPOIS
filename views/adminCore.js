@@ -38,7 +38,6 @@ app.controller('mainController', function($rootScope, $scope, $window, $http, $c
     $http.get('/me')
         .success(function(data) {
             $scope.userMe = data.message;
-            console.log($scope.userMe);
         })
         .error(function(data) {
             console.log('Error: ' + data);

@@ -190,6 +190,11 @@
         </div>
 
         <div id="acceso" class="tab-pane fade">
+            <div class="panel panel-warning col-md-12" ng-show="incorrecto">
+                <div class="panel-heading">
+                    <h7 class="panel-tittle">Datos de acceso incorrectos</h7>
+                </div>
+            </div>
             <div align="left">
                 <form class="form-inline">
                     <div class="form-group">
@@ -200,16 +205,15 @@
                         <label for="pass">Contraseña</label>
                         <input type="password" class="form-control" id="pass" placeholder="Password">
                     </div>
-                    <button type="submit" class="btn btn-default">Acceder</button>
+                    <button type="button" class="btn btn-default" ng-click="autentificar()">Acceder</button>
                 </form>
                 <a href="/views/registro.html">Registrarse</a>
             </div>
         </div>
     </div>
-
-    <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXKViVY9DuiM75qPiyclDq_wcWZNOpj1Q&callback=initMap">
-    </script>
 </div>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXKViVY9DuiM75qPiyclDq_wcWZNOpj1Q&callback=initMap">
+</script>
 </body>
 </html>
