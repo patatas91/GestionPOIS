@@ -19,6 +19,7 @@ exports.ensureAuthenticatedAdmin = function(req, res, next) {
             } else {
                 // if everything is good, save to request for use in other routes
                 if(decoded._doc.tipoUser == 0){
+                    req.body.userId = decoded._doc._id;
                     next();
                 } else{
                     res.json({error: true, message: "No tienes permiso para acceder ahi."});
@@ -73,6 +74,27 @@ exports.ensureAuthenticatedVisitante = function(req, res, next) {
                 }
             }
         });
+    }
+}
+
+/*
+ * Método de autenticación para el administrador
+ */
+exports.ensureAuthenticatedAll = function(req, res, next) {
+
+    var cookies = parseCookies(req);
+    var token = cookies.token;
+    if(token){
+        jwt.verify(token, config.secret, function(err, decoded) {
+            if (err) {
+                res.json({error: true, message: "No esta logueado."});
+            } else {
+                req.body.userId = decoded._doc._id;
+                next();
+            }
+        });
+    } else{
+        res.json({error: true, message: "No esta logueado."});
     }
 }
 

@@ -36,8 +36,15 @@ router.post('/auth', function(req, res) {
             //Si existe se le asigna un token de acceso y se redirige a su página principal de acuerdo a su rango
             if (user) {
                 var token = jwt.sign(user, config.secret, {
-                    expiresIn: 600 // expires in 24 hours
+                    expiresIn: 7200 // expires in 2h
                 });
+                //Se actualiza fecha de acceso
+                user.fechaAcceso = new Date();
+                user.save(function(err){
+                    if(err) {
+                        Console.log("Error al actualizar fecha de acceso");
+                    }
+                })
                 var next;
                 if(user.tipoUser == 0){
                     next = '/admin';

@@ -99,6 +99,7 @@ router.get('/:id', function(req,res){
   });
 });
 
+
 /**
  * Petición que permite modificar el usuario correspondiente al 'id'.
  */
