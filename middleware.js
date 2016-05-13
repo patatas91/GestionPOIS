@@ -45,6 +45,7 @@ exports.ensureAuthenticatedUser = function(req, res, next) {
             } else {
                 // if everything is good, save to request for use in other routes
                 if(decoded._doc.tipoUser == 1){
+                    req.body.userId = decoded._doc._id;
                     next();
                 } else{
                     res.json({error: true, message: "No tienes permiso para acceder ahi."});

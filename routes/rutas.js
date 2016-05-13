@@ -19,10 +19,25 @@ router.get('/', function(req, res) {
 });
 
 /**
+ * Funcion que devuelve las rutas de un usuario concreto
+ */
+router.get('/byUser', middleware.ensureAuthenticatedAll, function(req, res) {
+    var response = {};
+    mongoOp.find({"user": req.body.userId},function(err,data){
+// Mongo command to fetch all data from collection.
+        if(err) {
+            response = {"error" : true,"message" : "Error fetching data"};
+        } else {
+            response = {"error" : false,"message" : data};
+        }
+        res.json(response);
+    });
+});
+
+/**
  * Función que permite añadir una ruta
  */
 router.post('/', function(req,res) {
-    console.log(req.body);
     var db = new mongoOp();
     var response = {};
     db.nombre = req.body.nombre;
