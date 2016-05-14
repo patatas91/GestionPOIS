@@ -81,6 +81,7 @@
 
 <body ng-app="visitanteManager" ng-controller="mainController">
 <div class="container">
+
     <nav class="navbar navbar-default navbar-fixed-tdiv">
         <div class="container col-md-12">
             <div class="panel panel-primary">
@@ -102,15 +103,15 @@
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li role="presentation" class="active"><a data-toggle="pill" href="#pois">
+                    <li role="presentation" class="active"><a data-toggle="pill" href="#pois" onclick="$('.alert').hide()">
                         <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>&nbsp;POIS<span class="sr-only">(current)</span></a></li>
-                    <li role="presentation"><a data-toggle="pill" href="#rutas"><span class="glyphicon glyphicon-road" aria-hidden="true"></span>&nbsp;Rutas</a></li>
-                    <li role="presentation"><a data-toggle="pill" href="#acceso"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;Acceso</a></li>
+                    <li role="presentation"><a data-toggle="pill" href="#rutas" onclick="$('.alert').hide()"><span class="glyphicon glyphicon-road" aria-hidden="true"></span>&nbsp;Rutas</a></li>
+                    <li role="presentation"><a data-toggle="pill" href="#acceso" onclick="$('.alert').hide()"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;Acceso</a></li>
                     <form class="navbar-form navbar-left" role="search">
                         <div class="form-group">
                             <input type="text" ng-model="formData.word" class="form-control" placeholder="Búsqueda">
                         </div>
-                        <button type="submit" class="btn btn-default" ng-click="find(word)">Buscar</button>
+                        <button type="submit" class="btn btn-default" ng-click="find(word)" onclick="$('.alert').hide()">Buscar</button>
                     </form>
                 </ul>
 
@@ -118,7 +119,9 @@
         </div>
     </nav>
     <div class="tab-content">
-
+        <div class="alert alert-success" role="alert" hidden="true">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>Enviando POI
+        </div>
         <div id="pois" class="tab-pane fade in active">
             <div class="panel-body">
                 <div class="row">
@@ -152,7 +155,24 @@
                                             <b>Longitud: </b>{{ mypoi.longitud }}<br/>
                                         </div>
                                     </div>
-                                    <input type="button" class="btn btn-primary btn-lg btn-block" value="Volver" ng-click="viewPoi(0)">
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Valorar POI
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a  ng-click="valorar(0)" onclick="$('.alert').hide()">0</a></li>
+                                            <li><a  ng-click="valorar(0)" onclick="$('.alert').hide()">1</a></li>
+                                            <li><a  ng-click="valorar(0)" onclick="$('.alert').hide()">2</a></li>
+                                            <li><a  ng-click="valorar(0)" onclick="$('.alert').hide()">3</a></li>
+                                            <li><a  ng-click="valorar(0)" onclick="$('.alert').hide()">4</a></li>
+                                            <li><a  ng-click="valorar(0)" onclick="$('.alert').hide()">5</a></li>
+                                        </ul>
+                                    </div>
+                                    <input type="button" class="btn btn-primary btn-lg btn-block" value="Ver Usuario" ng-click="verUsuario()" onclick="$('.alert').hide()">
+                                    <input type="button" class="btn btn-primary btn-lg btn-block" value="Recomendar" onclick="$('.alert').show()">
+
+                                    <input type="button" class="btn btn-primary btn-lg btn-block" value="Volver" ng-click="viewPoi(0)" onclick="$('.alert').hide()">
                                 </div>
                                 <!-- LISTA POI -->
                                 <div ng-show="showlista" class="table-responsive">
