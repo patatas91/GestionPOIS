@@ -14,11 +14,9 @@
     <style>
         html, body { height: 100%; margin: 0; padding: 0; }
         #map { height: 100%; }
-
         .header-fixed {
             width: 100%
         }
-
         .header-fixed > thead,
         .header-fixed > tbody,
         .header-fixed > thead > tr,
@@ -27,7 +25,6 @@
         .header-fixed > tbody > tr > td {
             display: block;
         }
-
         .header-fixed > tbody > tr:after,
         .header-fixed > thead > tr:after {
             content: ' ';
@@ -35,12 +32,10 @@
             visibility: hidden;
             clear: both;
         }
-
         .header-fixed > tbody {
             overflow-y: auto;
             height: 350px;
         }
-
         .header-fixed > tbody > tr > td,
         .header-fixed > thead > tr > th {
             width: 100%;
@@ -49,7 +44,6 @@
         .header-fixed2 {
             width: 100%
         }
-
         .header-fixed2 > thead,
         .header-fixed2 > tbody,
         .header-fixed2 > thead > tr,
@@ -58,7 +52,6 @@
         .header-fixed2 > tbody > tr > td {
             display: block;
         }
-
         .header-fixed2 > tbody > tr:after,
         .header-fixed2 > thead > tr:after {
             content: ' ';
@@ -66,12 +59,10 @@
             visibility: hidden;
             clear: both;
         }
-
         .header-fixed2 > tbody {
             overflow-y: auto;
             height: 350px;
         }
-
         .header-fixed2 > tbody > tr > td,
         .header-fixed2 > thead > tr > th {
             width: 20%;
@@ -190,6 +181,11 @@
         </div>
 
         <div id="acceso" class="tab-pane fade">
+            <div class="panel panel-warning col-md-12" ng-show="incorrecto">
+                <div class="panel-heading">
+                    <h7 class="panel-tittle">Datos de acceso incorrectos</h7>
+                </div>
+            </div>
             <div align="left">
                 <form class="form-inline">
                     <div class="form-group">
@@ -200,16 +196,15 @@
                         <label for="pass">Contraseña</label>
                         <input type="password" class="form-control" id="pass" placeholder="Password">
                     </div>
-                    <button type="submit" class="btn btn-default">Acceder</button>
+                    <button type="button" class="btn btn-default" ng-click="autentificar()">Acceder</button>
                 </form>
                 <a href="/views/registro.html">Registrarse</a>
             </div>
         </div>
     </div>
-
-    <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXKViVY9DuiM75qPiyclDq_wcWZNOpj1Q&callback=initMap">
-    </script>
 </div>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXKViVY9DuiM75qPiyclDq_wcWZNOpj1Q&callback=initMap">
+</script>
 </body>
 </html>
