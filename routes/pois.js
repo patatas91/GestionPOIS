@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var mongoOp = require("../models/mongoPois");
+var middleware = require("../middleware");
 
 /**
  * Petición para obtener todos pois
@@ -8,6 +9,21 @@ var mongoOp = require("../models/mongoPois");
 router.get('/', function(req,res){
     var response = {};
     mongoOp.find({},function(err,data){
+        if(err) {
+            response = {"error" : true,"message" : "Error fetching data"};
+        } else {
+            response = {"error" : false,"message" : data};
+        }
+        res.json(response);
+    });
+});
+
+/**
+ * Petición para obtener todos pois de un usuario concreto
+ */
+router.get('/byUser',middleware.ensureAuthenticatedAll, function(req,res){
+    var response = {};
+    mongoOp.find({"user": req.body.userId},function(err,data){
         if(err) {
             response = {"error" : true,"message" : "Error fetching data"};
         } else {

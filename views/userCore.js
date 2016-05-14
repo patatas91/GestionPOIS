@@ -13,7 +13,6 @@ var lista = [];
 //var listaPois = [];
 //var markersBuscar = [];
 var directionsDisplay;
-var id_user = "57349ba848d3e577329ac669";
 
 function setMarkers(lat, long) {
     // Loop through markers and set map to null for each
@@ -168,28 +167,29 @@ function mainController($scope, $http) {
     $scope.cabeceraRutas=false;
     $scope.formData = {};
 
-    $http.get('/pois')
+    $http.get('/me')
+        .success(function(data){
+            $scope.user=data.message;
+        })
+        .error(function(data){
+            console.log('Error: '+ data);
+        });
+
+    $http.get('/pois/byUser')
         .success(function(data) {
+            console.log(data.message);
             $scope.pois = data.message;
         })
         .error(function(data) {
             console.log('Error: ' + data);
         });
 
-    $http.get('/rutas')
+    $http.get('/rutas/byUser')
         .success(function(data) {
-            $scope.rutas = data.message;            
+            $scope.rutas = data.message;
         })
         .error(function(data) {
             console.log('Error: ' + data);
-        });
-
-    $http.get('/users/'+id_user)
-        .success(function(data){
-            $scope.user=data.message;
-        })
-        .error(function(data){
-            console.log('Error: '+ data);
         });
 
     $http.get('/chart/bestpois')
@@ -200,8 +200,6 @@ function mainController($scope, $http) {
         .error(function(data){
             console.log('Error: ' + data);
         });
-
-    
 
     $scope.logout = function() {
         //$cookies.remove("token");
@@ -348,7 +346,7 @@ function mainController($scope, $http) {
             if($scope.formData.palabrasClave!=undefined) {
                 $scope.formData.palabrasClave = $scope.formData.palabrasClave.split(', ');
             }
-            $scope.formData.user = id_user;
+            $scope.formData.user = $scope.user._id;
             $http.post('/pois', $scope.formData)
                 .success(function(data) {
                     $scope.formData = {};
@@ -478,7 +476,7 @@ function mainController($scope, $http) {
             if($scope.formData.pois!=undefined) {
                 $scope.formData.pois = $scope.formData.pois.split(', ');
             }
-            $scope.formData.user = id_user;
+            $scope.formData.user = $scope.user._id;
             $http.post('/rutas', $scope.formData)
                 .success(function(data) {
                     $scope.formData = {};
@@ -585,7 +583,7 @@ function mainController($scope, $http) {
         var r = confirm('¿Desea editar su cuenta?');
         if(r==true) {        
             if($scope.formData.pass == $scope.formData.pass2) {
-                $http.put('/users/' + id_user, $scope.formData)
+                $http.put('/users/' + $scope.user._id, $scope.formData)
                     .success(function(data) {
                         $scope.formData = {};
                         $scope.user = data.message;

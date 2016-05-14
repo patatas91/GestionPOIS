@@ -9,7 +9,6 @@
     <script src="https://code.angularjs.org/1.4.4/angular.min.js"></script>
     <script src="https://code.angularjs.org/1.4.4/angular-cookies.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.0.1/Chart.min.js"></script>
-    <!-- Custom angular module -->
     <script src="views/adminCore.js"></script>
     <title>Admin</title>
     <style>
@@ -90,6 +89,7 @@
 </head>
 <body ng-app="adminManager" ng-controller="mainController">
 <div class="container">
+    <!-- Barra de Navegacion de la página -->
     <nav class="navbar navbar-default navbar-fixed-tdiv">
         <div class="container col-md-12">
             <div class="panel panel-primary">
@@ -110,6 +110,7 @@
                 <a class="navbar-brand">AICRIDI</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <!-- Elementos de la barra -->
                 <ul class="nav navbar-nav">
                     <li role="presentation" class="active"><a data-toggle="pill" href="#pois">
                         <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>&nbsp;POIS<span class="sr-only">(current)</span></a></li>
@@ -122,12 +123,15 @@
         </div>
     </nav>
     <div class="tab-content">
+        <!-- Panel de los POIS -->
         <div id="pois" class="tab-pane fade in active">
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-8">
                         <div >
+                            <!-- MAPA -->
                             <div class="embed-responsive embed-responsive-4by3 embed-responsive-item" ng-show="map" style="margin-bottom: 10px; min-width: 323px; min-height: 323px" id="map"></div>
+                            <!-- Especificacion de un POI -->
                             <div ng-show="showpoi">
                                 <div class="panel panel-primary embed-responsive-item" style="margin-bottom: 10px">
                                     <div class="panel-header" align="center">
@@ -147,6 +151,7 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Lista de POIS -->
                     <div class="col-md-4">
                         <div class="panel panel-primary" style="min-width: 323px">
                             <div class="panel-header" align="center">
@@ -174,16 +179,20 @@
                 </div>
             </div>
         </div>
+        <!-- Panel de Gestion de Usuarios -->
         <div id="users" class="tab-pane fade">
             <div class="panel-body">
                 <div class="row">
+                    <!-- Listado de Usuarios -->
                     <div class="col-md-12" ng-show="listUser">
+                        <!-- Botones Crear/Eliminar -->
                         <div class="row">
                             <div class="col-md-12">
                                 <button type="button" class="btn btn-primary btn-lg" style="margin: 0px 30px 20px 0px" ng-click="viewUser(0)"><b>Crear Usuario</b></button>
                                 <button type="button" class="btn btn-primary btn-lg" style="margin: 0px 0px 20px 0px" ng-click="viewUser(1)"><b>Eliminar Usuario</b></button>
                             </div>
                         </div>
+                        <!-- Lista de Usuarios -->
                         <div class="panel panel-primary col-md-12" style="min-width: 700px">
                             <div class="panel-header" align="center">
                                 <h3><b>Usuarios Registrados</b></h3>
@@ -214,7 +223,9 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Crear Usuario -->
                     <div class="col-md-12 col-ms-12" style="margin-bottom: 10px" ng-show="newUser" align="center">
+                        <!-- Barra para mostrar datos de acceso -->
                         <div class="panel panel-success col-md-12" ng-show="datosAcceso">
                             <div class="panel-heading">
                                 <h7 class="panel-tittle">Datos de Acceso</h7>
@@ -224,6 +235,7 @@
                                 Contraseña:&nbsp;<label>{{ user.pass }}</label>
                             </div>
                         </div>
+                        <!-- Formulario -->
                         <div class="col-md-12 col-ms-12">
                             <div class="panel panel-primary" style="align-content:center; max-width: 500px; min-width: 150px">
                                 <div class="panel-header" align="center">
@@ -244,6 +256,7 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Eliminar Usuario -->
                     <div class="col-md-12" ng-show="delUser" style="min-width: 267px">
                         <div class="panel panel-primary">
                             <div>
@@ -259,8 +272,13 @@
                 </div>
             </div>
         </div>
+        <!-- Panel de Estadisticas -->
         <div id="statics" class="tab-pane fade">
             <h3 align="center">Gestión de Estadísticas</h3>
+            <div class="panel panel-primary">
+                <label>Nº de Pois</label>&nbsp;<span class="label label-info"> {{ pois.length }}</span><br>
+                <label>Nº de Pois por Usuario</label>&nbsp;<span class="label label-info"> {{ (pois.length/users.length).toFixed(2) }}</span>
+            </div>
             <div class="panel embed-responsive-item">
                 <div><canvas id="myChart" ng-show="estadistica"></canvas></div>
             </div>
@@ -272,6 +290,7 @@
             </div>
             <button type="button" class="btn btn-primary btn-lg" style="margin: 10px 10px 10px 10px" ng-click="nextStatic()"><b>Siguiente</b></button>
         </div>
+        <!-- Panel de configuración de la cuenta -->
         <div id="account" class="tab-pane fade">
             <div class="col-md-12 panel panel-primary" style="min-width: 300px">
                 <div class="row">
@@ -283,9 +302,9 @@
                     <h3><b>Información del Usuario</b></h3>
                 </div>
                 <div class="panel-body">
-                    Nombre:&nbsp;<label>Manolo</label><br/>
-                    Apellidos:&nbsp;<label>Gimenez Goyo</label><br/>
-                    Email:&nbsp;<label>manolitogoyito@unizar.es</label><br/>
+                    Nombre:&nbsp;<label> {{ userMe.nombre }}</label><br/>
+                    Apellidos:&nbsp;<label>{{ userMe.apellidos }}</label><br/>
+                    Email:&nbsp;<label>{{ userMe.email }}</label><br/>
                 </div>
             </div>
         </div>

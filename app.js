@@ -19,6 +19,7 @@ var chart = require('./routes/chart');
 var admin = require('./routes/admin');
 var user = require('./routes/user');
 var visitante=require('./routes/visitante');
+var me=require('./routes/me');
 
 var app = express();
 
@@ -43,6 +44,7 @@ app.use('/pois/busqueda', busqueda);
 
 app.use('/admin', admin);
 app.use('/chart', chart);
+app.use('/me', me);
 
 app.use('/user', user);
 app.use('/visitante', visitante);

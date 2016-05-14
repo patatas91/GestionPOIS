@@ -192,63 +192,25 @@
 
         <div id="acceso" class="tab-pane fade">
             <div align="left">
-                <div class="panel panel-warning" ng-show="incorrecto">
-                    <div class="panel-heading">
-                        <h7 class="panel-tittle">{{ mensaje }}</h7>
-                    </div>
-                </div>
-                <form class="form-inline" ng-show="loginUser">
-
+                <form class="form-inline">
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" class="form-control" id="email" placeholder="Email" name="email" ng-model="formData.email">
+                        <input type="email" class="form-control" id="email" placeholder="Email">
                     </div>
                     <div class="form-group">
                         <label for="pass">Contraseña</label>
-                        <input type="password" class="form-control" id="pass" placeholder="Password" name="pass" ng-model="formData.pass">
+                        <input type="password" class="form-control" id="pass" placeholder="Password">
                     </div>
-                    <button type="button" class="btn btn-default" ng-click="autentificar()">Acceder</button>
-                    <button type="button" class="btn btn-default" ng-click="createUser()">Registrarse</button>
+                    <button type="submit" class="btn btn-default">Acceder</button>
                 </form>
-                <div class="col-md-12 col-ms-12" style="margin-bottom: 10px" ng-show="newUser" align="center">
-                    <!-- Barra para mostrar datos de acceso -->
-                    <div class="panel panel-success col-md-12" ng-show="datosAcceso">
-                        <div class="panel-heading">
-                            <h7 class="panel-tittle">Datos de Acceso</h7>
-                        </div>
-                        <div class="panel-body">
-                            Usuario:&nbsp;<label>{{ user.nombre }}</label>
-                            Contraseña:&nbsp;<label>{{ user.pass }}</label>
-                        </div>
-                    </div>
-                    <!-- Formulario -->
-                    <div class="col-md-12 col-ms-12">
-                        <div class="panel panel-primary" style="align-content:center; max-width: 500px; min-width: 150px">
-                            <div class="panel-header" align="center">
-                                <h3><b>Nuevo Visitante</b></h3>
-                            </div>
-                            <div class="panel-body" align="center">
-                                <form>
-                                    <label>Nombre:</label>
-                                    <input class="form-control" type="text" name="nombre" ng-model="formData.nombre"/>
-                                    <label>Apellidos:</label>
-                                    <input class="form-control"  type="text" name="apellidos" ng-model="formData.apellidos"/>
-                                    <label>Email:</label>
-                                    <input class="form-control"  type="text" name="email" ng-model="formData.email"/>
-                                    <label for="pass">Contraseña</label>
-                                    <input type="password" class="form-control" id="pass2" placeholder="Password" name="pass" ng-model="formData.pass">
-                                    <button type="submit" class="btn btn-primary btn-md" style="margin: 20px 0px 0px 0px" ng-click="newVisitor()"><b>Crear Perfil</b></button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <a href="/views/registro.html">Registrarse</a>
             </div>
         </div>
     </div>
+
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXKViVY9DuiM75qPiyclDq_wcWZNOpj1Q&callback=initMap">
+    </script>
 </div>
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXKViVY9DuiM75qPiyclDq_wcWZNOpj1Q&callback=initMap">
-</script>
 </body>
 </html>

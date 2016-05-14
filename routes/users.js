@@ -87,6 +87,47 @@ router.post('/', middleware.ensureAuthenticatedAdmin, function(req,res) {
 });
 
 /**
+ * Petición que permite añadir un usuario
+ * Sólo disponible para el administrador.
+ */
+router.post('/visitante', function(req,res) {
+  var response = {};
+  mongoOp.findOne({"email": req.body.email},function(err,data) {
+    if (err) {
+      response = {"error": true, "message": "Error adding user"};
+      res.json(response);
+    } else if(data) { //Si existe ya
+      response = {"error": true, "message": "This email is registred."};
+      res.json(response);
+    } else {
+      //Sino se crea
+      var db = new mongoOp();
+      var password = req.body.pass;
+      db.tipoUser = 1;
+      db.email = req.body.email;
+      db.pass = require('crypto')
+          .createHash('sha1')
+          .update(password)
+          .digest('base64');
+      db.nombre = req.body.nombre;
+      db.apellidos = req.body.apellidos;
+      db.fechaAlta = new Date();
+
+      //Se guarda
+      db.save(function (err) {
+        if (err) {
+          console.log(err);
+          response = {"error": true, "message": "Error adding user"};
+        } else {
+          response = {"error": false, "message": "Se ha añadido correctamente el usuario", "next": "/visitante"};
+        }
+        res.json(response);
+      });
+    }
+  });
+});
+
+/**
  * Petición que devuelve el usuario correspondiente al 'id'
  */
 router.get('/:id', function(req,res){
@@ -100,6 +141,7 @@ router.get('/:id', function(req,res){
     res.json(response);
   });
 });
+
 
 /**
  * Petición que permite modificar el usuario correspondiente al 'id'.

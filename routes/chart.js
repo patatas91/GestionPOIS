@@ -375,14 +375,25 @@ router.get('/pois', middleware.ensureAuthenticatedAdmin, function(req, res) {
 /*
  * Función que devuelve los pois del usuario mejor valorados.
  */
-router.get('/bestpois', function(req, res) {
-
+router.get('/bestpois', middleware.ensureAuthenticatedUser,function(req, res) {
   //Esqueleto de la gráfica
-  var myLineChart = {
+  var myChart ={
     type: 'bar',
-    data: {},
-    options: {}
-  };
+    data: {
+      labels: [],
+      datasets: []
+    },
+    options: {
+      responsive: true,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero:true
+          }
+        }]
+      }
+    }
+  }
 
   var response = {};
   var datos = [];
@@ -390,34 +401,31 @@ router.get('/bestpois', function(req, res) {
   var valoracion = [];
 
   //SE REALIZAN UNA SERIE DE CONSULTAS PARA OBTENER TODOS DATOS QUE HACEN FALTA PARA FORMAR LA GRÁFICA
-  var id_user = "57349ba848d3e577329ac669";
   //.sort({"valoracion": 1}).limit(5)
-  mongoPois.find({"user": id_user}), function(err, data) {
+  var lista;
+  mongoPois.find({"user": req.body.userId},function(err,data){
     if(err) {
       response = {"error" : true,"message" : "Error fetching data"};
     } else {
-      valoracion.push(5);
-    }     
-  }
-  for(var i = 0; i<datos.length; i++) {
-    nombres.push(datos[i].message.nombre);
-    valoracion.push(datos[i].message.valoracion);
-  }
-  //Se añaden los datos recogidos al esqueleto definido anteriormente
-  myLineChart.data = {
-    labels: ["tu madre", "tu vieja", "herny"],
-    datasets: [
-      {
-        label: "Mejores POIS",
-        backgroundColor: "rgba(108,164,232,0.4)",
-        borderColor: "rgba(13,35,62,0.4)",
-        borderWidth: 1,
-        data: valoracion
+      lista = data;
+      for(var i = 0; i<lista.length; i++) {
+        nombres.push(lista[i].nombre);
+        valoracion.push(lista[i].valoracion);
       }
-    ]
-  };
-  response = {"error": false, "message": myLineChart};
-  res.json(response)
+      var sets = [{
+        label: 'POIS Mejor Valorados',
+        data: valoracion,
+        backgroundColor: "#1F775E"
+      }];
+      myChart.data.datasets = sets;
+      myChart.data = {
+        labels: nombres,
+        datasets: sets
+      }
+      response = {"error" : false, "message": myChart}
+    }
+    res.json(response);
+  });
 });
 
 

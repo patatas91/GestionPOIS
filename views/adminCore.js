@@ -3,7 +3,7 @@
  */
 var app = angular.module('adminManager', ['ngCookies']);
 app.controller('mainController', function($rootScope, $scope, $window, $http, $cookies) {
-
+    /* Varibales utilizadas */
     var map;
     $scope.map=true;
     $scope.showpoi=false;
@@ -17,6 +17,7 @@ app.controller('mainController', function($rootScope, $scope, $window, $http, $c
     $scope.estadistica3 = false;
     $scope.numStatic = 0;
 
+    /* Obtener los POIS */
     $http.get('/pois')
         .success(function(data) {
             $scope.pois = data.message;
@@ -25,6 +26,7 @@ app.controller('mainController', function($rootScope, $scope, $window, $http, $c
             console.log('Error: ' + data);
         });
 
+    /*Obtener los Usuarios */
     $http.get('/users')
         .success(function(data) {
             $scope.users = data.message;
@@ -33,6 +35,15 @@ app.controller('mainController', function($rootScope, $scope, $window, $http, $c
             console.log('Error: ' + data);
         });
 
+    $http.get('/me')
+        .success(function(data) {
+            $scope.userMe = data.message;
+        })
+        .error(function(data) {
+            console.log('Error: ' + data);
+        });
+
+    /* Obtener Estadística de Ultmos Accesos */
     $http.get('/chart/ultimosAccesos')
         .success(function(data){
             var ctx = document.getElementById("myChart");
@@ -42,6 +53,7 @@ app.controller('mainController', function($rootScope, $scope, $window, $http, $c
             console.log('Error: ' + data);
         });
 
+    /* Obtener Estadistica de Altas y Bajas */
     $http.get('/chart/altasYbajas')
         .success(function(data){
             var ctx = document.getElementById("myChart2");
@@ -51,6 +63,7 @@ app.controller('mainController', function($rootScope, $scope, $window, $http, $c
             console.log('Error: ' + data);
         });
 
+    /* Obtener estadisticas sobre los POIS */
     $http.get('/chart/pois')
         .success(function(data){
             var ctx = document.getElementById("myChart3");
@@ -60,6 +73,7 @@ app.controller('mainController', function($rootScope, $scope, $window, $http, $c
             console.log('Error: ' + data);
         });
 
+    /* Funcion para pasar a la siguiente estadistica */
     $scope.nextStatic = function(id) {
         if($scope.numStatic == 0){
             $scope.estadistica = false;
@@ -77,6 +91,7 @@ app.controller('mainController', function($rootScope, $scope, $window, $http, $c
 
     }
 
+    /* Función para dejar de mostrar el mapa y mostrar la especificacion de un POI y viceversa*/
     $scope.viewPoi = function(id) {
         if(id != 0){
             $scope.map=false;
@@ -95,6 +110,7 @@ app.controller('mainController', function($rootScope, $scope, $window, $http, $c
         }
     };
 
+    /* Funcion para mostrar la lista de usuarios, el formulario para crear uno o la lista para permitir eliminar Usuarios */
     $scope.viewUser = function(id){
         if(id == 0){
             $scope.listUser=false;
@@ -117,6 +133,7 @@ app.controller('mainController', function($rootScope, $scope, $window, $http, $c
         }
     }
 
+    /* Función que realiza una petición para crear un Usuario */
     $scope.createUser = function() {
         $http.post('/users', $scope.formData)
             .success(function(data) {
@@ -130,11 +147,13 @@ app.controller('mainController', function($rootScope, $scope, $window, $http, $c
             });
     };
 
+    /* Función que cierra sesión (elimina la cookie) */
     $scope.logout = function() {
             $cookies.remove("token");
             $window.location.href= '/login';
     };
 
+    /* Función que hace una petición para eliminar un usuario */
     $scope.deleteUser = function(id) {
         $http.delete('/users/' + id)
             .success(function(data) {
@@ -147,6 +166,7 @@ app.controller('mainController', function($rootScope, $scope, $window, $http, $c
     };
 })
 
+/* Función que inicializa el Mapa */
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 40.4167754, lng: -3.7037901999999576},

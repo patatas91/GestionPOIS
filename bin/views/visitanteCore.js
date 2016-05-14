@@ -67,6 +67,7 @@ function mainController($rootScope, $scope, $window, $http, $cookies) {
     $scope.showlogin=false;
     $scope.latitud;
     $scope.longitud;
+    $scope.incorrecto = false;
 
     $http.get('/pois')
         .success(function(data) {
@@ -90,6 +91,26 @@ function mainController($rootScope, $scope, $window, $http, $cookies) {
             }
         });
     };
+
+    /* Auntentifica un Usuario */
+    $scope.autentificar = function() {
+        console.log("autentificando")
+        $http.post('/auth', $scope.formData)
+            .success(function(data) {
+                if(data.error == false){
+                    $scope.incorrecto = false;
+                    $scope.formData = {};
+                    $window.location.href= data.next;
+                } else{
+                    $scope.incorrecto = true;
+                }
+
+            })
+            .error(function(data) {
+                console.log('Error: ' + data);
+            });
+    };
+
     /* CAMBIA LISTA Y VISTA DE UN POI */
     $scope.viewPoi = function(id) {
         if($scope.showlista){
