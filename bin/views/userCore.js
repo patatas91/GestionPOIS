@@ -6,17 +6,24 @@ angular.module('userManager',[],function($locationProvider){
 });
 
 var map;
-//var map2;
 var markers = [];
 var markersUltimo = [];
 var lista = [];
-//var listaPois = [];
-//var markersBuscar = [];
 var directionsDisplay;
 var id_user = "57349ba848d3e577329ac669";
+var myChart;
+var myChart2;
+var myChart3;
+var myChart4;
+var myChart5;
 
+
+/**
+ * Muestra un POI en el mapa
+ * @param lat
+ * @param long
+ */
 function setMarkers(lat, long) {
-    // Loop through markers and set map to null for each
     for (var i=0; i<markers.length; i++) {
         markers[i].setMap(null);
     }
@@ -30,17 +37,28 @@ function setMarkers(lat, long) {
     markersUltimo.push(marker);
 }
 
+/**
+ * Cambia el zoom del mapa y se centra en un POI
+ * @param lat
+ * @param long
+ * @param zoom
+ */
 function focusPoi(lat, long, zoom) {
-    //map.setCenter(new google.maps.LatLng(lat, long));
     map.panTo(new google.maps.LatLng(lat, long));
     map.setZoom(zoom);
 }
 
+/**
+ * Resetea el focus del mapa
+ */
 function resetfocus() {
     map.panTo(new google.maps.LatLng(40.46366700000001, -3.7492200000000366));
     map.setZoom(6);
 }
 
+/**
+ * Actualiza los markers en el mapa
+ */
 function reloadMarkers() {
     for(i=0;i<markersUltimo.length;i++) {
         markersUltimo[i].setMap(null);
@@ -74,7 +92,10 @@ function reloadMarkers() {
     });
 }
 
-/* MUESTRA LA RUTA ENTRE 2 PUNTOS */
+/**
+ * Mustra la ruta entre N puntos
+ * @param lista
+ */
 function displayRoute(lista) {
 
     for(i=0;i<markersUltimo.length;i++) {
@@ -97,20 +118,20 @@ function displayRoute(lista) {
     var start = new google.maps.LatLng(lista[0], lista[1]);
 
     /*
-    var waypts = [];
+     var waypts = [];
 
-    for(i=2;i<lista.length;i+2) {
-        if(lista.length>4) {
-            stop = new google.maps.LatLng(lista[i], lista[i+1])
-            waypts.push({
-                location: stop,
-                stopover: true
-            });
-        } else {
-            var end = new google.maps.LatLng(lista[lista.length-1], lista[lista.length]);
-        }
-    }
-    */
+     for(i=2;i<lista.length;i+2) {
+     if(lista.length>4) {
+     stop = new google.maps.LatLng(lista[i], lista[i+1])
+     waypts.push({
+     location: stop,
+     stopover: true
+     });
+     } else {
+     var end = new google.maps.LatLng(lista[lista.length-1], lista[lista.length]);
+     }
+     }
+     */
 
     var end = new google.maps.LatLng(lista[sizeLista-2], lista[sizeLista-1]);
 
@@ -128,27 +149,6 @@ function displayRoute(lista) {
         }
     });
 }
-
-/*
- function reloadMarkersBuscar(lat, long) {
-
- for(i=0;i<markersBuscar.length;i++) {
- markersBuscar[i].setMap(null);
- }
-
- markersBuscar = [];
-
- var marker = new google.maps.Marker({
- position: {lat: lat, lng: long},
- map: map2,
- animation: google.maps.Animation.DROP,
- });
- // Push marker to markers array
- markersBuscar.push(marker);
- map2.panTo(new google.maps.LatLng(lat, long));
- map2.setZoom(12);
- }
- */
 
 function mainController($scope, $http) {
     // when landing on the page, get all todos and show them
@@ -178,7 +178,7 @@ function mainController($scope, $http) {
 
     $http.get('/rutas')
         .success(function(data) {
-            $scope.rutas = data.message;            
+            $scope.rutas = data.message;
         })
         .error(function(data) {
             console.log('Error: ' + data);
@@ -195,20 +195,107 @@ function mainController($scope, $http) {
     $http.get('/chart/bestpois')
         .success(function(data){
             var ctx = document.getElementById("myChart");
-            var myChart = new Chart(ctx,data.message);
+            myChart = new Chart(ctx,data.message);
         })
         .error(function(data){
             console.log('Error: ' + data);
         });
 
-    
+    $http.get('/chart/bestroutes')
+        .success(function(data){
+            var ctx = document.getElementById("myChart2");
+            myChart2 = new Chart(ctx,data.message);
+        })
+        .error(function(data){
+            console.log('Error: ' + data);
+        });
 
+    $http.get('/chart/bestusers')
+        .success(function(data){
+            var ctx = document.getElementById("myChart3");
+            myChart3 = new Chart(ctx,data.message);
+        })
+        .error(function(data){
+            console.log('Error: ' + data);
+        });
+
+    $http.get('/chart/lastpois')
+        .success(function(data){
+            var ctx = document.getElementById("myChart4");
+            myChart4 = new Chart(ctx,data.message);
+        })
+        .error(function(data){
+            console.log('Error: ' + data);
+        });
+
+    $http.get('/chart/lastroutes')
+        .success(function(data){
+            var ctx = document.getElementById("myChart5");
+            myChart5 = new Chart(ctx,data.message);
+        })
+        .error(function(data){
+            console.log('Error: ' + data);
+        });
+
+    /**
+     * Actualiza los charts
+     */
+    $scope.refreshStats = function() {
+        myChart.destroy();
+        $http.get('/chart/bestpois')
+            .success(function(data){
+                var ctx = document.getElementById("myChart");
+                myChart = new Chart(ctx,data.message);
+            })
+            .error(function(data){
+                console.log('Error: ' + data);
+            });
+        myChart2.destroy();
+        $http.get('/chart/bestroutes')
+            .success(function(data){
+                var ctx = document.getElementById("myChart2");
+                myChart2 = new Chart(ctx,data.message);
+            })
+            .error(function(data){
+                console.log('Error: ' + data);
+            });
+        myChart3.destroy();
+        $http.get('/chart/bestusers')
+            .success(function(data){
+                var ctx = document.getElementById("myChart3");
+                myChart3 = new Chart(ctx,data.message);
+            })
+            .error(function(data){
+                console.log('Error: ' + data);
+            });
+        myChart4.destroy();
+        $http.get('/chart/lastpois')
+            .success(function(data){
+                var ctx = document.getElementById("myChart4");
+                myChart4 = new Chart(ctx,data.message);
+            })
+            .error(function(data){
+                console.log('Error: ' + data);
+            });
+        myChart5.destroy();
+        $http.get('/chart/lastroutes')
+            .success(function(data){
+                var ctx = document.getElementById("myChart5");
+                myChart5 = new Chart(ctx,data.message);
+            })
+            .error(function(data){
+                console.log('Error: ' + data);
+            });
+    }
+    
     $scope.logout = function() {
         //$cookies.remove("token");
         //$window.location.href= '/login';
     };
 
-    /* CAMBIA A VISTA POIS */
+    /**
+     * Cambia a vista POIs
+     */
     $scope.changePois = function() {
         $scope.cabeceraPois=true;
         $scope.cabeceraRutas=false;
@@ -216,10 +303,11 @@ function mainController($scope, $http) {
         $scope.showlista=true;
         $scope.showlistaruta=false;
         $scope.showruta=false;
-        // RESET MAP
     }
 
-    /* CAMBIA A VISTA RUTAS */
+    /**
+     * Cambia a vista rutas
+     */
     $scope.changeRoutes = function() {
         $scope.cabeceraRutas=true;
         $scope.cabeceraPois=false;
@@ -227,32 +315,34 @@ function mainController($scope, $http) {
         $scope.showlista=false;
         $scope.showlistaruta=true;
         $scope.showruta=false;
-        //displayRoute();
-        //RESET MAP
     }
 
-    /* DEVUELVE LAS COORDENADAS DE UNA DIRECCION */
+    /**
+     * Devuelve las coordenadas de una direccion
+     * @param address
+     */
     $scope.sacarDir = function(address) {
         geocoder = new google.maps.Geocoder();
         geocoder.geocode( { 'address': address}, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
-                //reloadMarkersBuscar(results[0].geometry.location.lat(), results[0].geometry.location.lng());
                 $scope.latitud=results[0].geometry.location.lat();
                 $scope.longitud=results[0].geometry.location.lng();
-                //alert(results[0].geometry.location.lat()+'-'+results[0].geometry.location.lng());
             } else {
                 alert('Debe introducir una direccion');
             }
         });
     };
 
-    /* CAMBIA LISTA Y VISTA DE UN POI */
+    /**
+     * Cambia lista y vista de un POI
+     * @param id
+     */
     $scope.viewPoi = function(id) {
         if($scope.showlista){
             $scope.showlista=false;
             $http.get('/pois/'+id)
                 .success(function(data){
-                    $scope.mypoi=data.message;                    
+                    $scope.mypoi=data.message;
                     //
                     setMarkers(data.message.latitud, data.message.longitud);
                     focusPoi(data.message.latitud, data.message.longitud, 18);
@@ -270,7 +360,10 @@ function mainController($scope, $http) {
         }
     };
 
-    /* CAMBIA LISTA Y VISTA DE UNA RUTA */
+    /**
+     * Cambia lista y vista de una ruta
+     * @param id
+     */
     $scope.viewRuta = function(id) {
         if($scope.showlistaruta){
             $scope.showlistaruta=false;
@@ -285,7 +378,7 @@ function mainController($scope, $http) {
                     var start=0;
                     var end=0;
                     //for(i=0;i<tablaPois.length;i++) {
-                      //  count=i;
+                    //  count=i;
                     //}
                     //NUMERO DE POIS
                     $scope.numPois=sizeTabla;
@@ -313,24 +406,24 @@ function mainController($scope, $http) {
                             console.log('Error: '+ data);
                         });
                     /*
-                    for(i=0;i<tablaPois.length;i++) {
-                        $http.get('/pois/'+tablaPois[i])
-                            .success(function(data){
-                                $scope.inicio=data.message;
-                                //start=new google.maps.LatLng(data.message.latitud, data.message.longitud);
-                                lista.push(data.message.latitud);
-                                lista.push(data.message.longitud);
-                            })
-                            .error(function(data){
-                                console.log('Error: '+ data);
-                            });
-                    }*/
+                     for(i=0;i<tablaPois.length;i++) {
+                     $http.get('/pois/'+tablaPois[i])
+                     .success(function(data){
+                     $scope.inicio=data.message;
+                     //start=new google.maps.LatLng(data.message.latitud, data.message.longitud);
+                     lista.push(data.message.latitud);
+                     lista.push(data.message.longitud);
+                     })
+                     .error(function(data){
+                     console.log('Error: '+ data);
+                     });
+                     }*/
                     //displayRoute();
                     displayRoute(lista);
                 })
                 .error(function(data){
                     console.log('Error: '+ data);
-                });            
+                });
             $scope.showruta=true;
         }
         else{
@@ -341,7 +434,9 @@ function mainController($scope, $http) {
         }
     };
 
-    /* AÑADIR UN NUEVO POI */
+    /**
+     * Añadir un nuevo POI
+     */
     $scope.addPoi = function() {
         var r = confirm('¿Desea añadir el nuevo Poi?');
         if(r==true) {
@@ -365,7 +460,10 @@ function mainController($scope, $http) {
         }
     };
 
-    /* ELIMINAR UN POI */
+    /**
+     * Eliminar un POI
+     * @param id
+     */
     $scope.deletePoi = function(id) {
         var r = confirm('¿Desea eliminar el Poi seleccionado?');
         if(r==true) {
@@ -382,7 +480,10 @@ function mainController($scope, $http) {
         }
     };
 
-    /* DUPLICAR UN POI */
+    /**
+     * Duplicar un POI
+     * @param id
+     */
     $scope.duplicatePoi = function(id) {
         var r = confirm('¿Desea duplicar el Poi seleccionado?');
         if(r==true) {
@@ -408,7 +509,10 @@ function mainController($scope, $http) {
         }
     };
 
-    /* EDITAR UN POI */
+    /**
+     * Editar un POI
+     * @param id
+     */
     $scope.editPoi = function(id) {
         var r = confirm('¿Desea editar el Poi seleccionado?');
         if(r==true) {
@@ -432,6 +536,11 @@ function mainController($scope, $http) {
         $scope.edicion=false;
     };
 
+    /**
+     * Muestra / Oculta la parte de edicion de un POI
+     * @param op
+     * @param id
+     */
     $scope.showEdit = function(op, id) {
         if(op==1){
             $http.get('/pois/'+id)
@@ -451,7 +560,10 @@ function mainController($scope, $http) {
         }
     };
 
-    /* CAMBIA LISTA Y VISTA DE UN POI */
+    /**
+     * Cambia lista y vista de una ruta
+     * @param id
+     */
     $scope.viewPoiRuta = function(id) {
         if($scope.listaPoisRuta){
             $scope.listaPoisRuta=false;
@@ -471,7 +583,9 @@ function mainController($scope, $http) {
         }
     };
 
-    /* AÑADIR UNA NUEVA RUTA */
+    /**
+     * Añadir una nueva ruta
+     */
     $scope.addRoute = function() {
         var r = confirm('¿Desea añadir la nueva ruta?');
         if(r==true) {
@@ -494,7 +608,10 @@ function mainController($scope, $http) {
         }
     };
 
-    /* ELIMINAR UNA RUTA */
+    /**
+     * Eliminar una ruta
+     * @param id
+     */
     $scope.deleteRuta = function(id) {
         var r = confirm('¿Desea eliminar la ruta seleccionada?');
         if(r==true) {
@@ -511,7 +628,10 @@ function mainController($scope, $http) {
         }
     };
 
-    /* DUPLICAR UNA RUTA */
+    /**
+     * Duplicar una ruta
+     * @param id
+     */
     $scope.duplicateRuta = function(id) {
         var r = confirm('¿Desea duplicar la ruta seleccionado?');
         if(r==true) {
@@ -537,7 +657,10 @@ function mainController($scope, $http) {
         }
     };
 
-    /* EDITAR UNA RUTA */
+    /**
+     * Editar una ruta
+     * @param id
+     */
     $scope.editRuta = function(id) {
         var r = confirm('¿Desea editar la ruta seleccionado?');
         if(r==true) {
@@ -561,6 +684,11 @@ function mainController($scope, $http) {
         $scope.edicionRuta=false;
     };
 
+    /**
+     * Muestra / Oculta la parte de edicion de una ruta
+     * @param op
+     * @param id
+     */
     $scope.showEditRuta = function(op, id) {
         if(op==1){
             $http.get('/rutas/'+id)
@@ -580,16 +708,25 @@ function mainController($scope, $http) {
         }
     };
 
-    /* EDITAR UN USUARIO */
+    /**
+     * Editar un usuario
+     */
     $scope.editUser = function() {
         var r = confirm('¿Desea editar su cuenta?');
-        if(r==true) {        
+        if(r==true) {
             if($scope.formData.pass == $scope.formData.pass2) {
                 $http.put('/users/' + id_user, $scope.formData)
                     .success(function(data) {
                         $scope.formData = {};
                         $scope.user = data.message;
                         alert('Usuario editado correctamente');
+                        $http.get('/users/'+id_user)
+                            .success(function(data){
+                                $scope.user=data.message;
+                            })
+                            .error(function(data){
+                                console.log('Error: '+ data);
+                            });
                     })
                     .error(function(data) {
                         console.log('Error: ' + data);
@@ -598,31 +735,13 @@ function mainController($scope, $http) {
             } else {
                 alert('¡Las contraseñas no coinciden!');
             }
-        }        
-    };
-    
-    $scope.calculateDistance = function() {
-        var totalDistance = 0;
-        var partialDistance = [];
-        partialDistance.length = $scope.markers.length - 1;
-
-        for(var i = 0; i < partialDistance.length; i++){
-            var p1 = $scope.markers[i];
-            var p2 = $scope.markers[i+1];
-
-            var R = 6378137; // Earth’s mean radius in meter
-            var dLat = $scope.rad(p2.position.lat() - p1.position.lat());
-            var dLong = $scope.rad(p2.position.lng() - p1.position.lng());
-            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos($scope.rad(p1.position.lat())) * Math.cos($scope.rad(p2.position.lat())) *
-                Math.sin(dLong / 2) * Math.sin(dLong / 2);
-            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            totalDistance += R * c / 1000; //distance in Km
-            partialDistance[i] = R * c / 1000;
         }
-    }
+    };
 }
 
+/**
+ * Inicializa el mapa
+ */
 function initMap() {
     var mapOptions = {
         center: new google.maps.LatLng(40.4167754,-3.7492200000000366),
@@ -634,13 +753,6 @@ function initMap() {
     directionsService = new google.maps.DirectionsService();
     map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
 
-    /*
-     map2 = new google.maps.Map(document.getElementById('map_canvas2'), {
-     center: {lat: 40.46366700000001, lng: -3.7492200000000366},
-     zoom: 6
-     });
-     */
-
     $.get('/pois', function(res){
         var message=res.message;
         if(!res.error){
@@ -651,13 +763,10 @@ function initMap() {
                     animation: google.maps.Animation.DROP,
                     title: message[i].nombre
                 });
-                // Push marker to markers array
                 markers.push(marker);
             }
         }
     });
-    //setMarkers(markers);
 }
-
 
 
