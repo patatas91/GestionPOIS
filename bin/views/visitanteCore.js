@@ -1,3 +1,4 @@
+
 /**
  * Created by diego on 29/04/2016.
  */
@@ -7,18 +8,20 @@ angular.module('visitanteManager',[],function($locationProvider){
 
 var map;
 var markers = [];
-var markersUltimo = [];
+var markersBusqueda = [];
 
 function setMarkers(lat, long) {
-
-
+    for(i=0;i<markers.length;i++) {
+        markers[i].setMap(null);
+    }
+    var point = new google.maps.LatLng(lat,long);
     var marker = new google.maps.Marker({
-        position: {lat: lat, lng: long},
+        position: point,
         map: map,
         animation: google.maps.Animation.DROP
     });
 
-    markersUltimo.push(marker);
+    markersBusqueda.push(marker);
 }
 
 function focusPoi(lat, long, zoom) {
@@ -33,20 +36,23 @@ function resetfocus() {
 }
 
 function reloadMarkers() {
-    for(i=0;i<markersUltimo.length;i++) {
-        markersUltimo[i].setMap(null);
+    for(i=0;i<markersBusqueda.length;i++) {
+        markersBusqueda[i].setMap(null);
     }
-
+    for(i=0;i<markers.length;i++) {
+        markers[i].setMap(null);
+    }
     // Reset the markers array
-    markersUltimo = [];
+    markersBusqueda = [];
     markers = [];
 
     $.get('/pois', function(res){
         var message=res.message;
         if(!res.error){
             for(i=0;i<message.length;i++){
+                var point = new google.maps.LatLng(message[i].latitud,message[i].longitud);
                 var marker = new google.maps.Marker({
-                    position: {lat: message[i].latitud, lng: message[i].longitud},
+                    position: point,
                     map: map,
                     animation: google.maps.Animation.DROP,
                     title: message[i].nombre
@@ -134,27 +140,34 @@ function mainController($scope, $http) {
     };
 
     $scope.find = function() {
-
             //$scope.pois=[];
+        for(i=0;i<markersBusqueda.length;i++) {
+            markersBusqueda[i].setMap(null);
+        }
+
+        // Reset the markers array
+        markersBusqueda = [];
             $scope.showlista=false;
             $http.get('/pois/busqueda/'+$scope.formData.word).success(function(data){
                     $scope.formData = {};
                     $scope.pois=data.message;
+
                     var message=data.message;
                         // Loop through markers and set map to null for each
                         for (var i=0; i<markers.length; i++) {
                             markers[i].setMap(null);
                         }
-                        markers = [];
+                        //markers = [];
                         for(i=0;i<message.length;i++){
+                            var point = new google.maps.LatLng(message[i].latitud,message[i].longitud);
                             var marker = new google.maps.Marker({
-                                position: {lat: message[i].latitud, lng: message[i].longitud},
+                                position: point,
                                 map: map,
                                 animation: google.maps.Animation.DROP,
                                 title: message[i].nombre
                             });
-                            markers.push(marker);
-                            setMarkers(message[i].latitud, message[i].longitud);
+                            markersBusqueda.push(marker);
+                            //setMarkers(message[i].latitud, message[i].longitud);
                         }
 
                 }).error(function(data){
@@ -223,6 +236,4 @@ function initMap() {
     });
     setMarkers(markers);
 }
-
-
 
