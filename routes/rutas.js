@@ -45,6 +45,7 @@ router.post('/', function(req,res) {
     db.user = req.body.user;
     db.descripcion = req.body.descripcion;
     db.pois = req.body.pois;
+    db.fecha = new Date();
 
     db.save(function (err) {
         if (err) {

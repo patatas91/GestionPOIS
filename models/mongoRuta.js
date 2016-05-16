@@ -12,7 +12,8 @@ var rutaSchema = new Schema({
     "descripcion": String,
     "user": { type: Schema.Types.ObjectId, ref: 'userSchema' },
     "pois": [{ type: Schema.Types.ObjectId, ref: 'poiSchema' }],
-    "recomendaciones": { type: Number, default: 0 }
+    "recomendaciones": { type: Number, default: 0 },
+    "fecha": Date
 });
 
 // create model if not exists.

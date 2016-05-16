@@ -43,7 +43,7 @@ router.post('/', function(req,res){
     //DATOS obligatorios
     db.user = req.body.user;
     db.nombre = req.body.nombre;
-    db.fecha = new Date() - 1000 * 60 *60 *24*20;
+    db.fecha = new Date();
     db.latitud = req.body.latitud;
     db.longitud = req.body.longitud;
     //DATOS opcionales
@@ -161,7 +161,7 @@ router.put('/:id/votar', function(req,res){
             if(req.body.valoracion !== undefined && req.body.valoracion >= 0 && req.body.valoracion <= 5) {
                 // case where password needs to be updated
                 data.numVotantes = data.numVotantes + 1;
-                data.valoracion = data.valoracion + req.body.valoracion;
+                data.valoracion = data.valoracion + Number(req.body.valoracion);
                 data.save(function(err){
                     if(err) {
                         response = {"error" : true,"message" : "Error updating data"};
