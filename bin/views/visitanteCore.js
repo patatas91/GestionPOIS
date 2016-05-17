@@ -75,7 +75,10 @@ function mainController($scope, $http) {
     $scope.showregistro=true;
     $scope.showlogout=false;
     $scope.showoptions=false;
-
+    $scope.cabeceraPois=true;
+    $scope.cabeceraRutas=false;
+    $scope.showlistaruta=false;
+    $scope.showruta=false;
 
     $http.get('/pois')
         .success(function(data) {
@@ -85,6 +88,29 @@ function mainController($scope, $http) {
             console.log('Error: ' + data);
         });
 
+    /**
+     * Cambia a vista POIs
+     */
+    $scope.changePois = function() {
+        $scope.cabeceraPois=true;
+        $scope.cabeceraRutas=false;
+        $scope.showpoi=false;
+        $scope.showlista=true;
+        $scope.showlistaruta=false;
+        $scope.showruta=false;
+    }
+
+    /**
+     * Cambia a vista rutas
+     */
+    $scope.changeRoutes = function() {
+        $scope.cabeceraRutas=true;
+        $scope.cabeceraPois=false;
+        $scope.showpoi=false;
+        $scope.showlista=false;
+        $scope.showlistaruta=true;
+        $scope.showruta=false;
+    }
     /* DEVUELVE LAS COORDENADAS DE UNA DIRECCION */
     $scope.sacarDir = function(address) {
         geocoder = new google.maps.Geocoder();

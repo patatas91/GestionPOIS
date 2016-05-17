@@ -104,7 +104,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li role="presentation" class="active"><a data-toggle="pill" href="#pois" onclick="$('.alert').hide()">
-                        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>&nbsp;POIS<span class="sr-only">(current)</span></a></li>
+                        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>&nbsp;Mapa<span class="sr-only">(current)</span></a></li>
                     <li role="presentation"><a data-toggle="pill" href="#rutas" onclick="$('.alert').hide()"><span class="glyphicon glyphicon-road" aria-hidden="true"></span>&nbsp;Rutas</a></li>
                     <li role="presentation"><a data-toggle="pill" href="#acceso" onclick="$('.alert').hide()"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;Acceso</a></li>
                     <form class="navbar-form navbar-left" role="search">
@@ -124,6 +124,15 @@
         </div>
         <div id="pois" class="tab-pane fade in active">
             <div class="panel-body">
+                <div class="btn-group btn-group-justified">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success" ng-click="changePois()">POIS&nbsp;<span class="label label-info">{{pois.length}}</span></button>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-warning" ng-click="changeRoutes()">Rutas&nbsp;<span class="label label-info">{{rutas.length}}</span></button>
+                    </div>
+                </div>
+                <br>
                 <div class="row">
                     <div class="col-md-8">
                         <div >
@@ -175,6 +184,33 @@
                                     </div>
                                     <input type="button" class="btn btn-primary btn-lg btn-block" value="Volver" ng-click="viewPoi(0)" onclick="$('.alert').hide()">
                                 </div>
+                                <!-- PANEL INFO RUTA -->
+                                <div ng-show="showruta">
+                                    <div class="panel panel-primary embed-responsive-item" style="margin-bottom: 10px">
+                                        <div class="panel-header" align="center">
+                                            <h3> {{ myruta.nombre}} </h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <b>Descripción:</b> <p>{{ myruta.descripcion }}</p><br/>
+                                            <b>Numero de POIS: </b>{{ numPois }}<br/>
+                                            <br>
+                                            <b>POI inicio:</b><br/>
+                                            <ul>
+                                                <li type="circle"><b>Nombre: </b>{{ inicio.nombre }}</li>
+                                                <li type="circle"><b>Latitud: </b>{{ inicio.latitud }}</li>
+                                                <li type="circle"><b>Longitud: </b>{{ inicio.longitud }}</li>
+                                            </ul>
+                                            <br/>
+                                            <b>POI final:</b><br/>
+                                            <ul>
+                                                <li type="circle"><b>Nombre: </b>{{ final.nombre }}</li>
+                                                <li type="circle"><b>Latitud: </b>{{ final.latitud }}</li>
+                                                <li type="circle"><b>Longitud: </b>{{ final.longitud }}</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <input type="button" class="btn btn-primary btn-lg btn-block" value="Volver" ng-click="viewRuta(0)">
+                                </div>
                                 <!-- LISTA POI -->
                                 <div ng-show="showlista" class="table-responsive">
                                     <table class="table table-striped header-fixed">
@@ -186,6 +222,21 @@
                                         <tbody style="height: 435px">
                                         <tr ng-repeat="poi in pois">
                                             <td>{{ poi.nombre }} &nbsp;&nbsp;<input type="button" class="btn btn-primary btn-sm pull-right" value="Info" ng-click="viewPoi(poi._id)"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- LISTA RUTAS -->
+                                <div ng-show="showlistaruta" class="table-responsive">
+                                    <table class="table table-striped header-fixed">
+                                        <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody style="height: 435px">
+                                        <tr ng-repeat="ruta in rutas">
+                                            <td>{{ ruta.nombre }} &nbsp;&nbsp;<input type="button" class="btn btn-primary btn-sm pull-right" value="Info" ng-click="viewRuta(ruta._id)"></td>
                                         </tr>
                                         </tbody>
                                     </table>
