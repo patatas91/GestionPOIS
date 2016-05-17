@@ -108,45 +108,39 @@ function displayRoute(lista) {
     // Reset the markers array
     markersUltimo = [];
     markers = [];
-    var sizeLista = lista.length;
 
 
-    //directionsDisplay = new google.maps.DirectionsRenderer();// also, constructor can get "DirectionsRendererOptions" object
+    directionsDisplay = new google.maps.DirectionsRenderer();// also, constructor can get "DirectionsRendererOptions" object
     directionsDisplay.setMap(map); // map should be already initialized.
 
-    //var start = new google.maps.LatLng(41.6488226, -0.88908530000003);
-    //var end = new google.maps.LatLng(41.3850639, 2.1734034999999494);
-    var start = new google.maps.LatLng(lista[0], lista[1]);
+    var aux = lista[0];
+    var start = new google.maps.LatLng(aux[0], aux[1]);
 
-    /*
-     var waypts = [];
+    var waypts = [];
 
-     for(i=2;i<lista.length;i+2) {
-     if(lista.length>4) {
-     stop = new google.maps.LatLng(lista[i], lista[i+1])
-     waypts.push({
-     location: stop,
-     stopover: true
-     });
-     } else {
-     var end = new google.maps.LatLng(lista[lista.length-1], lista[lista.length]);
+    for(var i = 1; i<lista.length-1; i++){
+         aux = lista[i];
+         var stop = new google.maps.LatLng(aux[0], aux[1]);
+         waypts.push({
+            location: stop,
+            stopover: true
+         });
      }
-     }
-     */
-
-    var end = new google.maps.LatLng(lista[sizeLista-2], lista[sizeLista-1]);
+    aux = lista[lista.length-1];
+    var end = new google.maps.LatLng(aux[0], aux[1]);
 
     var request = {
         origin : start,
         destination : end,
-        //waypoints: waypts,
-        //optimizeWaypoints: true,
+        waypoints: waypts,
+        optimizeWaypoints: true,
         travelMode : google.maps.TravelMode.DRIVING
     };
     var directionsService = new google.maps.DirectionsService();
     directionsService.route(request, function(response, status) {
         if (status == google.maps.DirectionsStatus.OK) {
             directionsDisplay.setDirections(response);
+            var route = response.routes[0];
         }
     });
 }
@@ -366,72 +360,48 @@ function mainController($scope, $http) {
     };
 
     /**
+     * Función para obtener las coordenadas de los diferentes puntos de la ruta
+     */
+    function obtenerPoi(lista, contador, resultado){
+        if(contador < lista.length){
+            $http.get('/pois/' + lista[contador])
+                .success(function(data){
+                    if(contador == 0){
+                        $scope.inicio = data.message;
+                    } else if (contador == lista.length -1){
+                        $scope.final = data.message;
+                    }
+                    var punto = [data.message.latitud, data.message.longitud];
+                    resultado.push(punto);
+                    obtenerPoi(lista, contador + 1, resultado);
+                })
+                .error(function(data){
+                    console.log('Error: ' + data);
+                });
+        } else{
+            displayRoute(resultado);
+        }
+    }
+
+    /**
      * Cambia lista y vista de una ruta
      * @param id
      */
     $scope.viewRuta = function(id) {
-        if($scope.showlistaruta){
-            $scope.showlistaruta=false;
+        if($scope.showlistaruta){  //Muestra la ruta
             $http.get('/rutas/'+id)
                 .success(function(data){
                     $scope.myruta=data.message;
-                    var tablaPois= [];
-
-                    //TABLA CON LOS POIS DE LA RUTA
-                    tablaPois=data.message.pois;
-                    var sizeTabla = tablaPois.length;
-
-                    var start=0;
-                    var end=0;
-
-                    //NUMERO DE POIS
-                    $scope.numPois=sizeTabla;
-
-                    //DATOS POIS
-                    $http.get('/pois/'+tablaPois[0])
-                        .success(function(data){
-                            $scope.inicio=data.message;
-                            //start=new google.maps.LatLng(data.message.latitud, data.message.longitud);
-                            lista.push(data.message.latitud);
-                            lista.push(data.message.longitud);
-                        })
-                        .error(function(data){
-                            console.log('Error: '+ data);
-                        });
-                    $http.get('/pois/'+tablaPois[sizeTabla-1])
-                        .success(function(data){
-                            $scope.final=data.message;
-                            //end=new google.maps.LatLng(data.message.latitud, data.message.longitud);
-                            lista.push(data.message.latitud);
-                            lista.push(data.message.longitud);
-                        })
-                        .error(function(data){
-                            console.log('Error: '+ data);
-                        });
-                    /*
-                     for(i=0;i<tablaPois.length;i++) {
-                     $http.get('/pois/'+tablaPois[i])
-                     .success(function(data){
-                     $scope.inicio=data.message;
-                     //start=new google.maps.LatLng(data.message.latitud, data.message.longitud);
-                     lista.push(data.message.latitud);
-                     lista.push(data.message.longitud);
-                     })
-                     .error(function(data){
-                     console.log('Error: '+ data);
-                     });
-                     }*/
-                    //displayRoute();
-                    displayRoute(lista);
+                    obtenerPoi(data.message.pois,0, []);
+                    $scope.showlistaruta=false;
+                    $scope.showruta = true;
                 })
                 .error(function(data){
                     console.log('Error: '+ data);
                 });
-            $scope.showruta=true;
-        }
-        else{
+        } else{ //Se vuelve al mapa con los pois
             reloadMarkers();
-            resetfocus();            
+            resetfocus();
             $scope.showruta=false;
             $scope.showlistaruta=true;
         }
