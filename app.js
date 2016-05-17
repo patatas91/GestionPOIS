@@ -36,7 +36,7 @@ app.use('/', routes);
 app.use('/login', routes);
 app.use('/users', users);
 app.use('/users/registro', registro);
-app.use('/users/visitantes', visitantes);
+app.use('/users/visitante', visitantes);
 app.use('/rutas', rutas);
 app.use('/pois', pois);
 app.use('/pois/busqueda', busqueda);

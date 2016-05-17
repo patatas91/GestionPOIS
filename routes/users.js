@@ -243,7 +243,7 @@ function generar() {
 router.post('/registro', function(req,res) {
   var db = new mongoOp();
   var response = {};
-  mongoOp.findOne({"email": req.body.email},function(err,data) {
+  mongoOp.findOne({email: req.body.mail},function(err,data) {
     if (err) {
       response = {"error": true, "message": "Error adding user"};
       res.json(response);
@@ -252,10 +252,10 @@ router.post('/registro', function(req,res) {
       //Se encripta la contraseña
       var password = require('crypto')
           .createHash('sha1')
-          .update(req.body.pass)
+          .update(String(req.body.pass))
           .digest('base64');
       //Se comprueba si existe el usuario
-      userMongo.findOne({email: req.body.email, pass: password}, function(err, user) {
+      mongoOp.findOne({email: req.body.email, pass: password}, function(err, user) {
         if (err) {
           res.json({
             error: true,
@@ -294,18 +294,15 @@ router.post('/registro', function(req,res) {
           }
         }
       });
-
-
     } else {
       //Sino se crea
       var db = new mongoOp();
       db.tipoUser=2;
-      db.email = req.body.email;
+      db.email = req.body.mail;
       db.pass = require('crypto')
           .createHash('sha1')
-          .update(req.body.pass)
+          .update(String(req.body.pass))
           .digest('base64');
-      db.fechaAlta = new Date();
 
       //Se guarda
       db.save(function (err) {
@@ -314,16 +311,46 @@ router.post('/registro', function(req,res) {
           response = {"error": true, "message": "Error adding user"};
           res.json(response);
         } else {
-          mongoOp.find({"tipoUser": 2},function(err,data){
-            if(err) {
-              response = {"error" : true,"message" : "Error fetching data"};
+          //Se comprueba si existe el usuario
+          mongoOp.findOne({email: req.body.email, pass: password}, function(err, user) {
+            if (err) {
+              res.json({
+                error: true,
+                message: "Error occured"
+              });
             } else {
-              db.pass=password;
-              response = {"error": false, "message": data, "user": db};
+              //Si existe se le asigna un token de acceso y se redirige a su página principal de acuerdo a su rango
+              if (user) {
+                var token = jwt.sign(user, config.secret, {
+                  expiresIn: 600 // expires in 24 hours
+                });
+                var next;
+                if(user.tipoUser == 0){
+                  next = '/admin';
+                } else if (user.tipoUser == 1){
+                  next = '/user';
+                } else{
+                  next = '/visitante';
+                }
+                //Respuesta con cookie
+                res.header(
+                    {
+                      'Set-Cookie': 'token='+token ,
+                      'Content-Type': 'text/html'
+                    }).json({
+                  error: false,
+                  next: next,
+                  message: "Se ha autentificado correctamente"
+                });
+                res.end();
+              } else {
+                res.json({
+                  error: true,
+                  message: "Incorrect email/password"
+                });
+              }
             }
-            res.json(response);
           });
-
         }
       });
     }

@@ -72,6 +72,13 @@ function mainController($scope, $http) {
     $scope.latitud;
     $scope.longitud;
     $scope.incorrecto = false;
+    $scope.showregistro=true;
+    $scope.showlogout=false;
+    $scope.showoptions=false;
+    $scope.cabeceraPois=true;
+    $scope.cabeceraRutas=false;
+    $scope.showlistaruta=false;
+    $scope.showruta=false;
 
     $http.get('/pois')
         .success(function(data) {
@@ -81,6 +88,29 @@ function mainController($scope, $http) {
             console.log('Error: ' + data);
         });
 
+    /**
+     * Cambia a vista POIs
+     */
+    $scope.changePois = function() {
+        $scope.cabeceraPois=true;
+        $scope.cabeceraRutas=false;
+        $scope.showpoi=false;
+        $scope.showlista=true;
+        $scope.showlistaruta=false;
+        $scope.showruta=false;
+    }
+
+    /**
+     * Cambia a vista rutas
+     */
+    $scope.changeRoutes = function() {
+        $scope.cabeceraRutas=true;
+        $scope.cabeceraPois=false;
+        $scope.showpoi=false;
+        $scope.showlista=false;
+        $scope.showlistaruta=true;
+        $scope.showruta=false;
+    }
     /* DEVUELVE LAS COORDENADAS DE UNA DIRECCION */
     $scope.sacarDir = function(address) {
         geocoder = new google.maps.Geocoder();
@@ -99,11 +129,13 @@ function mainController($scope, $http) {
     /* Auntentifica un Usuario */
     $scope.autentificar = function() {
         console.log("autentificando")
-        $http.post('/auth', $scope.formData)
+        $http.post('/users/visitante', $scope.formData)
             .success(function(data) {
                 if(data.error == false){
                     $scope.incorrecto = false;
                     $scope.formData = {};
+                    $scope.showregistro=false;
+                    $scope.showlogout=true;
                     $window.location.href= data.next;
                 } else{
                     $scope.incorrecto = true;
@@ -183,12 +215,21 @@ function mainController($scope, $http) {
                 $scope.users = data.message;
                 $scope.user = data.user;
                 $scope.datosAcceso=true;
+                $scope.showregistro=false;
+                $scope.showlogout=true;
+                $scope.showoptions=true;
             })
             .error(function(data) {
+                $scope.incorrecto=true;
                 console.log('Error: ' + data);
             });
     }
-
+    $scope.logout = function() {
+                $scope.datosAcceso=false;
+                $scope.showregistro=true;
+                $scope.showlogout=false;
+                $scope.showoptions=false;
+    }
     $scope.calculateDistance = function() {
         var totalDistance = 0;
         var partialDistance = [];
