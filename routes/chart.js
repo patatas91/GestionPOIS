@@ -403,7 +403,7 @@ router.get('/bestpois', function(req, res) {
   //SE REALIZAN UNA SERIE DE CONSULTAS PARA OBTENER TODOS DATOS QUE HACEN FALTA PARA FORMAR LA GRÁFICA
   //.sort({"valoracion": -1}).limit(5)
   var lista;
-  mongoPois.find(({"user": "57349ba848d3e577329ac669"}),function(err,data){
+  mongoPois.find(({"user": "571b3df3d1854ac82da86892"}),function(err,data){
     if(err) {
       response = {"error" : true,"message" : "Error fetching data"};
     } else {
@@ -425,7 +425,7 @@ router.get('/bestpois', function(req, res) {
       response = {"error" : false, "message": myChart}
     }
     res.json(response);
-  });
+  }).sort({"valoracion": -1}).limit(5);
 });
 
 /*
@@ -456,9 +456,8 @@ router.get('/bestroutes', function(req, res) {
   var recomendaciones = [];
 
   //SE REALIZAN UNA SERIE DE CONSULTAS PARA OBTENER TODOS DATOS QUE HACEN FALTA PARA FORMAR LA GRÁFICA
-  //.sort({"valoracion": 1}).limit(5)
   var lista;
-  mongoRuta.find({"user": "57349ba848d3e577329ac669"},function(err,data){
+  mongoRuta.find({"user": "571b3df3d1854ac82da86892"},function(err,data){
     if(err) {
       response = {"error" : true,"message" : "Error fetching data"};
     } else {
@@ -480,70 +479,94 @@ router.get('/bestroutes', function(req, res) {
       response = {"error" : false, "message": myChart}
     }
     res.json(response);
-  });
+  }).sort({"recomendaciones": -1}).limit(5);
 });
 
 /*
  * Función que devuelve los usuarios mas activos.
  */
 router.get('/bestusers', function(req, res) {
-  //Esqueleto de la gráfica
-  var myChart = {
-    type: 'bar',
-    data: {
-      labels: [],
-      datasets: []
-    },
-    options: {
-      responsive: true,
-      scales: {
-        yAxes: [{
-          ticks: {
-            beginAtZero: true
-          }
-        }]
-      }
-    }
-  }
 
   var response = {};
-  var nombres = [];
-  var numPois = [];
 
-  //SE REALIZAN UNA SERIE DE CONSULTAS PARA OBTENER TODOS DATOS QUE HACEN FALTA PARA FORMAR LA GRÁFICA
-  //.sort({"valoracion": 1}).limit(5)
-  var lista;
+  //Se realiza la búsqueda de usuarios
   mongoUser.find({}, function (err, data) {
     if (err) {
       response = {"error": true, "message": "Error fetching data"};
+      res.json(response);
     } else {
-      lista = data;
-      for (var i = 0; i < lista.length; i++) {
-        nombres.push(lista[i].nombre);
-        mongoPois.count({"user": lista[i]._id}, function (err, count) {
-          if (err) {
-            response = {"error": true, "message": "Error fetching data"};
-            res.json(response);
-          } else {
-            numPois.push(count);
-          }
-        });
-      }
-      var sets = [{
-        label: 'Numero de POIS',
-        data: numPois,
-        backgroundColor: "#1F775E"
-      }];
-      myChart.data.datasets = sets;
-      myChart.data = {
-        labels: nombres,
-        datasets: sets
-      }
-      response = {"error": false, "message": myChart}
+      poisUser(data, 0, [],res);
     }
-    res.json(response);
   });
 });
+
+/**
+ * Función recursiva que obtiene el número de pois de cada usuario y almacena los pares de valores
+ **/
+function poisUser(lista, i, todo,res){
+  var response;
+  //Condicional recursivo, hasta que acabe la lista
+  if( i != lista.length){
+    mongoPois.count({"user": lista[i]._id}, function (err, count) {
+      if (err) {
+        response = {"error": true, "message": "Error fetching data"};
+        res.json(response);
+      } else {
+        todo.push([lista[i].nombre,count]);
+        poisUser(lista, i + 1, todo,res);
+      }
+    });
+  } else{  //Si se ha acabado de recorrer la lista, se genera la gráfica y se manda
+    //Esqueleto de la gráfica
+    var myChart = {
+      type: 'bar',
+      data: {
+        labels: [],
+        datasets: []
+      },
+      options: {
+        responsive: true,
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    }
+
+    //Se ordena la lista de listas con los pares de valores por el valor cuenta */
+    var final = todo;
+    final.sort(function(a,b){
+      return a[1] > b[1]; // orden ascendente
+    });
+
+    var nombres = [];
+    var numPois = [];
+
+    /* Se obtienen los 5 últimos datos, los mayores */
+    for(var i=0; i < 5; i++){
+      var aux = final[final.length-(i+1)];
+      nombres.push(aux[0]);
+      numPois.push(aux[1]);
+    }
+
+    //Se completa la gráfica
+    var sets = [{
+      label: 'Numero de recomendaciones',
+      data: numPois,
+      backgroundColor: "#1F775E"
+    }];
+    myChart.data = {
+      labels: nombres,
+      datasets: sets
+    }
+    //Se envia
+    response = {"error": false, "message": myChart};
+    res.json(response);
+  }
+}
 
 /*
  * Función que devuelve los datos para la gráfica del numero de pois añadidos en las ultimas semanas por el usuario

@@ -1,4 +1,3 @@
-
 /**
  * Created by diego on 29/04/2016.
  */
@@ -277,4 +276,6 @@ function initMap() {
     });
     setMarkers(markers);
 }
+
+
 
