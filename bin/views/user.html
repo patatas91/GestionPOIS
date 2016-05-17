@@ -190,6 +190,9 @@
                     <div class="btn-group">
                         <button type="button" class="btn btn-warning" ng-click="changeRoutes()">Rutas&nbsp;<span class="label label-info">{{rutas.length}}</span></button>
                     </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-danger" ng-click="reload()">RELOAD</button>
+                    </div>
                 </div>
                 <br>
                 <div class="row">
@@ -581,7 +584,7 @@
                                                 <td> {{ ruta.nombre }}</td>
                                                 <td> {{ ruta.descripcion }}</td>
                                                 <td> {{ ruta.fecha.substring(0,10) }} </td>
-                                                <td align="center"> {{ ruta.recomendaciones }} </td>
+                                                <td> {{ ruta.recomendaciones }} </td>
                                                 <td align="center"><button type="button" class="btn btn-danger btn-xs pull-center" ng-click="deleteRuta(ruta._id)">Eliminar</button></td>
                                             </tr>
                                             </tbody>
@@ -612,7 +615,7 @@
                                                 <td> {{ ruta.nombre }}</td>
                                                 <td> {{ ruta.descripcion }}</td>
                                                 <td> {{ ruta.fecha.substring(0,10) }} </td>
-                                                <td align="center"> {{ ruta.recomendaciones }} </td>
+                                                <td> {{ ruta.recomendaciones }} </td>
                                                 <td align="center"><button type="button" class="btn btn-warning btn-xs pull-center" ng-click="duplicateRuta(ruta._id)">Duplicar</button></td>
                                             </tr>
                                             </tbody>
@@ -643,7 +646,7 @@
                                                 <td> {{ ruta.nombre }}</td>
                                                 <td> {{ ruta.descripcion }}</td>
                                                 <td> {{ ruta.fecha.substring(0,10) }} </td>
-                                                <td align="center"> {{ ruta.recomendaciones }} </td>
+                                                <td> {{ ruta.recomendaciones }} </td>
                                                 <td align="center"><button type="button" class="btn btn-success btn-xs pull-center" ng-click="showEditRuta(1,ruta._id)">&nbsp;Editar&nbsp;</button></td>
                                             </tr>
                                             </tbody>

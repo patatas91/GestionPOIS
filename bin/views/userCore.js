@@ -16,6 +16,7 @@ var myChart2;
 var myChart3;
 var myChart4;
 var myChart5;
+var map;
 
 
 /**
@@ -71,7 +72,6 @@ function reloadMarkers() {
     markersUltimo = [];
     markers = [];
     //quitar rutas
-    //directionsDisplay = new google.maps.DirectionsRenderer();// also, constructor can get "DirectionsRendererOptions" object
     directionsDisplay.setMap(null);
 
     $.get('/pois', function(res){
@@ -109,6 +109,7 @@ function displayRoute(lista) {
     markersUltimo = [];
     markers = [];
     var sizeLista = lista.length;
+
 
     //directionsDisplay = new google.maps.DirectionsRenderer();// also, constructor can get "DirectionsRendererOptions" object
     directionsDisplay.setMap(map); // map should be already initialized.
@@ -292,6 +293,10 @@ function mainController($scope, $http) {
         //$cookies.remove("token");
         //$window.location.href= '/login';
     };
+    
+    $scope.reload = function() {
+        location.reload();
+    }
 
     /**
      * Cambia a vista POIs
@@ -370,20 +375,18 @@ function mainController($scope, $http) {
             $http.get('/rutas/'+id)
                 .success(function(data){
                     $scope.myruta=data.message;
-                    //$scope.tuvieja=data.message.pois
+                    var tablaPois= [];
+
                     //TABLA CON LOS POIS DE LA RUTA
-                    var tablaPois=data.message.pois;
+                    tablaPois=data.message.pois;
                     var sizeTabla = tablaPois.length;
-                    //var count=0;
+
                     var start=0;
                     var end=0;
-                    //for(i=0;i<tablaPois.length;i++) {
-                    //  count=i;
-                    //}
+
                     //NUMERO DE POIS
                     $scope.numPois=sizeTabla;
 
-                    //$scope.listPois=lista;
                     //DATOS POIS
                     $http.get('/pois/'+tablaPois[0])
                         .success(function(data){
@@ -428,7 +431,7 @@ function mainController($scope, $http) {
         }
         else{
             reloadMarkers();
-            resetfocus();
+            resetfocus();            
             $scope.showruta=false;
             $scope.showlistaruta=true;
         }
