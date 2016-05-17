@@ -155,23 +155,24 @@
                                             <b>Longitud: </b>{{ mypoi.longitud }}<br/>
                                         </div>
                                     </div>
-                                    <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Valorar POI
-                                            <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a  ng-click="valorar(0)" onclick="$('.alert').hide()">0</a></li>
-                                            <li><a  ng-click="valorar(0)" onclick="$('.alert').hide()">1</a></li>
-                                            <li><a  ng-click="valorar(0)" onclick="$('.alert').hide()">2</a></li>
-                                            <li><a  ng-click="valorar(0)" onclick="$('.alert').hide()">3</a></li>
-                                            <li><a  ng-click="valorar(0)" onclick="$('.alert').hide()">4</a></li>
-                                            <li><a  ng-click="valorar(0)" onclick="$('.alert').hide()">5</a></li>
-                                        </ul>
+                                    <div ng-show="showoptions">
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Valorar POI
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a  ng-click="valorar(0)" onclick="$('.alert').hide()">0</a></li>
+                                                <li><a  ng-click="valorar(1)" onclick="$('.alert').hide()">1</a></li>
+                                                <li><a  ng-click="valorar(2)" onclick="$('.alert').hide()">2</a></li>
+                                                <li><a  ng-click="valorar(3)" onclick="$('.alert').hide()">3</a></li>
+                                                <li><a  ng-click="valorar(4)" onclick="$('.alert').hide()">4</a></li>
+                                                <li><a  ng-click="valorar(5)" onclick="$('.alert').hide()">5</a></li>
+                                            </ul>
+                                        </div>
+                                        <input type="button" class="btn btn-primary btn-lg btn-block" value="Ver Usuario" ng-click="verUsuario()" onclick="$('.alert').hide()">
+                                        <input type="button" class="btn btn-primary btn-lg btn-block" value="Recomendar" onclick="$('.alert').show()">
                                     </div>
-                                    <input type="button" class="btn btn-primary btn-lg btn-block" value="Ver Usuario" ng-click="verUsuario()" onclick="$('.alert').hide()">
-                                    <input type="button" class="btn btn-primary btn-lg btn-block" value="Recomendar" onclick="$('.alert').show()">
-
                                     <input type="button" class="btn btn-primary btn-lg btn-block" value="Volver" ng-click="viewPoi(0)" onclick="$('.alert').hide()">
                                 </div>
                                 <!-- LISTA POI -->
@@ -207,18 +208,22 @@
                 </div>
             </div>
             <div align="left">
-                <form class="form-inline">
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" class="form-control" id="email" placeholder="Email">
-                    </div>
-                    <div class="form-group">
-                        <label for="pass">Contraseña</label>
-                        <input type="password" class="form-control" id="pass" placeholder="Password">
-                    </div>
-                    <button type="button" class="btn btn-default" ng-click="autentificar()">Acceder</button>
-                </form>
-                <a href="/views/registro.html">Registrarse</a>
+                <div ng-show="showregistro">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label for="mail">Email</label>
+                            <input type="email" class="form-control" id="mail" placeholder="Email" ng-model="formData.mail">
+                        </div>
+                        <div class="form-group">
+                            <label for="pass">Contraseña</label>
+                            <input type="password" class="form-control" id="pass" placeholder="Password" ng-model="formData.pass">
+                        </div>
+                        <button type="button" class="btn btn-default" ng-click="registro()">Acceder</button>
+                    </form>
+                 </div>
+                <div ng-show="showlogout">
+                    <button type="button" class="btn btn-default" ng-click="logout()">Logout</button>
+                </div>
             </div>
         </div>
     </div>

@@ -72,6 +72,10 @@ function mainController($scope, $http) {
     $scope.latitud;
     $scope.longitud;
     $scope.incorrecto = false;
+    $scope.showregistro=true;
+    $scope.showlogout=false;
+    $scope.showoptions=false;
+
 
     $http.get('/pois')
         .success(function(data) {
@@ -99,11 +103,13 @@ function mainController($scope, $http) {
     /* Auntentifica un Usuario */
     $scope.autentificar = function() {
         console.log("autentificando")
-        $http.post('/auth', $scope.formData)
+        $http.post('/users/visitante', $scope.formData)
             .success(function(data) {
                 if(data.error == false){
                     $scope.incorrecto = false;
                     $scope.formData = {};
+                    $scope.showregistro=false;
+                    $scope.showlogout=true;
                     $window.location.href= data.next;
                 } else{
                     $scope.incorrecto = true;
@@ -183,12 +189,21 @@ function mainController($scope, $http) {
                 $scope.users = data.message;
                 $scope.user = data.user;
                 $scope.datosAcceso=true;
+                $scope.showregistro=false;
+                $scope.showlogout=true;
+                $scope.showoptions=true;
             })
             .error(function(data) {
+                $scope.incorrecto=true;
                 console.log('Error: ' + data);
             });
     }
-
+    $scope.logout = function() {
+                $scope.datosAcceso=false;
+                $scope.showregistro=true;
+                $scope.showlogout=false;
+                $scope.showoptions=false;
+    }
     $scope.calculateDistance = function() {
         var totalDistance = 0;
         var partialDistance = [];
