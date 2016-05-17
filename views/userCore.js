@@ -302,6 +302,7 @@ function mainController($scope, $http) {
         $scope.showlista=true;
         $scope.showlistaruta=false;
         $scope.showruta=false;
+        initMap();
     }
 
     /**
@@ -314,6 +315,7 @@ function mainController($scope, $http) {
         $scope.showlista=false;
         $scope.showlistaruta=true;
         $scope.showruta=false;
+        initMap();
     }
 
     /**

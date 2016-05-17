@@ -403,7 +403,7 @@ router.get('/bestpois', function(req, res) {
   //SE REALIZAN UNA SERIE DE CONSULTAS PARA OBTENER TODOS DATOS QUE HACEN FALTA PARA FORMAR LA GRÁFICA
   //.sort({"valoracion": -1}).limit(5)
   var lista;
-  mongoPois.find(({"user": "571b3df3d1854ac82da86892"}),function(err,data){
+  mongoPois.find(({"user": "57349ba848d3e577329ac669"}),function(err,data){
     if(err) {
       response = {"error" : true,"message" : "Error fetching data"};
     } else {
@@ -457,7 +457,7 @@ router.get('/bestroutes', function(req, res) {
 
   //SE REALIZAN UNA SERIE DE CONSULTAS PARA OBTENER TODOS DATOS QUE HACEN FALTA PARA FORMAR LA GRÁFICA
   var lista;
-  mongoRuta.find({"user": "571b3df3d1854ac82da86892"},function(err,data){
+  mongoRuta.find({"user": "57349ba848d3e577329ac669"},function(err,data){
     if(err) {
       response = {"error" : true,"message" : "Error fetching data"};
     } else {
@@ -546,7 +546,7 @@ function poisUser(lista, i, todo,res){
     var numPois = [];
 
     /* Se obtienen los 5 últimos datos, los mayores */
-    for(var i=0; i < 5; i++){
+    for(var i=0; (i < 5) && (i < final.length); i++){
       var aux = final[final.length-(i+1)];
       nombres.push(aux[0]);
       numPois.push(aux[1]);
