@@ -19,7 +19,7 @@ router.get('/', function(req, res) {
  * Petición correspondiente que se encarga de comprobar que los campos introducidos por el usuario corresponden con
  * los de un usuario existente.
  */
-router.post('/login/auth', function(req, res) {
+router.post('/auth', function(req, res) {
     //Se encripta la contraseña
     var password = require('crypto')
         .createHash('sha1')
@@ -36,15 +36,8 @@ router.post('/login/auth', function(req, res) {
             //Si existe se le asigna un token de acceso y se redirige a su página principal de acuerdo a su rango
             if (user) {
                 var token = jwt.sign(user, config.secret, {
-                    expiresIn: 7200 // expires in 2h
+                    expiresIn: 600 // expires in 24 hours
                 });
-                //Se actualiza fecha de acceso
-                user.fechaAcceso = new Date();
-                user.save(function(err){
-                    if(err) {
-                        Console.log("Error al actualizar fecha de acceso");
-                    }
-                })
                 var next;
                 if(user.tipoUser == 0){
                     next = '/admin';

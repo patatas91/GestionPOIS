@@ -8,7 +8,7 @@ app.controller('mainController', function($rootScope, $scope, $window, $http) {
 
     $scope.autentificar = function() {
 
-        $http.post('/login/auth', $scope.formData)
+        $http.post('/auth', $scope.formData)
             .success(function(data) {
                 if(data.error == false){
                     $scope.incorrecto = false;

@@ -564,7 +564,7 @@ router.get('/lastpois', function(req, res) {
 
   //SE REALIZAN UNA SERIE DE CONSULTAS PARA OBTENER TODOS DATOS QUE HACEN FALTA PARA FORMAR LA GRÁFICA
   date1 = new Date().getTime() - 1000 * 60 * 60 * 24 * 7;
-  
+
   //Accesos hace 1 semana
   mongoPois.count({"user": "57349ba848d3e577329ac669", "fecha": {$gt: date1}},function(err,data){
     if(err){

@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var mongoOp = require("../models/mongoPois");
-var middleware = require("../middleware");
 
 /**
  * Petición para obtener todos pois
@@ -9,21 +8,6 @@ var middleware = require("../middleware");
 router.get('/', function(req,res){
     var response = {};
     mongoOp.find({},function(err,data){
-        if(err) {
-            response = {"error" : true,"message" : "Error fetching data"};
-        } else {
-            response = {"error" : false,"message" : data};
-        }
-        res.json(response);
-    });
-});
-
-/**
- * Petición para obtener todos pois de un usuario concreto
- */
-router.get('/byUser',middleware.ensureAuthenticatedAll, function(req,res){
-    var response = {};
-    mongoOp.find({"user": req.body.userId},function(err,data){
         if(err) {
             response = {"error" : true,"message" : "Error fetching data"};
         } else {
@@ -208,18 +192,4 @@ router.delete('/:id', function(req,res){
     });
 }) ;
 
-/**
- * Función que devuelve los pois filtrados por busqueda
- */
-router.get('/busqueda/:word', function(req,res){
-    var response = {};
-    mongoOp.find({$or:[{descripcion:{$regex : ".*"+req.params.word+".*"}},{nombre:{$regex : ".*"+req.params.word+".*"}}]} ,function(err,data){
-        if(err) {
-            response = {"error" : true,"message" : "Error fetching data"};
-        } else {
-            response = {"error" : false,"message" : data};
-        }
-        res.json(response);
-    });
-});
 module.exports = router;

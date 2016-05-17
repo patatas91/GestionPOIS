@@ -21,23 +21,16 @@ router.get('/', function(req, res) {
 router.post('/', function(req,res) {
     var db = new mongoOp();
     var response = {};
-    db.tipoUser=2;
-    db.email = req.body.email;
-    db.pass = req.body.pass;
-    db.save(function(err){
-        if(err) {
-            response = {"error" : true,"message" : "Error adding data"};
-            res.json(response);
+
+    db.user = req.body.user;
+
+    db.save(function (err) {
+        if (err) {
+            response = {"error": true, "message": "Error adding data"};
         } else {
-            mongoOp.find({}, function(err, data) {
-                if(err) {
-                    response = {"error" : true,"message" : "Error adding data"};
-                } else {
-                    response = {"error" : false,"message" : data};
-                }
-                res.json(response);
-            });
+            response = {"error": false, "message": "Data added"};
         }
+        res.json(response);
     });
 });
 
@@ -106,3 +99,19 @@ router.delete('/:id', function(req,res){
     });
 })
 
+/**
+ * Función que devuelve los pois
+ */
+router.get('pois/busqueda/:descripcion', function(req,res){
+    var response = {};
+    mongoOp.find( {'descripcion': req.params.word} ,function(err,data){
+        if(err) {
+            response = {"error" : true,"message" : "Error fetching data"};
+        } else {
+            response = {"error" : false,"message" : data};
+        }
+        res.json(response);
+    });
+});
+
+module.exports = router;
