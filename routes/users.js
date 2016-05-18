@@ -22,7 +22,7 @@ router.get('/', middleware.ensureAuthenticatedAdmin, function(req, res) {
 });
 
 /**
- * Petición para obtener todos users
+ * Petición para obtener todos users PRUEBAAAASSSSS
  */
 router.get('/visitantes', function(req,res){
   var response = {};
@@ -87,7 +87,7 @@ router.post('/', middleware.ensureAuthenticatedAdmin, function(req,res) {
 });
 
 /**
- * Petición que permite añadir un usuario
+ * Petición que permite añadir un usuario  PRUEBASSSSSSSSSSSSSSSSSSSSS
  * Sólo disponible para el administrador.
  */
 router.post('/visitante', function(req,res) {
@@ -173,9 +173,9 @@ router.put('/:id', function(req,res){
       if(req.body.apellidos !== undefined) {
         data.apellidos = req.body.apellidos;
       }
-      if(req.body.fechaAcceso !== undefined) {
-        data.fechaAcceso = req.body.fechaAcceso;
-      }
+
+      data.fechaAcceso = new Date();
+
       //Se guarda
       data.save(function(err){
         if(err) {
@@ -282,6 +282,7 @@ router.post('/registro', function(req,res) {
                   'Content-Type': 'text/html'
                 }).json({
               error: false,
+              user: user,
               next: next,
               message: "Se ha autentificado correctamente"
             });
@@ -324,14 +325,7 @@ router.post('/registro', function(req,res) {
                 var token = jwt.sign(user, config.secret, {
                   expiresIn: 600 // expires in 24 hours
                 });
-                var next;
-                if(user.tipoUser == 0){
-                  next = '/admin';
-                } else if (user.tipoUser == 1){
-                  next = '/user';
-                } else{
-                  next = '/visitante';
-                }
+                var next = '/visitante';
                 //Respuesta con cookie
                 res.header(
                     {
@@ -340,6 +334,7 @@ router.post('/registro', function(req,res) {
                     }).json({
                   error: false,
                   next: next,
+                  user: user,
                   message: "Se ha autentificado correctamente"
                 });
                 res.end();

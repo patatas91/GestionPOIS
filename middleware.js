@@ -15,7 +15,7 @@ exports.ensureAuthenticatedAdmin = function(req, res, next) {
     if(token){
         jwt.verify(token, config.secret, function(err, decoded) {
             if (err) {
-                res.json({error: true, message: "No esta logueado."});
+                res.sendfile('./views/loginPermisos.html');
             } else {
                 // if everything is good, save to request for use in other routes
                 if(decoded._doc.tipoUser == 0){
@@ -27,7 +27,7 @@ exports.ensureAuthenticatedAdmin = function(req, res, next) {
             }
         });
     } else{
-        res.json({error: true, message: "No esta logueado."});
+        res.sendfile('./views/loginPermisos.html');
     }
 }
 
@@ -41,16 +41,19 @@ exports.ensureAuthenticatedUser = function(req, res, next) {
     if(token){
         jwt.verify(token, config.secret, function(err, decoded) {
             if (err) {
-                res.json({error: true, message: "No esta logueado."});
+                res.sendfile('./views/loginPermisos.html');
             } else {
                 // if everything is good, save to request for use in other routes
                 if(decoded._doc.tipoUser == 1){
+                    req.body.userId = decoded._doc._id;
                     next();
                 } else{
                     res.json({error: true, message: "No tienes permiso para acceder ahi."});
                 }
             }
         });
+    } else{
+        res.sendfile('./views/loginPermisos.html');
     }
 }
 
@@ -64,16 +67,42 @@ exports.ensureAuthenticatedVisitante = function(req, res, next) {
     if(token){
         jwt.verify(token, config.secret, function(err, decoded) {
             if (err) {
-                res.json({error: true, message: "No esta logueado."});
+                res.sendfile('./views/loginPermisos.html');
             } else {
                 // if everything is good, save to request for use in other routes
                 if(decoded._doc.tipoUser == 2){
+                    req.body.userId = decoded._doc._id;
                     next();
                 } else{
                     res.json({error: true, message: "No tienes permiso para acceder ahi."});
                 }
             }
         });
+    } else{
+        res.sendfile('./views/loginPermisos.html');
+    }
+}
+
+/*
+ * Método de autenticación para todos
+ */
+exports.ensureAuthenticatedAll = function(req, res, next) {
+
+    var cookies = parseCookies(req);
+    var token = cookies.token;
+    if(token){
+        jwt.verify(token, config.secret, function(err, decoded) {
+            if (err) {
+                res.sendfile('./views/loginPermisos.html');
+            } else {
+                // if everything is good, save to request for use in other routes
+                req.body.userId = decoded._doc._id;
+                next();
+
+            }
+        });
+    } else{
+        res.sendfile('./views/loginPermisos.html');
     }
 }
 

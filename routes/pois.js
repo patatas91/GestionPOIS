@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var mongoOp = require("../models/mongoPois");
+var middleware = require('../middleware');
 
 /**
  * Petición para obtener todos pois
@@ -46,7 +47,7 @@ router.post('/', function(req,res){
             response = {"error" : true,"message" : "Error adding data"};
             res.json(response);
         } else {
-            mongoOp.find({}, function(err, data) {
+            mongoOp.find({ "user": req.body.user }, function(err, data) {
                 if(err) {
                     response = {"error" : true,"message" : "Error adding data"};
                 } else {
@@ -55,6 +56,21 @@ router.post('/', function(req,res){
                 res.json(response);
             });           
         }       
+    });
+});
+
+/**
+ * Función que devuelve las rutas correspondientes a un usuario
+ */
+router.get('/me', middleware.ensureAuthenticatedUser, function(req,res){
+    var response = {};
+    mongoOp.find( { "user": req.body.userId },function(err,data){
+        if(err) {
+            response = {"error" : true,"message" : "Error fetching data"};
+        } else {
+            response = {"error" : false,"message" : data};
+        }
+        res.json(response);
     });
 });
 
@@ -77,54 +93,59 @@ router.get('/:id', function(req,res){
 /**
  * Petición para actualizar los datos que son actualizables de un poi
  */
-router.put('/:id', function(req,res){
+router.put('/:id', middleware.ensureAuthenticatedAll, function(req,res){
     var response = {};
     //Se busca
     mongoOp.findById(req.params.id,function(err,data){
         if(err) {
             response = {"error" : true,"message" : "Error fetching data"};
         } else {
-            //Se actualizan los campos
-            if(req.body.nombre !== undefined) {
-                // case where password needs to be updated
-                data.nombre = req.body.nombre;
-            }
-            if(req.body.descripcion !== undefined) {
-                // case where password needs to be updated
-                data.descripcion = req.body.descripcion;
-            }
-            if(req.body.url !== undefined) {
-                // case where password needs to be updated
-                data.url = req.body.url;
-            }
-            if(req.body.palabrasClave !== undefined) {
-                // case where password needs to be updated
-                data.palabrasClave = req.body.palabrasClave;
-            }
-            if(req.body.latitud !== undefined) {
-                // case where password needs to be updated
-                data.latitud = req.body.latitud;
-            }
-            if(req.body.longitud !== undefined) {
-                // case where password needs to be updated
-                data.longitud = req.body.longitud;
-            }
-            //Se guarda
-            data.save(function(err){
-                if(err) {
-                    response = {"error" : true,"message" : "Error updating data"};
-                    res.json(response);
-                } else {
-                    mongoOp.find({}, function(err, data) {
-                        if(err) {
-                            response = {"error" : true,"message" : "Error updating data"};
-                        } else {
-                            response = {"error" : false,"message" : data};
-                        }
-                        res.json(response);
-                    });
+            if(data.user == req.body.userId){
+                if(req.body.nombre !== undefined) {
+                    // case where password needs to be updated
+                    data.nombre = req.body.nombre;
                 }
-            })
+                if(req.body.descripcion !== undefined) {
+                    // case where password needs to be updated
+                    data.descripcion = req.body.descripcion;
+                }
+                if(req.body.url !== undefined) {
+                    // case where password needs to be updated
+                    data.url = req.body.url;
+                }
+                if(req.body.palabrasClave !== undefined) {
+                    // case where password needs to be updated
+                    data.palabrasClave = req.body.palabrasClave;
+                }
+                if(req.body.latitud !== undefined) {
+                    // case where password needs to be updated
+                    data.latitud = req.body.latitud;
+                }
+                if(req.body.longitud !== undefined) {
+                    // case where password needs to be updated
+                    data.longitud = req.body.longitud;
+                }
+                //Se guarda
+                data.save(function(err){
+                    if(err) {
+                        response = {"error" : true,"message" : "Error updating data"};
+                        res.json(response);
+                    } else {
+                        mongoOp.find({ "user": req.body.userId }, function(err, data) {
+                            if(err) {
+                                response = {"error" : true,"message" : "Error updating data"};
+                            } else {
+                                response = {"error" : false,"message" : data};
+                            }
+                            res.json(response);
+                        });
+                    }
+                })
+            } else{
+                response = {"error" : true,"message" : "Error editing data, dont is your POI"};
+                res.json(response);
+            }
+
         }
     });
 });
@@ -165,31 +186,52 @@ router.put('/:id/votar', function(req,res){
 /**
  * Petición para eliminar un poi, correspondiente al id
  */
-router.delete('/:id', function(req,res){
+router.delete('/:id', middleware.ensureAuthenticatedAll, function(req,res){
     var response = {};
     //Se busca el dato
     mongoOp.findById(req.params.id,function(err,data){
         if(err) {
             response = {"error" : true,"message" : "Error fetching data"};
         } else {
-            //Si existe, se elimina
-            mongoOp.remove({_id : req.params.id},function(err){
-                if(err) {
-                    response = {"error" : true,"message" : "Error deleting data"};
-                    res.json(response);
-                } else {
-                    mongoOp.find({}, function(err, data) {
-                        if(err) {
-                            response = {"error" : true,"message" : "Error deleting data"};
-                        } else {
-                            response = {"error" : false,"message" : data};
-                        }
+            //Si existe y es suyo, se elimina
+            if(data.user == req.body.userId){
+                mongoOp.remove({_id : req.params.id},function(err){
+                    if(err) {
+                        response = {"error" : true,"message" : "Error deleting data"};
                         res.json(response);
-                    });
-                }                
-            });
+                    } else {
+                        mongoOp.find({"user": req.body.userId}, function(err, data) {
+                            if(err) {
+                                response = {"error" : true,"message" : "Error deleting data"};
+                            } else {
+                                response = {"error" : false,"message" : data};
+                            }
+                            res.json(response);
+                        });
+                    }
+                });
+            } else{
+                response = {"error" : true,"message" : "Error deleting data, dont is your POI"};
+                res.json(response);
+            }
+
         }
     });
 }) ;
+
+/**
+ + * Función que devuelve los pois filtrados por busqueda
+ + */
++router.get('/busqueda/:word', function(req,res){
+       var response = {};
+        mongoOp.find({$or:[{descripcion:{$regex : ".*"+req.params.word+".*"}},{nombre:{$regex : ".*"+req.params.word+".*"}}]} ,function(err,data){
+               if(err) {
+                        response = {"error" : true,"message" : "Error fetching data"};
+                    } else {
+                        response = {"error" : false,"message" : data};
+                    }
+                res.json(response);
+            });
+    });
 
 module.exports = router;

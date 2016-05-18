@@ -3,10 +3,11 @@
  */
 var express = require('express');
 var router = express.Router();
+var middleware = require('../middleware')
 
 
 /* Devuelve la página de inicio del usuario. */
-router.get('/', function(req, res) {
+router.get('/', middleware.ensureAuthenticatedUser, function(req, res) {
     res.sendfile('./views/user.html');
 });
 

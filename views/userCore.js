@@ -1,9 +1,7 @@
 /**
  * Created by patatas91 on 30/04/16.
  */
-angular.module('userManager',[],function($locationProvider){
-    $locationProvider.html5Mode(true);
-});
+var app = angular.module('userManager', ['ngCookies']);
 
 var map;
 var markers = [];
@@ -74,7 +72,7 @@ function reloadMarkers() {
     //quitar rutas
     directionsDisplay.setMap(null);
 
-    $.get('/pois', function(res){
+    $.get('/pois/me', function(res){
         var message=res.message;
         if(!res.error){
             for(i=0;i<message.length;i++){
@@ -145,7 +143,7 @@ function displayRoute(lista) {
     });
 }
 
-function mainController($scope, $http) {
+app.controller('mainController', function($rootScope, $scope, $window, $http, $cookies) {
     // when landing on the page, get all todos and show them
     $scope.showpoi=false;
     $scope.showlista=true;
@@ -163,7 +161,7 @@ function mainController($scope, $http) {
     $scope.cabeceraRutas=false;
     $scope.formData = {};
 
-    $http.get('/pois')
+    $http.get('/pois/me')
         .success(function(data) {
             $scope.pois = data.message;
         })
@@ -171,7 +169,7 @@ function mainController($scope, $http) {
             console.log('Error: ' + data);
         });
 
-    $http.get('/rutas')
+    $http.get('/rutas/me')
         .success(function(data) {
             $scope.rutas = data.message;
         })
@@ -179,7 +177,7 @@ function mainController($scope, $http) {
             console.log('Error: ' + data);
         });
 
-    $http.get('/users/'+id_user)
+    $http.get('/me')
         .success(function(data){
             $scope.user=data.message;
         })
@@ -284,8 +282,8 @@ function mainController($scope, $http) {
     }
     
     $scope.logout = function() {
-        //$cookies.remove("token");
-        //$window.location.href= '/login';
+        $cookies.remove("token");
+        $window.location.href= '/login';
     };
     
     $scope.reload = function() {
@@ -418,7 +416,7 @@ function mainController($scope, $http) {
             if($scope.formData.palabrasClave!=undefined) {
                 $scope.formData.palabrasClave = $scope.formData.palabrasClave.split(', ');
             }
-            $scope.formData.user = id_user;
+            $scope.formData.user = $scope.user._id;
             $http.post('/pois', $scope.formData)
                 .success(function(data) {
                     $scope.formData = {};
@@ -567,7 +565,7 @@ function mainController($scope, $http) {
             if($scope.formData.pois!=undefined) {
                 $scope.formData.pois = $scope.formData.pois.split(', ');
             }
-            $scope.formData.user = id_user;
+            $scope.formData.user = $scope.user._id;
             $http.post('/rutas', $scope.formData)
                 .success(function(data) {
                     $scope.formData = {};
@@ -690,12 +688,12 @@ function mainController($scope, $http) {
         var r = confirm('¿Desea editar su cuenta?');
         if(r==true) {
             if($scope.formData.pass == $scope.formData.pass2) {
-                $http.put('/users/' + id_user, $scope.formData)
+                $http.put('/users/' + $scope.user._id, $scope.formData)
                     .success(function(data) {
                         $scope.formData = {};
                         $scope.user = data.message;
                         alert('Usuario editado correctamente');
-                        $http.get('/users/'+id_user)
+                        $http.get('/me')
                             .success(function(data){
                                 $scope.user=data.message;
                             })
@@ -712,7 +710,7 @@ function mainController($scope, $http) {
             }
         }
     };
-}
+});
 
 /**
  * Inicializa el mapa
@@ -728,7 +726,7 @@ function initMap() {
     directionsService = new google.maps.DirectionsService();
     map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
 
-    $.get('/pois', function(res){
+    $.get('/pois/me', function(res){
         var message=res.message;
         if(!res.error){
             for(i=0;i<message.length;i++){

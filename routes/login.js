@@ -53,6 +53,7 @@ router.post('/auth', function(req, res) {
                     'Content-Type': 'text/html'
                 }).json({
                     error: false,
+                    user: user,
                     next: next,
                     message: "Se ha autentificado correctamente"
                 });

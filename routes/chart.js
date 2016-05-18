@@ -12,7 +12,7 @@ var middleware = require('../middleware');
  * Función que devuelve los datos para la gráfica de últimos accesos.
  * Sólo puede acceder a estos datos el administrador.
  */
-router.get('/ultimosAccesos', middleware.ensureAuthenticatedAdmin,function(req, res) {
+router.get('/ultimosAccesos',function(req, res) {
   //Esqueleto de los datos
   var myChart ={
     type: 'bar',
@@ -113,7 +113,7 @@ router.get('/ultimosAccesos', middleware.ensureAuthenticatedAdmin,function(req, 
  * Función que devuelve los datos para la gráfica de números de usuarios que se han dado de alta y baja.
  * Sólo puede acceder a estos datos el administrador.
  */
-router.get('/altasYbajas', middleware.ensureAuthenticatedAdmin,function(req, res) {
+router.get('/altasYbajas',function(req, res) {
   //Esqueleto de los datos
   var myChart ={
     type: 'bar',
@@ -281,7 +281,7 @@ router.get('/altasYbajas', middleware.ensureAuthenticatedAdmin,function(req, res
  * Función que devuelve los datos para la gráfica de número de pois que se han añadido en las últimas semanas.
  * Sólo puede acceder a estos datos el administrador.
  */
-router.get('/pois', middleware.ensureAuthenticatedAdmin, function(req, res) {
+router.get('/pois', function(req, res) {
 
   //Esqueleto de la gráfica
   var myLineChart = {
@@ -376,7 +376,7 @@ router.get('/pois', middleware.ensureAuthenticatedAdmin, function(req, res) {
 /*
  * Función que devuelve los pois del usuario mejor valorados.
  */
-router.get('/bestpois', function(req, res) {
+router.get('/bestpois', middleware.ensureAuthenticatedAll, function(req, res) {
   //Esqueleto de la gráfica
   var myChart ={
     type: 'bar',
@@ -403,7 +403,7 @@ router.get('/bestpois', function(req, res) {
   //SE REALIZAN UNA SERIE DE CONSULTAS PARA OBTENER TODOS DATOS QUE HACEN FALTA PARA FORMAR LA GRÁFICA
   //.sort({"valoracion": -1}).limit(5)
   var lista;
-  mongoPois.find(({"user": "57349ba848d3e577329ac669"}),function(err,data){
+  mongoPois.find(({"user": req.body.userId}),function(err,data){
     if(err) {
       response = {"error" : true,"message" : "Error fetching data"};
     } else {
@@ -431,7 +431,7 @@ router.get('/bestpois', function(req, res) {
 /*
  * Función que devuelve las rutas del usuario mejor valorados.
  */
-router.get('/bestroutes', function(req, res) {
+router.get('/bestroutes', middleware.ensureAuthenticatedAll, function(req, res) {
   //Esqueleto de la gráfica
   var myChart ={
     type: 'bar',
@@ -457,7 +457,7 @@ router.get('/bestroutes', function(req, res) {
 
   //SE REALIZAN UNA SERIE DE CONSULTAS PARA OBTENER TODOS DATOS QUE HACEN FALTA PARA FORMAR LA GRÁFICA
   var lista;
-  mongoRuta.find({"user": "57349ba848d3e577329ac669"},function(err,data){
+  mongoRuta.find({"user": req.body.userId},function(err,data){
     if(err) {
       response = {"error" : true,"message" : "Error fetching data"};
     } else {
@@ -554,7 +554,7 @@ function poisUser(lista, i, todo,res){
 
     //Se completa la gráfica
     var sets = [{
-      label: 'Numero de recomendaciones',
+      label: 'Número de POIS',
       data: numPois,
       backgroundColor: "#1F775E"
     }];
@@ -571,7 +571,7 @@ function poisUser(lista, i, todo,res){
 /*
  * Función que devuelve los datos para la gráfica del numero de pois añadidos en las ultimas semanas por el usuario
  */
-router.get('/lastpois', function(req, res) {
+router.get('/lastpois', middleware.ensureAuthenticatedAll, function(req, res) {
 
   //Esqueleto de la gráfica
   var myLineChart = {
@@ -589,7 +589,7 @@ router.get('/lastpois', function(req, res) {
   date1 = new Date().getTime() - 1000 * 60 * 60 * 24 * 7;
 
   //Accesos hace 1 semana
-  mongoPois.count({"user": "57349ba848d3e577329ac669", "fecha": {$gt: date1}},function(err,data){
+  mongoPois.count({"user": req.body.userId, "fecha": {$gt: date1}},function(err,data){
     if(err){
       response = {"error" : true,"message" : "Error fetching data"};
       res.json(response);
@@ -597,7 +597,7 @@ router.get('/lastpois', function(req, res) {
       datos.push(data);
       //Accesos hace 2 semanas
       date2 = new Date().getTime() - 1000 * 60 * 60 * 24 * 14;
-      mongoPois.count({"user": "57349ba848d3e577329ac669", "fecha": {$gt: date2, $lt: date1}},function(err,data){
+      mongoPois.count({"user": req.body.userId, "fecha": {$gt: date2, $lt: date1}},function(err,data){
         if(err) {
           response = {"error" : true,"message" : "Error fetching data"};
           res.json(response);
@@ -605,7 +605,7 @@ router.get('/lastpois', function(req, res) {
           datos.push(data);
           date1 = new Date().getTime() - 1000 * 60 * 60 * 24 * 21;
           //Accesos hace 3 semanas
-          mongoPois.count({"user": "57349ba848d3e577329ac669", "fecha": {$gt: date1, $lt: date2}},function(err,data){
+          mongoPois.count({"user": req.body.userId, "fecha": {$gt: date1, $lt: date2}},function(err,data){
             if(err) {
               response = {"error" : true,"message" : "Error fetching data"};
               res.json(response)
@@ -613,7 +613,7 @@ router.get('/lastpois', function(req, res) {
               datos.push(data);
               date2 = new Date().getTime() - 1000 * 60 * 60 * 24 * 28;
               //Accesos hace 4 semanas
-              mongoPois.count({"user": "57349ba848d3e577329ac669", "fecha": {$gt: date2, $lt: date1}},function(err,data){
+              mongoPois.count({"user": req.body.userId, "fecha": {$gt: date2, $lt: date1}},function(err,data){
                 if(err) {
                   response = {"error" : true,"message" : "Error fetching data"};
                   res.json(response);
@@ -621,7 +621,7 @@ router.get('/lastpois', function(req, res) {
                   datos.push(data);
                   date1 = new Date().getTime() - 1000 * 60 * 60 * 24 * 35;
                   //Accesos hace 5 semanas
-                  mongoPois.count({"user": "57349ba848d3e577329ac669", "fecha": {$gt: date1, $lt: date2}},function(err,data){
+                  mongoPois.count({"user": req.body.userId, "fecha": {$gt: date1, $lt: date2}},function(err,data){
                     if(err) {
                       response = {"error" : true,"message" : "Error fetching data"};
                       res.json(response);
@@ -629,7 +629,7 @@ router.get('/lastpois', function(req, res) {
                       datos.push(data);
                       date2 = new Date().getTime() - 1000 * 60 * 60 * 24 * 42;
                       //Accesos hace 6 semanas
-                      mongoPois.count({"user": "57349ba848d3e577329ac669", "fecha": {$gt: date2, $lt: date1}},function(err,data){
+                      mongoPois.count({"user": req.body.userId, "fecha": {$gt: date2, $lt: date1}},function(err,data){
                         if(err) {
                           response = {"error" : true,"message" : "Error fetching data"};
                           res.json(response);
@@ -667,7 +667,7 @@ router.get('/lastpois', function(req, res) {
 /*
  * Función que devuelve los datos para la gráfica del numero de rutas añadidas en las ultimas semanas por el usuario
  */
-router.get('/lastroutes', function(req, res) {
+router.get('/lastroutes', middleware.ensureAuthenticatedAll, function(req, res) {
 
   //Esqueleto de la gráfica
   var myLineChart = {
@@ -685,7 +685,7 @@ router.get('/lastroutes', function(req, res) {
   date1 = new Date().getTime() - 1000 * 60 * 60 * 24 * 7;
 
   //Accesos hace 1 semana
-  mongoRuta.count({"user": "57349ba848d3e577329ac669", "fecha": {$gt: date1}},function(err,data){
+  mongoRuta.count({"user": req.body.userId, "fecha": {$gt: date1}},function(err,data){
     if(err){
       response = {"error" : true,"message" : "Error fetching data"};
       res.json(response);
@@ -693,7 +693,7 @@ router.get('/lastroutes', function(req, res) {
       datos.push(data);
       //Accesos hace 2 semanas
       date2 = new Date().getTime() - 1000 * 60 * 60 * 24 * 14;
-      mongoRuta.count({"user": "57349ba848d3e577329ac669", "fecha": {$gt: date2, $lt: date1}},function(err,data){
+      mongoRuta.count({"user": req.body.userId, "fecha": {$gt: date2, $lt: date1}},function(err,data){
         if(err) {
           response = {"error" : true,"message" : "Error fetching data"};
           res.json(response);
@@ -701,7 +701,7 @@ router.get('/lastroutes', function(req, res) {
           datos.push(data);
           date1 = new Date().getTime() - 1000 * 60 * 60 * 24 * 21;
           //Accesos hace 3 semanas
-          mongoRuta.count({"user": "57349ba848d3e577329ac669", "fecha": {$gt: date1, $lt: date2}},function(err,data){
+          mongoRuta.count({"user": req.body.userId, "fecha": {$gt: date1, $lt: date2}},function(err,data){
             if(err) {
               response = {"error" : true,"message" : "Error fetching data"};
               res.json(response)
@@ -709,7 +709,7 @@ router.get('/lastroutes', function(req, res) {
               datos.push(data);
               date2 = new Date().getTime() - 1000 * 60 * 60 * 24 * 28;
               //Accesos hace 4 semanas
-              mongoRuta.count({"user": "57349ba848d3e577329ac669", "fecha": {$gt: date2, $lt: date1}},function(err,data){
+              mongoRuta.count({"user": req.body.userId, "fecha": {$gt: date2, $lt: date1}},function(err,data){
                 if(err) {
                   response = {"error" : true,"message" : "Error fetching data"};
                   res.json(response);
@@ -717,7 +717,7 @@ router.get('/lastroutes', function(req, res) {
                   datos.push(data);
                   date1 = new Date().getTime() - 1000 * 60 * 60 * 24 * 35;
                   //Accesos hace 5 semanas
-                  mongoRuta.count({"user": "57349ba848d3e577329ac669", "fecha": {$gt: date1, $lt: date2}},function(err,data){
+                  mongoRuta.count({"user": req.body.userId, "fecha": {$gt: date1, $lt: date2}},function(err,data){
                     if(err) {
                       response = {"error" : true,"message" : "Error fetching data"};
                       res.json(response);
@@ -725,7 +725,7 @@ router.get('/lastroutes', function(req, res) {
                       datos.push(data);
                       date2 = new Date().getTime() - 1000 * 60 * 60 * 24 * 42;
                       //Accesos hace 6 semanas
-                      mongoRuta.count({"user": "57349ba848d3e577329ac669", "fecha": {$gt: date2, $lt: date1}},function(err,data){
+                      mongoRuta.count({"user": req.body.userId, "fecha": {$gt: date2, $lt: date1}},function(err,data){
                         if(err) {
                           response = {"error" : true,"message" : "Error fetching data"};
                           res.json(response);
