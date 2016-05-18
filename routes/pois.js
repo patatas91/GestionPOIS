@@ -74,6 +74,25 @@ router.get('/me', middleware.ensureAuthenticatedUser, function(req,res){
     });
 });
 
+/*
+ * Petición para obtener un poi concreto correspondiente al id
+ */
+router.get('/:id', function(req,res){
+    var response = {};
+    mongoOp.findById(req.params.id,function(err,data){
+        // This will run Mongo Query to fetch data based on ID.
+        if(err) {
+            response = {"error" : true,"message" : "Error fetching data"};
+        } else {
+            response = {"error" : false,"message" : data};
+        }
+        res.json(response);
+    });
+});
+
+/*
+ * Obtiene los pois de un usuario concreto
+ */
 router.get('/lista/:id', function(req,res){
     var response = {};
     mongoOp.findById(req.params.id,function(err,data){
