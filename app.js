@@ -13,6 +13,8 @@ var visitantes = require('./routes/users');
 var rutas = require('./routes/rutas');
 var pois = require('./routes/pois');
 var busqueda = require('./routes/pois');
+var lista = require('./routes/pois');
+var acceso = require('./routes/acceso')
 var gestionVisitantes = require('./routes/gestionVisitantes');
 var chart = require('./routes/chart');
 //Se importan las diferentes peticiones web
@@ -36,10 +38,12 @@ app.use('/', routes);
 app.use('/login', routes);
 app.use('/users', users);
 app.use('/users/registro', registro);
+app.use('/acceso',acceso);
 app.use('/users/visitante', visitantes);
 app.use('/rutas', rutas);
 app.use('/pois', pois);
 app.use('/pois/busqueda', busqueda);
+app.use('/pois/lista', lista);
 //app.use('/gestionVisitantes', gestionVisitantes);
 
 app.use('/admin', admin);

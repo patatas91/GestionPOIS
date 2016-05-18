@@ -74,10 +74,7 @@ router.get('/me', middleware.ensureAuthenticatedUser, function(req,res){
     });
 });
 
-/*
- * Petición para obtener un poi concreto correspondiente al id
- */
-router.get('/:id', function(req,res){
+router.get('/lista/:id', function(req,res){
     var response = {};
     mongoOp.findById(req.params.id,function(err,data){
         // This will run Mongo Query to fetch data based on ID.
@@ -222,16 +219,15 @@ router.delete('/:id', middleware.ensureAuthenticatedAll, function(req,res){
 /**
   * Función que devuelve los pois filtrados por busqueda
   */
-router.get('/busqueda/:word', function(req,res){
-       var response = {};
-        mongoOp.find({$or:[{descripcion:{$regex : ".*"+req.params.word+".*"}},{nombre:{$regex : ".*"+req.params.word+".*"}}]} ,function(err,data){
-               if(err) {
-                        response = {"error" : true,"message" : "Error fetching data"};
-                    } else {
-                        response = {"error" : false,"message" : data};
-                    }
-                res.json(response);
-            });
-    });
-
+    router.get('/busqueda/:word', function(req,res){
+            var response = {};
+            mongoOp.find({$or:[{descripcion:{$regex : ".*"+req.params.word+".*"}},{nombre:{$regex : ".*"+req.params.word+".*"}}]} ,function(err,data){
+                    if(err) {
+                            response = {"error" : true,"message" : "Error fetching data"};
+                        } else {
+                            response = {"error" : false,"message" : data};
+                       }
+                   res.json(response);
+                });
+        });
 module.exports = router;

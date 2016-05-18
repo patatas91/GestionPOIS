@@ -1,7 +1,8 @@
 /**
  * Created by diego on 29/04/2016.
  */
-var app = angular.module('visitanteManager',[]);
+var app = angular.module('visitanteManager', ['ngCookies']);
+
 
 var map;
 var markers = [];
@@ -61,6 +62,30 @@ function reloadMarkers() {
     });
 }
 
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: 40.46366700000001, lng: -3.7492200000000366},
+        zoom: 6
+    });
+
+    $.get('/pois', function(res){
+        var message=res.message;
+        if(!res.error){
+            for(i=0;i<message.length;i++){
+                var marker = new google.maps.Marker({
+                    position: {lat: message[i].latitud, lng: message[i].longitud},
+                    map: map,
+                    animation: google.maps.Animation.DROP,
+                    title: message[i].nombre
+                });
+                // Push marker to markers array
+                markers.push(marker);
+            }
+        }
+    });
+    setMarkers(markers);
+}
+
 app.controller('mainController', function($rootScope, $scope, $window, $http) {
     // when landing on the page, get all todos and show them
     $scope.map=true;
@@ -68,9 +93,15 @@ app.controller('mainController', function($rootScope, $scope, $window, $http) {
     $scope.showlista=true;
     $scope.latitud;
     $scope.longitud;
-    $scope.loginUser = true;
-    $scope.newUser = false;
     $scope.incorrecto = false;
+    $scope.showregistro=true;
+    $scope.showlogout=false;
+    $scope.showoptions=false;
+    $scope.cabeceraPois=true;
+    $scope.cabeceraRutas=false;
+    $scope.showlistaruta=false;
+    $scope.showruta=false;
+    $scope.showalert=false;
 
     $http.get('/pois')
         .success(function(data) {
@@ -80,48 +111,29 @@ app.controller('mainController', function($rootScope, $scope, $window, $http) {
             console.log('Error: ' + data);
         });
 
-    /* Autentifica un usuario */
-    $scope.autentificar = function() {
-        $http.post('/login/auth', $scope.formData)
-            .success(function(data) {
-                if(data.error == false){
-                    $scope.incorrecto = false;
-                    $scope.formData = {};
-                    $window.location.href= data.next;
-                } else{
-                    $scope.mensaje = data.message;
-                    $scope.incorrecto = true;
-                }
-
-            })
-            .error(function(data) {
-                console.log('Error: ' + data);
-            });
+    /**
+     * Cambia a vista POIs
+     */
+    $scope.changePois = function() {
+        $scope.cabeceraPois=true;
+        $scope.cabeceraRutas=false;
+        $scope.showpoi=false;
+        $scope.showlista=true;
+        $scope.showlistaruta=false;
+        $scope.showruta=false;
     };
 
-    $scope.createUser = function() {
-        $scope.loginUser = false;
-        $scope.newUser = true;
-    }
-
-    /* Autentifica un usuario */
-    $scope.newVisitor = function() {
-        $http.post('/users/visitante', $scope.formData)
-            .success(function(data) {
-                if(data.error == false){
-                    $scope.formData = {};
-                    $window.location.href= data.next;
-                } else{
-                    $scope.mensaje = data.message;
-                    $scope.incorrecto = true;
-                }
-
-            })
-            .error(function(data) {
-                console.log('Error: ' + data);
-            });
+    /**
+     * Cambia a vista rutas
+     */
+    $scope.changeRoutes = function() {
+        $scope.cabeceraRutas=true;
+        $scope.cabeceraPois=false;
+        $scope.showpoi=false;
+        $scope.showlista=false;
+        $scope.showlistaruta=true;
+        $scope.showruta=false;
     };
-
     /* DEVUELVE LAS COORDENADAS DE UNA DIRECCION */
     $scope.sacarDir = function(address) {
         geocoder = new google.maps.Geocoder();
@@ -136,6 +148,7 @@ app.controller('mainController', function($rootScope, $scope, $window, $http) {
             }
         });
     };
+
     /* CAMBIA LISTA Y VISTA DE UN POI */
     $scope.viewPoi = function(id) {
         if($scope.showlista){
@@ -161,8 +174,6 @@ app.controller('mainController', function($rootScope, $scope, $window, $http) {
     };
 
     $scope.find = function() {
-
-            //$scope.pois=[];
         for(i=0;i<markersBusqueda.length;i++) {
             markersBusqueda[i].setMap(null);
         }
@@ -196,33 +207,28 @@ app.controller('mainController', function($rootScope, $scope, $window, $http) {
                     console.log('Error: '+ data);
                 });
         $scope.showlista=true;
-    }
+    };
 
     $scope.registro = function() {
-        $http.post('/users/registro', $scope.formData)
-            .success(function(data) {
-                $scope.formData = {}; // clear the form so our user is ready to enter another
-                $scope.users = data.message;
-                $scope.user = data.user;
-                $scope.datosAcceso=true;
-            })
-            .error(function(data) {
-                console.log('Error: ' + data);
-            });
-    }
+        if(typeof($scope.formData.mail)=="undefined" | typeof($scope.formData.pass)=="undefined" | $scope.formData.mail=="" |$scope.formData.pass==""){
+            $scope.showalert=true;
+        }else{
+            $scope.showalert=false;
+            $http.post('/users/registro', $scope.formData)
+                .success(function(data) {
+                    $scope.formData = {}; // clear the form so our user is ready to enter another
+                    $scope.users = data.message;
+                    $scope.user = data.user;
+                    $scope.datosAcceso=true;
+                    $window.location.href= '/acceso';
+                })
+                .error(function(data) {
+                    $scope.incorrecto=true;
+                    console.log('Error: ' + data);
+                });
 
-    $scope.reload = function() {
-        reloadMarkers();
-        $http.get('/pois')
-            .success(function(data) {
-                $scope.pois = data.message;
-            })
-            .error(function(data) {
-                console.log('Error: ' + data);
-            });
-
-    }
-
+        }
+    };
     $scope.calculateDistance = function() {
         var totalDistance = 0;
         var partialDistance = [];
@@ -242,35 +248,11 @@ app.controller('mainController', function($rootScope, $scope, $window, $http) {
             totalDistance += R * c / 1000; //distance in Km
             partialDistance[i] = R * c / 1000;
         }
-    }
+    };
 
 
 });
 
-function initMap() {
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: 40.46366700000001, lng: -3.7492200000000366},
-        zoom: 6
-    });
-
-    $.get('/pois', function(res){
-        var message=res.message;
-        if(!res.error){
-            for(i=0;i<message.length;i++){
-                var point = new google.maps.LatLng(message[i].latitud,message[i].longitud);
-                var marker = new google.maps.Marker({
-                    position: point,
-                    map: map,
-                    animation: google.maps.Animation.DROP,
-                    title: message[i].nombre
-                });
-                // Push marker to markers array
-                markers.push(marker);
-            }
-        }
-    });
-    //setMarkers(markers);
-}
 
 
 
