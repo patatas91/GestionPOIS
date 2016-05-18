@@ -220,8 +220,8 @@ router.delete('/:id', middleware.ensureAuthenticatedAll, function(req,res){
 }) ;
 
 /**
- + * Función que devuelve los pois filtrados por busqueda
- + */
+  * Función que devuelve los pois filtrados por busqueda
+  */
 router.get('/busqueda/:word', function(req,res){
        var response = {};
         mongoOp.find({$or:[{descripcion:{$regex : ".*"+req.params.word+".*"}},{nombre:{$regex : ".*"+req.params.word+".*"}}]} ,function(err,data){
