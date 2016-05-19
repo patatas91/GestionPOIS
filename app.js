@@ -8,11 +8,9 @@ var bodyParser = require('body-parser');
 //Se importan las diferentes peticiones de la API
 var routes = require('./routes/login');
 var users = require('./routes/users');
-var registro = require('./routes/users');
-var visitantes = require('./routes/users');
 var rutas = require('./routes/rutas');
 var pois = require('./routes/pois');
-var acceso = require('./routes/acceso')
+var acceso = require('./routes/acceso');
 var gestionVisitantes = require('./routes/gestionVisitantes');
 var chart = require('./routes/chart');
 //Se importan las diferentes peticiones web
@@ -35,11 +33,10 @@ app.use(cookieParser());
 app.use('/', routes);
 app.use('/login', routes);
 app.use('/users', users);
-app.use('/users/registro', registro);
 app.use('/acceso',acceso);
-app.use('/users/visitante', visitantes);
 app.use('/rutas', rutas);
 app.use('/pois', pois);
+app.use('/gestionVisitantes',gestionVisitantes);
 
 
 app.use('/admin', admin);

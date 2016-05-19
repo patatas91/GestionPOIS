@@ -130,6 +130,35 @@ function reloadMarkers() {
     });
 }
 
+/**
+ * Actualiza los markers en el mapa
+ */
+function reloadMarkersFavs(lista) {
+    for(i=0;i<markersBusqueda.length;i++) {
+        markersBusqueda[i].setMap(null);
+    }
+    for(i=0;i<markers.length;i++) {
+        markers[i].setMap(null);
+    }
+
+    // Reset the markers array
+    markersBusqueda = [];
+    markers = [];
+    //quitar rutas
+    directionsDisplay.setMap(null);
+        for(i=0;i<lista.length;i++){
+            var point = new google.maps.LatLng(lista[i].latitud,lista[i].longitud);
+            var marker = new google.maps.Marker({
+                position: point,
+                map: map,
+                animation: google.maps.Animation.DROP,
+                title: lista[i].nombre
+            });
+            // Push marker to markers array
+            markers.push(marker);
+        }
+}
+
 function initMap() {
     var mapOptions = {
         center: new google.maps.LatLng(40.4167754,-3.7492200000000366),
@@ -159,22 +188,28 @@ function initMap() {
     setMarkers(markers);
 }
 
-app.controller('mainController', function($rootScope, $scope, $window, $http) {
+app.controller('mainController', function($rootScope, $scope, $window, $http, $cookies) {
     // when landing on the page, get all todos and show them
     $scope.map=true;
     $scope.showpoi=false;
     $scope.showlista=true;
+    $scope.showfav=false;
     $scope.latitud;
     $scope.longitud;
     $scope.incorrecto = false;
     $scope.showregistro=true;
     $scope.showlogout=false;
     $scope.showoptions=false;
-    $scope.cabeceraPois=true;
-    $scope.cabeceraRutas=false;
+    $scope.cabecera='Listado de POIS';
     $scope.showlistaruta=false;
     $scope.showruta=false;
     $scope.showalert=false;
+    $scope.added=false;
+    $scope.favpoi=false;
+    $scope.listaUsuarios=true;
+    $scope.poisUsuarios=false;
+    $scope.listaFavoritos = [];
+    $scope.listaSeguidores = [];
 
     $http.get('/pois')
         .success(function(data) {
@@ -192,16 +227,65 @@ app.controller('mainController', function($rootScope, $scope, $window, $http) {
             console.log('Error: ' + data);
         });
 
+    $http.get('/gestionVisitantes/me')
+        .success(function(data){
+            $scope.gestionVisitante = data.message;
+            //Se obtienen los pois marcados como favoritos
+            for(var i=0; i<$scope.gestionVisitante.listaFavoritos.length; i++){
+                $scope.getPoi($scope.gestionVisitante.listaFavoritos[i]);
+            }
+            //Se obtienen los usuarios seguidos
+            for(var i=0; i<$scope.gestionVisitante.listaSeguidores.length; i++){
+                $scope.getUser($scope.gestionVisitante.listaSeguidores[i]);
+            }
+        })
+        .error(function(data){
+           console.log('Error: ' + data);
+        });
+
+    /* Obtiene la información del visitante */
+    $http.get('/me')
+        .success(function(data) {
+            $scope.userMe = data.message;
+        })
+        .error(function(data) {
+            console.log('Error: ' + data);
+        });
+
+    /* Función que obtiene un POI */
+    $scope.getPoi = function(id){
+        $http.get('/pois/'+id)
+            .success(function(data){
+                $scope.listaFavoritos.push(data.message);
+            })
+            .error(function(data){
+                console.log('Error: ' + data);
+            });
+    }
+
+    /* Función que obtiene un User */
+    $scope.getUser = function(id){
+        $http.get('/users/'+id)
+            .success(function(data){
+                $scope.listaSeguidores.push(data.message);
+            })
+            .error(function(data){
+                console.log('Error: ' + data);
+            });
+    }
+
     /**
      * Cambia a vista POIs
      */
     $scope.changePois = function() {
-        $scope.cabeceraPois=true;
-        $scope.cabeceraRutas=false;
+        $scope.cabecera='Listado de POIS';
         $scope.showpoi=false;
+        $scope.showfav=false;
         $scope.showlista=true;
         $scope.showlistaruta=false;
         $scope.showruta=false;
+        $scope.added=false;
+        $scope.favpoi=false;
         $http.get('/pois')
             .success(function(data) {
                 $scope.pois = data.message;
@@ -216,26 +300,51 @@ app.controller('mainController', function($rootScope, $scope, $window, $http) {
      * Cambia a vista rutas
      */
     $scope.changeRoutes = function() {
-        $scope.cabeceraRutas=true;
-        $scope.cabeceraPois=false;
+        $scope.cabecera='Listado de Rutas';
         $scope.showpoi=false;
+        $scope.showfav=false;
         $scope.showlista=false;
         $scope.showlistaruta=true;
         $scope.showruta=false;
+        $scope.added=false;
+        $scope.favpoi=false;
         initMap();
     };
 
     /*
      * Cambia a vista POIS Favoritos
      */
-    $scope.changeRoutes = function() {
-        $scope.cabeceraRutas=true;
-        $scope.cabeceraPois=false;
+    $scope.changeFav = function() {
+        reloadMarkersFavs($scope.listaFavoritos);
+        $scope.cabecera='POIS Favoritos';
         $scope.showpoi=false;
         $scope.showlista=false;
-        $scope.showlistaruta=true;
+        $scope.showlistaruta=false;
         $scope.showruta=false;
-        initMap();
+        $scope.added=false;
+        $scope.favpoi=false;
+        $scope.showfav=true;
+    };
+
+    /*
+     * Cambia a vista POIS Favoritos
+     */
+    $scope.viewUser= function(id, nombre) {
+        if(id != 0){
+            $scope.myUser=nombre;
+            $http.get('/pois/lista/' + id)
+                .success(function(data){
+                   $scope.myPoisUser=data.message;
+                   $scope.listaUsuarios=false;
+                   $scope.poisUsuarios=true;
+                })
+                .error(function(data){
+                    console.log('Error: ' + data);
+                });
+        } else{
+            $scope.poisUsuarios=false;
+            $scope.listaUsuarios=true;
+        }
     };
 
     /* DEVUELVE LAS COORDENADAS DE UNA DIRECCION */
@@ -284,6 +393,56 @@ app.controller('mainController', function($rootScope, $scope, $window, $http) {
         }
     };
 
+    /* CAMBIA LISTA DE FAVORITOS Y VISTA DE UN POI */
+    $scope.viewPoiFav = function(id) {
+        if($scope.showfav){
+            $scope.showfav=false;
+            $http.get('/pois/'+id)
+                .success(function(data){
+                    $scope.mypoi=data.message;
+                    setMarkers(data.message.latitud, data.message.longitud);
+                    focusPoi(data.message.latitud, data.message.longitud, 18);
+                    $http.get('/users/'+data.message.user)
+                        .success(function(data){
+                            $scope.userPoi = data.message;
+                        })
+                        .error(function(data){
+                            console.log('Error: '+ data);
+                        });
+                })
+                .error(function(data){
+                    console.log('Error: '+ data);
+                });
+            $scope.favpoi=true;
+        }
+        else{
+            //console.log($scope.listaFavoritos);
+            reloadMarkersFavs($scope.listaFavoritos);
+            resetfocus();
+            $scope.favpoi=false;
+            $scope.showfav=true;
+        }
+    };
+
+    /*
+    * Función que valora un POI
+    */
+    $scope.valorar=function(valor,id){
+        $http.put('/pois/'+id+'/'+valor)
+            .success(function(data){
+                $http.get('pois/'+id)
+                    .success(function(data){
+                        $scope.mypoi = data.message;
+                    })
+                    .error(function(data){
+                        console.log('Error: ' + data);
+                    })
+            })
+            .error(function(data){
+                console.log('Error: '+ data);
+            });
+    };
+
     /**
      * Función para obtener las coordenadas de los diferentes puntos de la ruta
      */
@@ -329,6 +488,85 @@ app.controller('mainController', function($rootScope, $scope, $window, $http) {
         }
     };
 
+    /* Función para añadir un POI como favorito */
+    $scope.addFav = function(){
+        $http.put('/gestionVisitantes/fav/'+$scope.mypoi._id)
+            .success(function(data){
+                $scope.added=true;
+                $scope.listaFavoritos = [];
+                $http.get('/gestionVisitantes/me')
+                    .success(function(data){
+                        $scope.gestionVisitante = data.message;
+                        for(var i=0; i<$scope.gestionVisitante.listaFavoritos.length; i++){
+                            $scope.getPoi($scope.gestionVisitante.listaFavoritos[i]);
+                        }
+                    })
+                    .error(function(data){
+                        console.log('Error: ' + data);
+                    });
+            })
+            .error(function(data){
+               console.log('Error: '+data);
+            });
+    }
+    /* Función para eliminar un POI como favorito */
+    $scope.deleteFav = function(){
+        $http.put('/gestionVisitantes/deletefav/'+$scope.mypoi._id)
+            .success(function(data){
+                $window.alert("El poi " + $scope.mypoi.nombre + " se ha eliminado de favoritos");
+                location.reload();
+            })
+            .error(function(data){
+                console.log('Error: '+data);
+            });
+    }
+
+    /* Función para añadir un Usuario a la lista de Seguidores */
+    $scope.addFollow = function(){
+        $http.put('/gestionVisitantes/follow/'+$scope.userPoi._id)
+            .success(function(data){
+                $scope.added=true;
+                $scope.listaSeguidores = [];
+                $http.get('/gestionVisitantes/me')
+                    .success(function(data){
+                        $scope.gestionVisitante = data.message;
+                        for(var i=0; i<$scope.gestionVisitante.listaSeguidores.length; i++){
+                            $scope.getUser($scope.gestionVisitante.listaSeguidores[i]);
+                        }
+                    })
+                    .error(function(data){
+                        console.log('Error: ' + data);
+                    });
+            })
+            .error(function(data){
+                console.log('Error: '+data);
+            });
+    }
+
+    /*
+     * Elimina un usuario de los Usuarios Seguidos
+     */
+    $scope.deleteUser = function(id){
+        $http.put('/gestionVisitantes/unfollow/'+id)
+            .success(function(data){
+                $scope.added=true;
+                $scope.listaSeguidores = [];
+                $http.get('/gestionVisitantes/me')
+                    .success(function(data){
+                        $scope.gestionVisitante = data.message;
+                        for(var i=0; i<$scope.gestionVisitante.listaSeguidores.length; i++){
+                            $scope.getUser($scope.gestionVisitante.listaSeguidores[i]);
+                        }
+                    })
+                    .error(function(data){
+                        console.log('Error: ' + data);
+                    });
+            })
+            .error(function(data){
+                console.log('Error: '+data);
+            });
+    }
+
     $scope.find = function() {
         for(i=0;i<markersBusqueda.length;i++) {
             markersBusqueda[i].setMap(null);
@@ -349,7 +587,6 @@ app.controller('mainController', function($rootScope, $scope, $window, $http) {
                         for (var i=0; i<markers.length; i++) {
                             markers[i].setMap(null);
                         }
-                        //markers = [];
                         for(i=0;i<message.length;i++){
                             var point = new google.maps.LatLng(message[i].latitud,message[i].longitud);
                             var marker = new google.maps.Marker({
@@ -359,7 +596,6 @@ app.controller('mainController', function($rootScope, $scope, $window, $http) {
                                 title: message[i].nombre
                             });
                             markersBusqueda.push(marker);
-                            //setMarkers(message[i].latitud, message[i].longitud);
                         }
 
                 }).error(function(data){
@@ -368,25 +604,28 @@ app.controller('mainController', function($rootScope, $scope, $window, $http) {
         $scope.showlista=true;
     };
 
-    $scope.registro = function() {
-        if(typeof($scope.formData.mail)=="undefined" | typeof($scope.formData.pass)=="undefined" | $scope.formData.mail=="" |$scope.formData.pass==""){
-            $scope.showalert=true;
-        }else{
-            $scope.showalert=false;
-            $http.post('/users/registro', $scope.formData)
-                .success(function(data) {
-                    $scope.formData = {}; // clear the form so our user is ready to enter another
-                    $scope.users = data.message;
-                    $scope.user = data.user;
-                    $scope.datosAcceso=true;
-                    $window.location.href= '/acceso';
+    /*
+     * Recomienda una Ruta
+     */
+    $scope.recomendar = function(id){
+        if (id == 0){
+            $scope.message='Ruta Enviada: '+ $scope.myruta.nombre;
+            $http.put('/rutas/'+ $scope.myruta._id + '/recomendar')
+                .success(function(data){
+                    $scope.myruta=data.message;
                 })
-                .error(function(data) {
-                    $scope.incorrecto=true;
+                .error(function(data){
                     console.log('Error: ' + data);
                 });
-
+        } else{
+            $scope.message='POI Enviado: '+ $scope.mypoi.nombre;
         }
+    }
+
+    /* Función que cierra sesión (elimina la cookie) */
+    $scope.logout = function() {
+        $cookies.remove("token");
+        $window.location.href= '/login';
     };
 });
 

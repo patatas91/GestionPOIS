@@ -133,15 +133,9 @@ router.put('/:id/recomendar', function(req,res){
                 if(err) {
                     response = {"error" : true,"message" : "Error updating data"};
                 } else {
-                    mongoOp.find({}, function(err, data) {
-                        if(err) {
-                            response = {"error" : true,"message" : "Error adding data"};
-                        } else {
-                            response = {"error" : false,"message" : data};
-                        }
-                        res.json(response);
-                    });
+                    response = {"error" : false,"message" : data};
                 }
+                res.json(response);
             })
         }
     });

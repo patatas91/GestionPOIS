@@ -35,6 +35,7 @@ router.post('/auth', function(req, res) {
         } else {
             //Si existe se le asigna un token de acceso y se redirige a su página principal de acuerdo a su rango
             if (user) {
+                actualizarUltimoAcceso(user);
                 var token = jwt.sign(user, config.secret, {
                     expiresIn: 600 // expires in 24 hours
                 });
@@ -67,6 +68,18 @@ router.post('/auth', function(req, res) {
     });
 });
 
+/*
+ * Actualiza la fecha de último acceso del usuario
+ */
+function actualizarUltimoAcceso(user){
+    user.fechaAcceso = new Date();
+    user.save(function(err){
+        if(err) {
+            console.log('Error acualizando fecha de último acceso');
+        }
+    })
+}
+
 /**
  * Función que permite añadir un visitante
  */
@@ -87,6 +100,7 @@ router.post('/registro', function(req, res) {
             //Si existe se le asigna un token de acceso y se redirige a su página principal de acuerdo a su rango
             userMongo.findOne({email: req.body.email, pass: password}, function(err, user) {
                 if(user) {
+                    actualizarUltimoAcceso(user);
                     var token = jwt.sign(user, config.secret, {
                         expiresIn: 600 // expires in 24 hours
                     });
@@ -132,6 +146,7 @@ router.post('/registro', function(req, res) {
                     response = {"error": true, "message": "Error adding user"};
                     res.json(response);
                 } else {
+                    actualizarUltimoAcceso(newUser);
                     var token = jwt.sign(user, config.secret, {
                         expiresIn: 600 // expires in 24 hours
                     });

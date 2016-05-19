@@ -10,7 +10,6 @@ var mongoOp = require("../models/mongoUser");
 var middleware = require("../middleware");
 
 router.get('/', middleware.ensureAuthenticatedAll, function(req,res){
-    console.log(req.body.userId);
     var response = {};
     mongoOp.findById( req.body.userId ,{"tipoUser": 0, "pass": 0},function(err,data){
         if(err) {

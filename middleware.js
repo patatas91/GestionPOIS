@@ -1,7 +1,7 @@
 /**
  * Created by diego on 06/05/2016.
  */
-
+var moment = require('moment');
 var config = require('./config');
 var jwt = require('jsonwebtoken');
 
@@ -22,7 +22,7 @@ exports.ensureAuthenticatedAdmin = function(req, res, next) {
                     req.body.userId = decoded._doc._id;
                     next();
                 } else{
-                    res.json({error: true, message: "No tienes permiso para acceder ahi."});
+                    res.sendfile('./views/loginPermisos.html');
                 }
             }
         });
@@ -48,7 +48,7 @@ exports.ensureAuthenticatedUser = function(req, res, next) {
                     req.body.userId = decoded._doc._id;
                     next();
                 } else{
-                    res.json({error: true, message: "No tienes permiso para acceder ahi."});
+                    res.sendfile('./views/loginPermisos.html');
                 }
             }
         });

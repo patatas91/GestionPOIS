@@ -95,8 +95,7 @@ router.get('/:id', function(req,res){
  */
 router.get('/lista/:id', function(req,res){
     var response = {};
-    mongoOp.findById(req.params.id,function(err,data){
-        // This will run Mongo Query to fetch data based on ID.
+    mongoOp.find({"user" : req.params.id},function(err,data){
         if(err) {
             response = {"error" : true,"message" : "Error fetching data"};
         } else {
@@ -170,7 +169,6 @@ router.put('/:id', middleware.ensureAuthenticatedAll, function(req,res){
  * Petición para votar un determinado poi
  */
 router.put('/:id/:valor', function(req,res){
-    console.log(req.params.valor);
     var response = {};
     // first find out record exists or not
     // if it does then update the record
@@ -203,7 +201,6 @@ router.put('/:id/:valor', function(req,res){
  * Petición para votar un determinado poi
  */
 router.put('/:id/votar', function(req,res){
-    console.log(req.body.valoracion);
     var response = {};
     // first find out record exists or not
     // if it does then update the record

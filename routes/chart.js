@@ -40,7 +40,7 @@ router.get('/ultimosAccesos',function(req, res) {
   //SE REALIZAN UNA SERIE DE CONSULTAS PARA OBTENER TODOS DATOS QUE HACEN FALTA PARA FORMAR LA GRÁFICA
   date1 = new Date().getTime() - 1000 * 60 * 60 * 24 * 7;
   //Accesos hace 1 semana
-  mongoUser.count({"fechaAcceso": {$gt: date1}, "tipoUser":1},function(err,data){
+  mongoUser.count({"fechaAcceso": {$gt: date1}},function(err,data){
     if(err){
       response = {"error" : true,"message" : "Error fetching data"};
       res.json(response);
@@ -48,7 +48,7 @@ router.get('/ultimosAccesos',function(req, res) {
       datos.push(data); //Se añade a la lista
       //Accesos hace 2 semanas
       date2 = new Date().getTime() - 1000 * 60 * 60 * 24 * 14;
-      mongoUser.count({"fechaAcceso": {$gt: date2, $lt: date1}, "tipoUser":1},function(err,data){
+      mongoUser.count({"fechaAcceso": {$gt: date2, $lt: date1}},function(err,data){
         if(err) {
           response = {"error" : true,"message" : "Error fetching data"};
           res.json(response);
@@ -56,7 +56,7 @@ router.get('/ultimosAccesos',function(req, res) {
           datos.push(data);
           date1 = new Date().getTime() - 1000 * 60 * 60 * 24 * 21;
           //Accesos hace 3 semanas
-          mongoUser.count({"fechaAcceso": {$gt: date1, $lt: date2}, "tipoUser":1},function(err,data){
+          mongoUser.count({"fechaAcceso": {$gt: date1, $lt: date2}},function(err,data){
             if(err) {
               response = {"error" : true,"message" : "Error fetching data"};
               res.json(response)
@@ -64,7 +64,7 @@ router.get('/ultimosAccesos',function(req, res) {
               datos.push(data);
               date2 = new Date().getTime() - 1000 * 60 * 60 * 24 * 28;
               //Accesos hace 4 semanas
-              mongoUser.count({"fechaAcceso": {$gt: date2, $lt: date1}, "tipoUser":1},function(err,data){
+              mongoUser.count({"fechaAcceso": {$gt: date2, $lt: date1}},function(err,data){
                 if(err) {
                   response = {"error" : true,"message" : "Error fetching data"};
                   res.json(response);
@@ -72,7 +72,7 @@ router.get('/ultimosAccesos',function(req, res) {
                   datos.push(data);
                   date1 = new Date().getTime() - 1000 * 60 * 60 * 24 * 35;
                   //Accesos hace 5 semanas
-                  mongoUser.count({"fechaAcceso": {$gt: date1, $lt: date2}, "tipoUser":1},function(err,data){
+                  mongoUser.count({"fechaAcceso": {$gt: date1, $lt: date2}},function(err,data){
                     if(err) {
                       response = {"error" : true,"message" : "Error fetching data"};
                       res.json(response);
@@ -80,7 +80,7 @@ router.get('/ultimosAccesos',function(req, res) {
                       datos.push(data);
                       date2 = new Date().getTime() - 1000 * 60 * 60 * 24 * 42;
                       //Accesos hace 6 semanas
-                      mongoUser.count({"fechaAcceso": {$gt: date2, $lt: date1}, "tipoUser":1},function(err,data){
+                      mongoUser.count({"fechaAcceso": {$gt: date2, $lt: date1}},function(err,data){
                         if(err) {
                           response = {"error" : true,"message" : "Error fetching data"};
                           res.json(response);
@@ -88,7 +88,7 @@ router.get('/ultimosAccesos',function(req, res) {
                           datos.push(data);
                           //Se añaden los datos recogidos al esqueleto definido anteriormente
                           var sets = [{
-                            label: 'Nº Usuarios',
+                            label: 'Nº Usuarios que han accedido.',
                             data: datos,
                             backgroundColor: "#1F775E"
                           }];

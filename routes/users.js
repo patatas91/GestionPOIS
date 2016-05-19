@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var mongoOp = require("../models/mongoUser");
+var visitanteOp = require("../models/mongoVisitantes");
 var middleware = require("../middleware");
 var jwt = require("jsonwebtoken");
 var config = require('../config');
@@ -82,13 +83,40 @@ router.post('/', middleware.ensureAuthenticatedAdmin, function(req,res) {
 
         }
       });
+
+
     }
   });
 });
 
+/*
+ * Función que crea la instancia de gestion visitantes
+ */
+function crearVisit(email, res) {
+  mongoOp.findOne({"email": email},function(err,data) {
+    var response;
+    if (err){
+      response = {"error": true, "message": "Error adding user"};
+      res.json(response);
+    } else{
+      var visit = new visitanteOp();
+      visit.user = data._id;
+      visit.listaFavoritos= [];
+      visit.listaSeguidores = [];
+      visit.save(function(err){
+        if(err){
+          response = {"error": true, "message": "Error adding user"};
+        } else{
+          response = {"error": false, "message": "Se ha añadido correctamente el usuario", "next": "/visitante"};
+        }
+        res.json(response);
+      })
+    }
+  })
+}
+
 /**
- * Petición que permite añadir un usuario
- * Sólo disponible para el administrador.
+ * Petición que permite añadir un visitante.
  */
 router.post('/visitante', function(req,res) {
   var response = {};
@@ -118,10 +146,11 @@ router.post('/visitante', function(req,res) {
         if (err) {
           console.log(err);
           response = {"error": true, "message": "Error adding user"};
+          res.json(response);
         } else {
-          response = {"error": false, "message": "Se ha añadido correctamente el usuario", "next": "/visitante"};
+          crearVisit(db.email, res);
         }
-        res.json(response);
+
       });
     }
   });
@@ -229,7 +258,9 @@ router.delete('/:id', middleware.ensureAuthenticatedAdmin, function(req,res){
   });
 })
 
-
+/*
+ * Función que genera una contraseña aleatoria de 8 carácteres
+ */
 function generar() {
   var caracteres = "abcdefghijkmnpqrtuvwxyzABCDEFGHIJKLMNPQRTUVWXYZ2346789_/-?¿.:=+";
   var contraseña = "";
