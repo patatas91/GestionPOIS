@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://code.angularjs.org/1.4.4/angular.min.js"></script>
+    <script src="https://code.angularjs.org/1.4.4/angular-cookies.min.js"></script>
+    <script src="views/acceso.js"></script>
+    <title>Panel Visitante</title>
+    <!-- TABLA POIS -->
+    <style>
+        html, body { height: 100%; margin: 0; padding: 0; }
+        #map { height: 100%; }
+
+        .header-fixed {
+            width: 100%
+        }
+
+        .header-fixed > thead,
+        .header-fixed > tbody,
+        .header-fixed > thead > tr,
+        .header-fixed > tbody > tr,
+        .header-fixed > thead > tr > th,
+        .header-fixed > tbody > tr > td {
+            display: block;
+        }
+        .header-fixed > tbody > tr:after,
+        .header-fixed > thead > tr:after {
+            content: ' ';
+            display: block;
+            visibility: hidden;
+            clear: both;
+        }
+        .header-fixed > tbody {
+            overflow-y: auto;
+            height: 350px;
+        }
+        .header-fixed > tbody > tr > td,
+        .header-fixed > thead > tr > th {
+            width: 100%;
+            float: left;
+        }
+        .header-fixed2 {
+            width: 100%
+        }
+        .header-fixed2 > thead,
+        .header-fixed2 > tbody,
+        .header-fixed2 > thead > tr,
+        .header-fixed2 > tbody > tr,
+        .header-fixed2 > thead > tr > th,
+        .header-fixed2 > tbody > tr > td {
+            display: block;
+        }
+        .header-fixed2 > tbody > tr:after,
+        .header-fixed2 > thead > tr:after {
+            content: ' ';
+            display: block;
+            visibility: hidden;
+            clear: both;
+        }
+        .header-fixed2 > tbody {
+            overflow-y: auto;
+            height: 350px;
+        }
+        .header-fixed2 > tbody > tr > td,
+        .header-fixed2 > thead > tr > th {
+            width: 20%;
+            float: left;
+        }
+        .table-responsive>.table>tbody>tr>td,
+        .table-responsive>.table>tbody>tr>th,
+        .table-responsive>.table>tfoot>tr>td,
+        .table-responsive>.table>tfoot>tr>th,
+        .table-responsive>.table>thead>tr>td,
+        .table-responsive>.table>thead>tr>th {
+            white-space: pre-line;
+        }
+    </style>
+</head>
+
+<body ng-app="accesoManager" ng-controller="mainController">
+<div class="container">
+
+    <nav class="navbar navbar-default navbar-fixed-tdiv">
+        <div class="container col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading" align="center">
+                    <h1><b>Panel de Visitante</b></h1>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand">AICRIDI</a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li role="presentation" class="active"><a data-toggle="pill" href="#pois" onclick="$('.alert').hide()">
+                        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>&nbsp;Mapa<span class="sr-only">(current)</span></a></li>
+                    <li role="presentation" ng-show="showlogout"><a data-toggle="pill" href="#cuenta" onclick="$('.alert').hide()"><span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;Cuenta</a></li>
+                    <li role="presentation"><a data-toggle="pill" href="#acceso" onclick="$('.alert').hide()"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;Acceso</a></li>
+                    <form class="navbar-form navbar-left" role="search">
+                        <div class="form-group">
+                            <input type="text" ng-model="formData.word" class="form-control" placeholder="Búsqueda">
+                        </div>
+                        <button type="submit" class="btn btn-default" ng-click="find(word)" onclick="$('.alert').hide()">Buscar</button>
+                    </form>
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+    <div class="tab-content">
+        <div class="alert alert-success" role="alert" hidden="true">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>Enviando POI
+        </div>
+        <div class="alert alert-danger" role="alert" ng-show="showalert">
+            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+            <span class="sr-only">Error:</span>
+            Datos de acceso erroneos
+        </div>
+        <div id="pois" class="tab-pane fade in active">
+            <div class="panel-body">
+                <div ng-show="showuser">
+                        <div class="panel-body">
+                            <h3> {{ user.nombre}} </h3>
+                            <b>Listado de POIS: </b>{{ numPois }}<br/>
+                            <br>
+                            <table class="table table-striped header-fixed">
+                                <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                </tr>
+                                </thead>
+                                <tbody style="height: 435px">
+                                <tr ng-repeat="p in poisuser">
+                                    <td>{{ poi.nombre }} &nbsp;&nbsp;<input type="button" class="btn btn-primary btn-sm pull-right" value="Añadir" ng-click="addFav(poi._id)"></td>
+                                </tr>
+                                <input type="button" class="btn btn-primary btn-sm pull-right" value="Seguir" ng-click="seguir(user._id)">
+                                <input type="button" class="btn btn-primary btn-sm pull-right" value="Volver" ng-click="viewPoi(mypoi._id)">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                <div ng-show="showbody">
+                    <div class="btn-group btn-group-justified">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-success" ng-click="changePois()">POIS&nbsp;<span class="label label-info">{{pois.length}}</span></button>
+                        </div>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-warning" ng-click="changeRoutes()">Rutas&nbsp;<span class="label label-info">{{rutas.length}}</span></button>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div >
+                                <!-- MAPA -->
+                                <div class="embed-responsive embed-responsive-4by3 embed-responsive-item" ng-show="map" style="margin-bottom: 10px;
+                            min-width: 323px; min-height: 323px" id="map"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="panel panel-primary" style="min-width: 323px">
+                                <div class="panel-header" align="center">
+                                    <h3><b>Listado de POIS</b></h3>
+                                </div>
+                                <div class="panel-body" style="height: 500px">
+
+                                    <!-- PANEL INFO POI -->
+                                    <div ng-show="showpoi">
+                                        <div class="panel panel-primary embed-responsive-item" style="margin-bottom: 10px">
+                                            <div class="panel-header" align="center">
+                                                <h3> {{ mypoi.nombre}} </h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <b>Descripción:</b> <p>{{ mypoi.descripcion }}</p><br/>
+                                                <b>Url:</b> {{ mypoi.url }}<br/>
+                                                <b>Número de votantes:</b> {{ mypoi.numVotantes }}<br/>
+                                                <b>Valoración:</b> {{ mypoi.valoracion/ mypoi.numVotantes }}<br/>
+                                                <b>Palabras clave:</b> <ol ng-repeat="clave in mypoi.palabrasClave"> {{ clave }}</ol>
+                                                <b>Latitud: </b>{{ mypoi.latitud }}<br/>
+                                                <b>Longitud: </b>{{ mypoi.longitud }}<br/>
+                                            </div>
+                                        </div>
+                                        <div ng-show="showoptions">
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    Valorar POI
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a  ng-click="valorar(0,mypoi._id)" onclick="$('.alert').hide()">0</a></li>
+                                                    <li><a  ng-click="valorar(1,mypoi._id)" onclick="$('.alert').hide()">1</a></li>
+                                                    <li><a  ng-click="valorar(2,mypoi._id)" onclick="$('.alert').hide()">2</a></li>
+                                                    <li><a  ng-click="valorar(3,mypoi._id)" onclick="$('.alert').hide()">3</a></li>
+                                                    <li><a  ng-click="valorar(4,mypoi._id)" onclick="$('.alert').hide()">4</a></li>
+                                                    <li><a  ng-click="valorar(5,mypoi._id)" onclick="$('.alert').hide()">5</a></li>
+                                                </ul>
+                                            </div>
+
+                                            <input type="button" class="btn btn-primary btn-lg btn-block" value="Ver Usuario" ng-click="verUsuario(mypoi.user)" onclick="$('.alert').hide()">
+                                            <br>
+                                            <input type="button" class="btn btn-primary btn-lg btn-block" value="Recomendar" onclick="$('.alert').show()">
+                                            <br>
+                                            <input type="button" class="btn btn-primary btn-lg btn-block" value="Añadir Favoritos" ng-click="addFav(mypoi._id)" onclick="$('.alert').show()">
+                                            <br>
+                                        </div>
+                                        <input type="button" class="btn btn-primary btn-lg btn-block" value="Volver" ng-click="viewPoi(0)" onclick="$('.alert').hide()">
+                                    </div>
+
+                                    <!-- PANEL INFO RUTA -->
+                                    <div ng-show="showruta">
+                                        <div class="panel panel-primary embed-responsive-item" style="margin-bottom: 10px">
+                                            <div class="panel-header" align="center">
+                                                <h3> {{ myruta.nombre}} </h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <b>Descripción:</b> <p>{{ myruta.descripcion }}</p><br/>
+                                                <b>Numero de POIS: </b>{{ numPois }}<br/>
+                                                <br>
+                                                <b>POI inicio:</b><br/>
+                                                <ul>
+                                                    <li type="circle"><b>Nombre: </b>{{ inicio.nombre }}</li>
+                                                    <li type="circle"><b>Latitud: </b>{{ inicio.latitud }}</li>
+                                                    <li type="circle"><b>Longitud: </b>{{ inicio.longitud }}</li>
+                                                </ul>
+                                                <br/>
+                                                <b>POI final:</b><br/>
+                                                <ul>
+                                                    <li type="circle"><b>Nombre: </b>{{ final.nombre }}</li>
+                                                    <li type="circle"><b>Latitud: </b>{{ final.latitud }}</li>
+                                                    <li type="circle"><b>Longitud: </b>{{ final.longitud }}</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <input type="button" class="btn btn-primary btn-lg btn-block" value="Volver" ng-click="viewRuta(0)">
+                                    </div>
+                                    <!-- LISTA POI -->
+                                    <div ng-show="showlista" class="table-responsive">
+                                        <table class="table table-striped header-fixed">
+                                            <thead>
+                                            <tr>
+                                                <th>Nombre</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody style="height: 435px">
+                                            <tr ng-repeat="poi in pois">
+                                                <td>{{ poi.nombre }} &nbsp;&nbsp;<input type="button" class="btn btn-primary btn-sm pull-right" value="Info" ng-click="viewPoi(poi._id)"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- LISTA RUTAS -->
+                                    <div ng-show="showlistaruta" class="table-responsive">
+                                        <table class="table table-striped header-fixed">
+                                            <thead>
+                                            <tr>
+                                                <th>Nombre</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody style="height: 435px">
+                                            <tr ng-repeat="ruta in rutas">
+                                                <td>{{ ruta.nombre }} &nbsp;&nbsp;<input type="button" class="btn btn-primary btn-sm pull-right" value="Info" ng-click="viewRuta(ruta._id)"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="cuenta" class="tab-pane fade">
+            <div  class="table-responsive">
+                <table class="table table-striped header-fixed">
+                    <thead>
+                    <tr>
+                        <th>FAVORITOS</th>
+                    </tr>
+                    </thead>
+                    <tbody style="height: 435px">
+                    <tr ng-repeat="poi in pois">
+                        <td>{{ poi.nombre }} &nbsp;&nbsp;<input type="button" class="btn btn-primary btn-sm pull-right" value="Borrar" ng-click="borrar(poi._id)">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div  class="table-responsive">
+                <table class="table table-striped header-fixed">
+                    <thead>
+                    <tr>
+                        <th>USUARIOS SEGUIDOS</th>
+                    </tr>
+                    </thead>
+                    <tbody style="height: 435px">
+                    <tr ng-repeat="user in users">
+                        <td>{{ user.nombre }} &nbsp;&nbsp;<input type="button" class="btn btn-primary btn-sm pull-right" value="Info" ng-click="viewUser(user._id)">
+                            <input type="button"  class="btn btn-primary btn-sm pull-right" value="Unfollow" ng-click="unfollow(user._id)">
+                        </td>
+
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="acceso" class="tab-pane fade">
+            <div class="panel panel-warning col-md-12" ng-show="incorrecto">
+                <div class="panel-heading">
+                    <h7 class="panel-tittle">Datos de acceso incorrectos</h7>
+                </div>
+            </div>
+            <div align="left">
+                <div ng-show="showregistro">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label for="mail">Email</label>
+                            <input type="email" class="form-control" id="mail" placeholder="Email" ng-model="formData.mail">
+                        </div>
+                        <div class="form-group">
+                            <label for="pass">Contraseña</label>
+                            <input type="password" class="form-control" id="pass" placeholder="Password" ng-model="formData.pass">
+                        </div>
+                        <button type="button" class="btn btn-default" ng-click="registro()">Acceder</button>
+                    </form>
+                </div>
+                <div ng-show="showlogout">
+                    <button type="button" class="btn btn-default" ng-click="logout()"> Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBXKViVY9DuiM75qPiyclDq_wcWZNOpj1Q&callback=initMap">
+</script>
+</body>
+</html>
