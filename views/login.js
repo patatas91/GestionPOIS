@@ -23,4 +23,7 @@ app.controller('mainController', function($rootScope, $scope, $window, $http) {
                 console.log('Error: ' + data);
             });
     };
+    $scope.acceder = function(){
+        $window.location.href= '/visitante';
+    }
 });

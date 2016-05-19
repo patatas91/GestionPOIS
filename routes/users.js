@@ -382,4 +382,35 @@ router.post('/registro', function(req,res) {
   });
 });
 
+/*
+ * Función para el arranque del sistema.
+ */
+router.post('/maestra', function(req,res) {
+  var response = {};
+      //Sino se crea
+      var db = new mongoOp();
+      var password = req.body.pass;
+      db.tipoUser = 0;
+      db.email = req.body.email;
+      db.pass = require('crypto')
+          .createHash('sha1')
+          .update(password)
+          .digest('base64');
+      db.nombre = req.body.nombre;
+      db.apellidos = req.body.apellidos;
+      db.fechaAlta = new Date();
+
+      //Se guarda
+      db.save(function (err) {
+        if (err) {
+          console.log(err);
+          response = {"error": true, "message": "Error adding user"};
+          res.json(response);
+        } else {
+          response = {"error": false, "message": "Se ha añadido correctamente el usuario"};
+        }
+        res.json(response);
+      });
+});
+
 module.exports = router;

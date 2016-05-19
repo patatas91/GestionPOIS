@@ -37,7 +37,7 @@ router.post('/auth', function(req, res) {
             if (user) {
                 actualizarUltimoAcceso(user);
                 var token = jwt.sign(user, config.secret, {
-                    expiresIn: 600 // expires in 24 hours
+                    expiresIn: 3000 // expires in 24 hours
                 });
                 var next;
                 if(user.tipoUser == 0){
@@ -102,7 +102,7 @@ router.post('/registro', function(req, res) {
                 if(user) {
                     actualizarUltimoAcceso(user);
                     var token = jwt.sign(user, config.secret, {
-                        expiresIn: 600 // expires in 24 hours
+                        expiresIn: 3000 // expires in 24 hours
                     });
                     var next;
                     if (user.tipoUser == 0) {
@@ -148,7 +148,7 @@ router.post('/registro', function(req, res) {
                 } else {
                     actualizarUltimoAcceso(newUser);
                     var token = jwt.sign(user, config.secret, {
-                        expiresIn: 600 // expires in 24 hours
+                        expiresIn: 3000 // expires in 24 hours
                     });
                     var next='/acceso';
                     //Respuesta con cookie

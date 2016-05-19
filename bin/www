@@ -20,7 +20,7 @@ app.set('port', port);
  */
 var server = http.createServer(app);
 
-//Conectamos con el servidor
+//Conectamos con la base de datos
 mongoose.connect('mongodb://localhost:27017/proyecto');
 
 
