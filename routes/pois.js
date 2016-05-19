@@ -240,7 +240,8 @@ router.delete('/:id', middleware.ensureAuthenticatedAll, function(req,res){
   */
     router.get('/busqueda/:word', function(req,res){
             var response = {};
-            mongoOp.find({$or:[{descripcion:{$regex : ".*"+req.params.word+".*"}},{nombre:{$regex : ".*"+req.params.word+".*"}}]} ,function(err,data){
+            mongoOp.find({$or:[{descripcion:{$regex : ".*"+req.params.word+".*", $options:'-i'}},{nombre:{$regex : ".*"+req.params.word+".*", $options:'-i'}},
+                {palabrasClave:{$regex : ".*"+req.params.word+".*", $options:'-i'}}]} ,function(err,data){
                     if(err) {
                             response = {"error" : true,"message" : "Error fetching data"};
                         } else {

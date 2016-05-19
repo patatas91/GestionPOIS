@@ -1,7 +1,7 @@
 /**
  * Created by diego on 29/04/2016.
  */
-var app = angular.module('visitanteManager', []);
+var app = angular.module('visitanteManager', ['ngCookies']);
 
 
 var map;
@@ -167,7 +167,6 @@ app.controller('mainController', function($rootScope, $scope, $window, $http) {
     $scope.latitud;
     $scope.longitud;
     $scope.incorrecto = false;
-    $scope.correcto = false;
     $scope.showregistro=true;
     $scope.showlogout=false;
     $scope.showoptions=false;
@@ -225,6 +224,20 @@ app.controller('mainController', function($rootScope, $scope, $window, $http) {
         $scope.showruta=false;
         initMap();
     };
+
+    /*
+     * Cambia a vista POIS Favoritos
+     */
+    $scope.changeRoutes = function() {
+        $scope.cabeceraRutas=true;
+        $scope.cabeceraPois=false;
+        $scope.showpoi=false;
+        $scope.showlista=false;
+        $scope.showlistaruta=true;
+        $scope.showruta=false;
+        initMap();
+    };
+
     /* DEVUELVE LAS COORDENADAS DE UNA DIRECCION */
     $scope.sacarDir = function(address) {
         geocoder = new google.maps.Geocoder();
@@ -355,26 +368,25 @@ app.controller('mainController', function($rootScope, $scope, $window, $http) {
         $scope.showlista=true;
     };
 
-    $scope.login = function(){
-        $window.location.href='/login';
-    }
-
     $scope.registro = function() {
-        $http.post('/users/visitante', $scope.formData)
-            .success(function(data) {
-                if(data.error == false){
-                    $scope.incorrecto = false;
-                    $scope.correcto = true;
-                    $scope.formData = {};
-                } else{
-                    $scope.correcto=false;
-                    $scope.incorrecto = true;
-                }
+        if(typeof($scope.formData.mail)=="undefined" | typeof($scope.formData.pass)=="undefined" | $scope.formData.mail=="" |$scope.formData.pass==""){
+            $scope.showalert=true;
+        }else{
+            $scope.showalert=false;
+            $http.post('/users/registro', $scope.formData)
+                .success(function(data) {
+                    $scope.formData = {}; // clear the form so our user is ready to enter another
+                    $scope.users = data.message;
+                    $scope.user = data.user;
+                    $scope.datosAcceso=true;
+                    $window.location.href= '/acceso';
+                })
+                .error(function(data) {
+                    $scope.incorrecto=true;
+                    console.log('Error: ' + data);
+                });
 
-            })
-            .error(function(data) {
-                console.log('Error: ' + data);
-            });
+        }
     };
 });
 

@@ -44,26 +44,111 @@ router.post('/auth', function(req, res) {
                 } else if (user.tipoUser == 1){
                     next = '/user';
                 } else{
-                    next = '/visitante';
+                    next = '/acceso';
                 }
                 //Respuesta con cookie
                 res.header(
                     {
-                    'Set-Cookie': 'token='+token ,
-                    'Content-Type': 'text/html'
-                }).json({
+                        'Set-Cookie': 'token='+token ,
+                        'Content-Type': 'text/html'
+                    })
+                    .json({
                     error: false,
-                    user: user,
                     next: next,
                     message: "Se ha autentificado correctamente"
                 });
-                res.end();
             } else {
                 res.json({
                     error: true,
                     message: "Incorrect email/password"
                 });
             }
+        }
+    });
+});
+
+/**
+ * Función que permite añadir un visitante
+ */
+router.post('/registro', function(req, res) {
+    //Se comprueba si existe el usuario
+    userMongo.findOne({email: req.body.email}, function(err, datos) {
+        if (err) {
+            res.json({
+                error: true,
+                message: "Error occured."
+            });
+        } else if(datos) {
+            //Se encripta la contraseña
+            var password = require('crypto')
+                .createHash('sha1')
+                .update(req.body.pass)
+                .digest('base64');
+            //Si existe se le asigna un token de acceso y se redirige a su página principal de acuerdo a su rango
+            userMongo.findOne({email: req.body.email, pass: password}, function(err, user) {
+                if(user) {
+                    var token = jwt.sign(user, config.secret, {
+                        expiresIn: 600 // expires in 24 hours
+                    });
+                    var next;
+                    if (user.tipoUser == 0) {
+                        next = '/admin';
+                    } else if (user.tipoUser == 1) {
+                        next = '/user';
+                    } else {
+                        next = '/acceso';
+                    }
+                    //Respuesta con cookie
+                    res.header(
+                        {
+                            'Set-Cookie': 'token=' + token,
+                            'Content-Type': 'text/html'
+                        })
+                        .json({
+                            error: false,
+                            next: next,
+                            message: "Se ha autentificado correctamente"
+                        });
+                } else {
+                    res.json({
+                        error: true,
+                        message: "Incorrect email/password"
+                    });
+                }
+            });
+        } else { //Crear usuario
+            var newUser = new userMongo();
+            var password = req.body.pass;
+            newUser.tipoUser = 2;
+            newUser.email = req.body.email;
+            newUser.pass = require('crypto')
+                .createHash('sha1')
+                .update(password)
+                .digest('base64');
+            //Se guarda
+            newUser.save(function (err) {
+                if (err) {
+                    console.log(err);
+                    response = {"error": true, "message": "Error adding user"};
+                    res.json(response);
+                } else {
+                    var token = jwt.sign(user, config.secret, {
+                        expiresIn: 600 // expires in 24 hours
+                    });
+                    var next='/acceso';
+                    //Respuesta con cookie
+                    res.header(
+                        {
+                            'Set-Cookie': 'token=' + token,
+                            'Content-Type': 'text/html'
+                        })
+                        .json({
+                            error: false,
+                            next: next,
+                            message: "Se ha autentificado correctamente"
+                        });
+                }
+            });
         }
     });
 });

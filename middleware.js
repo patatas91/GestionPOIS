@@ -1,7 +1,7 @@
 /**
  * Created by diego on 06/05/2016.
  */
-var moment = require('moment');
+
 var config = require('./config');
 var jwt = require('jsonwebtoken');
 
@@ -87,7 +87,6 @@ exports.ensureAuthenticatedVisitante = function(req, res, next) {
  * Método de autenticación para todos
  */
 exports.ensureAuthenticatedAll = function(req, res, next) {
-
     var cookies = parseCookies(req);
     var token = cookies.token;
     if(token){

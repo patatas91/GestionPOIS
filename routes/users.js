@@ -87,7 +87,7 @@ router.post('/', middleware.ensureAuthenticatedAdmin, function(req,res) {
 });
 
 /**
- * Petición que permite añadir un usuario  PRUEBASSSSSSSSSSSSSSSSSSSSS
+ * Petición que permite añadir un usuario
  * Sólo disponible para el administrador.
  */
 router.post('/visitante', function(req,res) {
@@ -103,7 +103,7 @@ router.post('/visitante', function(req,res) {
       //Sino se crea
       var db = new mongoOp();
       var password = req.body.pass;
-      db.tipoUser = 1;
+      db.tipoUser = 2;
       db.email = req.body.email;
       db.pass = require('crypto')
           .createHash('sha1')
@@ -243,7 +243,7 @@ function generar() {
 router.post('/registro', function(req,res) {
   var db = new mongoOp();
   var response = {};
-  mongoOp.findOne({email: req.body.mail},function(err,data) {
+  mongoOp.findOne({email: req.body.email},function(err,data) {
     if (err) {
       response = {"error": true, "message": "Error adding user"};
       res.json(response);
@@ -259,7 +259,7 @@ router.post('/registro', function(req,res) {
         if (err) {
           res.json({
             error: true,
-            message: "Error occured"
+            message: "Error occured."
           });
         } else {
           //Si existe se le asigna un token de acceso y se redirige a su página principal de acuerdo a su rango
@@ -273,7 +273,7 @@ router.post('/registro', function(req,res) {
             } else if (user.tipoUser == 1){
               next = '/user';
             } else{
-              next = '/visitante';
+              next = '/acceso';
             }
             //Respuesta con cookie
             res.header(
@@ -282,7 +282,6 @@ router.post('/registro', function(req,res) {
                   'Content-Type': 'text/html'
                 }).json({
               error: false,
-              user: user,
               next: next,
               message: "Se ha autentificado correctamente"
             });
@@ -325,7 +324,7 @@ router.post('/registro', function(req,res) {
                 var token = jwt.sign(user, config.secret, {
                   expiresIn: 600 // expires in 24 hours
                 });
-                var next = '/visitante';
+                var next = '/acceso';
                 //Respuesta con cookie
                 res.header(
                     {
