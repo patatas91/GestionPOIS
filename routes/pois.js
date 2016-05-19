@@ -169,6 +169,39 @@ router.put('/:id', middleware.ensureAuthenticatedAll, function(req,res){
 /**
  * Petición para votar un determinado poi
  */
+router.put('/:id/:valor', function(req,res){
+    console.log(req.params.valor);
+    var response = {};
+    // first find out record exists or not
+    // if it does then update the record
+    mongoOp.findById(req.params.id,function(err,data){
+        if(err) {
+            response = {"error" : true,"message" : "Error fetching data"};
+            res.json(response);
+        } else {
+            if(req.params.valor !== undefined && req.params.valor >= 0 && req.params.valor <= 5) {
+                // case where password needs to be updated
+                data.numVotantes = data.numVotantes + 1;
+                data.valoracion = data.valoracion + Number(req.params.valor);
+                data.save(function(err){
+                    if(err) {
+                        response = {"error" : true,"message" : "Error updating data"};
+                    } else {
+                        response = {"error" : false,"message" : "Data is updated for "+req.params.id};
+                    }
+                    res.json(response);
+                });
+            } else{
+                response = {"error" : true,"message" : "Valoración should be in the range 0-5"};
+                res.json(response);
+            }
+        }
+    });
+});
+
+/**
+ * Petición para votar un determinado poi
+ */
 router.put('/:id/votar', function(req,res){
     console.log(req.body.valoracion);
     var response = {};
